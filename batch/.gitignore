@@ -1,0 +1,13 @@
+.env
+__pycache__/
+*.html
+*.json
+json/
+log/
+blank-img/
+daily-scraping/
+new-product/
+images/
+*.txt
+*.png
+*.db

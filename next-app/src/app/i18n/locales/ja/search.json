@@ -1,0 +1,13 @@
+{
+  "title": "検索",
+  "keyword": "キーワード",
+  "release-date": "発売年月",
+  "year": "年",
+  "month": "月",
+  "brand": "ブランド",
+  "page-limit": "表示件数",
+  "submit": "検索",
+  "result": "検索結果",
+  "total-count": "検索件数",
+  "no-result": "検索結果がありません"
+}
