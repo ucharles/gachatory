@@ -93,11 +93,11 @@ def insert_new_product(file_name):
         alias="default",
     )
 
-    # json 파일 열기
-    with open(file_name, "r", encoding="utf-8") as f:
-        product_list = json.load(f)
-
-    if product_list == []:
+    try:
+        # json 파일 열기
+        with open(file_name, "r", encoding="utf-8") as f:
+            product_list = json.load(f)
+    except:
         print("No new product")
         return
 
@@ -204,11 +204,11 @@ def insert_updated_image(file_name):
         alias="default",
     )
 
-    # json 파일 열기
-    with open(file_name, "r", encoding="utf-8") as f:
-        product_list = json.load(f)
-
-    if product_list == []:
+    try:
+        # json 파일 열기
+        with open(file_name, "r", encoding="utf-8") as f:
+            product_list = json.load(f)
+    except:
         print("No product of which image is updated")
         return
 
