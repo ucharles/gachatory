@@ -20,7 +20,7 @@ def log(brand, page, url, status_code, msg="", path=""):
 
     # log 폴더가 없을 경우
     if not os.path.isdir(brand_path_selector(brand) + "log"):
-        os.makedirs("log")
+        os.makedirs(brand_path_selector(brand) + "log")
 
     f = open(
         brand_path_selector(brand) + "log/" + brand + "_" + nowDate + ".txt",
