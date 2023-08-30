@@ -253,19 +253,28 @@ def bandai_capsule_toy_update_image(product, idx=0):
         updated_product["image_updated"] = True
         updated_product["updatedAt"] = datetime.utcnow().isoformat()
 
+        # 로그 기록
+        log(
+            "bandai",
+            idx,
+            product["detail_url"],
+            0,
+            "'main image updated'",
+        )
+
     if len(product["detail_img"]) != len(updated_image):
         updated_product["detail_img"] = updated_image
         updated_product["image_updated"] = True
         updated_product["updatedAt"] = datetime.utcnow().isoformat()
 
-    # 로그 기록
-    log(
-        "bandai",
-        idx,
-        product["detail_url"],
-        0,
-        "'image updated'",
-    )
+        # 로그 기록
+        log(
+            "bandai",
+            idx,
+            product["detail_url"],
+            0,
+            "'detail image updated'",
+        )
 
     return updated_product
 
