@@ -25,7 +25,8 @@ from utils.crud_mongodb import (
     search_blank_image,
     insert_updated_image,
 )
-from utils.google_image_search import google_image_search
+
+# from utils.google_image_search import google_image_search
 
 
 bandai_prepare_img = "./bandai-prepare.jpg"
@@ -137,8 +138,8 @@ def bandai_capsule_toy_detail(product, idx=0):
 
     for img in img_list:
         img = img.get("src")
-        img_loc = "../../../backend/contents/images/bandai/" + save_img(
-            img, "../../../backend/contents/images/bandai/"
+        img_loc = "../../../image-server/contents/images/bandai/" + save_img(
+            img, "../../../image-server/contents/images/bandai/"
         )
 
         if img_loc == "":
@@ -151,7 +152,7 @@ def bandai_capsule_toy_detail(product, idx=0):
             os.remove(img_loc)
             continue
 
-        updated_image.append(img_loc.replace("../../../backend/contents/", ""))
+        updated_image.append(img_loc.replace("../../../image-server/contents/", ""))
 
     # 상품 정보 추출
     description = soup.find("div", class_="pg-productInfo__desc").text
@@ -215,8 +216,8 @@ def bandai_capsule_toy_update_image(product, idx=0):
 
     for img in img_list:
         img = img.get("src")
-        img_loc = "../../../backend/contents/images/bandai/" + save_img(
-            img, "../../../backend/contents/images/bandai/"
+        img_loc = "../../../image-server/contents/images/bandai/" + save_img(
+            img, "../../../image-server/contents/images/bandai/"
         )
 
         if img_loc == "":
@@ -229,7 +230,7 @@ def bandai_capsule_toy_update_image(product, idx=0):
             os.remove(img_loc)
             continue
 
-        updated_image.append(img_loc.replace("../../../backend/contents/", ""))
+        updated_image.append(img_loc.replace("../../../image-server/contents/", ""))
 
     if updated_image == []:
         # 로그 기록
@@ -304,46 +305,50 @@ def scraping_detail_info(product_list_json, start_idx=0, mode=0):
 # 셀레니움을 사용하여 첫 번째 이미지를 가져온다.
 # 수 회 테스트를 진행했으나, 부정확한 이미지를 가져오는 경우가 많다.
 # 어떻게 하면 정확한 이미지를 가져올 수 있을지 고민이 필요하다.
-def bandai_google_image_search(product_list_json):
-    updated_product_list = []
-    temp_dic = {}
+# def bandai_google_image_search(product_list_json):
+#     updated_product_list = []
+#     temp_dic = {}
 
-    with open(product_list_json, "r", encoding="utf-8") as f:
-        product_list_json = f.read()
+#     with open(product_list_json, "r", encoding="utf-8") as f:
+#         product_list_json = f.read()
 
-        # 리스트로 변환
-        product_list = json.loads(product_list_json)
+#         # 리스트로 변환
+#         product_list = json.loads(product_list_json)
 
-        # 인덱스 추가
-        for product in product_list:
-            if "google_search" in product and product["google_search"] == True:
-                name = re.sub(r"[【\[].+[】\]]", "", product["name"])
-                img_url = google_image_search(name + "+site:chappy-net.com")
+#         # 인덱스 추가
+#         for product in product_list:
+#             if "google_search" in product and product["google_search"] == True:
+#                 name = re.sub(r"[【\[].+[】\]]", "", product["name"])
+#                 img_url = google_image_search(name + "+site:chappy-net.com")
 
-                if img_url == None:
-                    img_url = ""
+#                 if img_url == None:
+#                     img_url = ""
 
-                try:
-                    img_loc = "images/bandai/" + save_img(img_url, "images/bandai/")
-                except Exception as e:
-                    print("Can't save image")
-                    img_loc = ""
+#                 try:
+#                     img_loc = "images/bandai/" + save_img(img_url, "images/bandai/")
+#                 except Exception as e:
+#                     print("Can't save image")
+#                     img_loc = ""
 
-                product["img"] = img_loc.replace("../backend/contents/", "")
+#                 product["img"] = img_loc.replace("../image-server/contents/", "")
 
-                updated_product_list.append(product)
-                write_file(updated_product_list, "google-image-updated")
-    f.close()
+#                 updated_product_list.append(product)
+#                 write_file(updated_product_list, "google-image-updated")
+#     f.close()
 
 
 # 오늘 날짜를 YYYYMMDD 형식으로 출력
 today = datetime.today().strftime("%Y%m%d")
+print(today)
 # 데일리 스크래핑 순서
 
 # 1. bandai_capsule_toy_list() 실행
 # 이번달부터 1년치의 상품 리스트를 가져온다.
 # 출력 파일은 'daily-scraping-YYYYMMDD.json'
+print("bandai_capsule_toy_list")
 bandai_capsule_toy_list()
+print("bandai_capsule_toy_list end")
+
 
 # 2. search_new_product() 실행
 # 입력 파일은 'daily-scraping-YYYYMMDD.json'
@@ -351,25 +356,37 @@ bandai_capsule_toy_list()
 # DB에 저장된 상품이면 기존 dict에 'date_added'를 추가
 # DB에 저장되지 않은 상품이면 별다른 편집 없음
 # 출력 파일은 'new-product-YYYYMMDD.json'
+print("search_new_product")
 write_file(search_new_product("daily-scraping/" + today + ".json"), "new-product/")
+print("search_new_product end")
 
 # 3. scraping_detail_info() 실행
 # 입력 파일은 'new-product-YYYYMMDD.json'
 # 입력 파일의 각 'detail_url'에 접속하여 상품 정보를 가져온다.
 # 출력 파일은 'image-updated-YYYYMMDD.json'
+print("scraping_detail_info")
 scraping_detail_info("new-product/" + today + ".json", mode=0)
+print("scraping_detail_info end")
 
 # 4. insert_new_product() 실행
+print("insert_new_product")
 insert_new_product("new-product/detail-" + today + ".json")
+print("insert_new_product end")
 
 
 # DB에 저장된 상품의 이미지를 업데이트하는 순서
 
 # 이미지가 없는 상품을 DB에서 찾아 그 결과를 출력하는 함수
+print("search_blank_image")
 write_file(search_blank_image("BANDAI"), "blank-img/")
+print("search_blank_image end")
 
 # 이미지가 없는 상품의 상세 페이지에서 이미지를 가져오는 함수
+print("scraping_detail_info")
 scraping_detail_info("blank-img/" + today + ".json", mode=1)
+print("scraping_detail_info end")
 
 # 가져온 이미지 정보를 DB에 업데이트하는 함수
+print("insert_updated_image")
 insert_updated_image("blank-img/updated-" + today + ".json")
+print("insert_updated_image end")
