@@ -8,6 +8,7 @@ from dateutil.relativedelta import relativedelta
 import json
 import os
 import unicodedata
+from dotenv import load_dotenv
 
 sys.path.append(
     os.path.dirname(
@@ -29,7 +30,13 @@ from utils.crud_mongodb import (
 # from utils.google_image_search import google_image_search
 
 
-bandai_prepare_img = "./bandai-prepare.jpg"
+# dotenv
+load_dotenv()
+
+image_server_path = os.getenv("IMAGE_SERVER_PATH")
+absolute_path_bandai = os.getenv("ABSOLUTE_PATH_BANDAI")
+
+bandai_prepare_img = absolute_path_bandai + "bandai-prepare.jpg"
 
 
 # 이번 달부터 1년치의 상품 리스트를 가져오는 함수
@@ -58,7 +65,13 @@ def bandai_capsule_toy_list():
         soup = BeautifulSoup(r.content, "html.parser")
 
         # 로그 기록
-        log("bandai", date, search_url, r.status_code, "scraping start")
+        log(
+            "bandai",
+            date,
+            search_url,
+            r.status_code,
+            "scraping start",
+        )
 
         # 모든 결과를 담고 있는 div
         result = soup.find("div", class_="contents")
@@ -83,12 +96,24 @@ def bandai_capsule_toy_list():
             temp_dic = {}
 
         # 페이지 종료마다 파일 저장
-        write_file(capsule_toy_list, "daily-scraping/")
-        log("bandai", date, search_url, r.status_code, "scraping end")
+        write_file(capsule_toy_list, absolute_path_bandai + "daily-scraping/")
+        log(
+            "bandai",
+            date,
+            search_url,
+            r.status_code,
+            "scraping end",
+        )
 
         # 현재 날짜와 종료 날짜가 같으면 종료
         if date == end_date:
-            log("bandai", date, search_url, r.status_code, "scraping end")
+            log(
+                "bandai",
+                date,
+                search_url,
+                r.status_code,
+                "scraping end",
+            )
             break
 
         # YYYYMM 형식의 날짜를 받아 다음달 날짜를 YYYYMM 형식으로 출력
@@ -138,8 +163,10 @@ def bandai_capsule_toy_detail(product, idx=0):
 
     for img in img_list:
         img = img.get("src")
-        img_loc = "../../../image-server/contents/images/bandai/" + save_img(
-            img, "../../../image-server/contents/images/bandai/"
+        img_loc = (
+            image_server_path
+            + "images/bandai/"
+            + save_img(img, image_server_path + "images/bandai/")
         )
 
         if img_loc == "":
@@ -152,7 +179,7 @@ def bandai_capsule_toy_detail(product, idx=0):
             os.remove(img_loc)
             continue
 
-        updated_image.append(img_loc.replace("../../../image-server/contents/", ""))
+        updated_image.append(img_loc.replace(image_server_path, ""))
 
     # 상품 정보 추출
     description = soup.find("div", class_="pg-productInfo__desc").text
@@ -216,8 +243,10 @@ def bandai_capsule_toy_update_image(product, idx=0):
 
     for img in img_list:
         img = img.get("src")
-        img_loc = "../../../image-server/contents/images/bandai/" + save_img(
-            img, "../../../image-server/contents/images/bandai/"
+        img_loc = (
+            image_server_path
+            + "images/bandai/"
+            + save_img(img, image_server_path + "images/bandai/")
         )
 
         if img_loc == "":
@@ -230,7 +259,7 @@ def bandai_capsule_toy_update_image(product, idx=0):
             os.remove(img_loc)
             continue
 
-        updated_image.append(img_loc.replace("../../../image-server/contents/", ""))
+        updated_image.append(img_loc.replace(image_server_path, ""))
 
     if updated_image == []:
         # 로그 기록
@@ -253,19 +282,28 @@ def bandai_capsule_toy_update_image(product, idx=0):
         updated_product["image_updated"] = True
         updated_product["updatedAt"] = datetime.utcnow().isoformat()
 
+        # 로그 기록
+        log(
+            "bandai",
+            idx,
+            product["detail_url"],
+            0,
+            "'main image updated'",
+        )
+
     if len(product["detail_img"]) != len(updated_image):
         updated_product["detail_img"] = updated_image
         updated_product["image_updated"] = True
         updated_product["updatedAt"] = datetime.utcnow().isoformat()
 
-    # 로그 기록
-    log(
-        "bandai",
-        idx,
-        product["detail_url"],
-        0,
-        "'image updated'",
-    )
+        # 로그 기록
+        log(
+            "bandai",
+            idx,
+            product["detail_url"],
+            0,
+            "'detail image updated'",
+        )
 
     return updated_product
 
@@ -276,9 +314,9 @@ def scraping_detail_info(product_list_json, start_idx=0, mode=0):
     i = 0
 
     if mode == 0:
-        file_name = "new-product/detail"
+        file_name = absolute_path_bandai + "new-product/detail"
     elif mode == 1:
-        file_name = "blank-img/updated"
+        file_name = absolute_path_bandai + "blank-img/updated"
 
     # json 파일 열기
     with open(product_list_json, "r", encoding="utf-8") as f:
@@ -347,7 +385,6 @@ print(today)
 # 출력 파일은 'daily-scraping-YYYYMMDD.json'
 print("bandai_capsule_toy_list")
 bandai_capsule_toy_list()
-print("bandai_capsule_toy_list end")
 
 
 # 2. search_new_product() 실행
@@ -357,36 +394,33 @@ print("bandai_capsule_toy_list end")
 # DB에 저장되지 않은 상품이면 별다른 편집 없음
 # 출력 파일은 'new-product-YYYYMMDD.json'
 print("search_new_product")
-write_file(search_new_product("daily-scraping/" + today + ".json"), "new-product/")
-print("search_new_product end")
+write_file(
+    search_new_product(absolute_path_bandai + "daily-scraping/" + today + ".json"),
+    absolute_path_bandai + "new-product/",
+)
 
 # 3. scraping_detail_info() 실행
 # 입력 파일은 'new-product-YYYYMMDD.json'
 # 입력 파일의 각 'detail_url'에 접속하여 상품 정보를 가져온다.
 # 출력 파일은 'image-updated-YYYYMMDD.json'
 print("scraping_detail_info")
-scraping_detail_info("new-product/" + today + ".json", mode=0)
-print("scraping_detail_info end")
+scraping_detail_info(absolute_path_bandai + "new-product/" + today + ".json", mode=0)
 
 # 4. insert_new_product() 실행
 print("insert_new_product")
-insert_new_product("new-product/detail-" + today + ".json")
-print("insert_new_product end")
+insert_new_product(absolute_path_bandai + "new-product/detail-" + today + ".json")
 
 
 # DB에 저장된 상품의 이미지를 업데이트하는 순서
 
 # 이미지가 없는 상품을 DB에서 찾아 그 결과를 출력하는 함수
 print("search_blank_image")
-write_file(search_blank_image("BANDAI"), "blank-img/")
-print("search_blank_image end")
+write_file(search_blank_image("BANDAI"), absolute_path_bandai + "blank-img/")
 
 # 이미지가 없는 상품의 상세 페이지에서 이미지를 가져오는 함수
 print("scraping_detail_info")
-scraping_detail_info("blank-img/" + today + ".json", mode=1)
-print("scraping_detail_info end")
+scraping_detail_info(absolute_path_bandai + "blank-img/" + today + ".json", mode=1)
 
 # 가져온 이미지 정보를 DB에 업데이트하는 함수
 print("insert_updated_image")
-insert_updated_image("blank-img/updated-" + today + ".json")
-print("insert_updated_image end")
+insert_updated_image(absolute_path_bandai + "blank-img/updated-" + today + ".json")
