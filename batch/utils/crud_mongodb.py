@@ -97,6 +97,10 @@ def insert_new_product(file_name):
     with open(file_name, "r", encoding="utf-8") as f:
         product_list = json.load(f)
 
+    if product_list == []:
+        print("No new product")
+        return
+
     new_product_list = []
 
     for product in product_list:
@@ -203,6 +207,10 @@ def insert_updated_image(file_name):
     # json 파일 열기
     with open(file_name, "r", encoding="utf-8") as f:
         product_list = json.load(f)
+
+    if product_list == []:
+        print("No product of which image is updated")
+        return
 
     for product in product_list:
         # dict에 date_added가 있으면
