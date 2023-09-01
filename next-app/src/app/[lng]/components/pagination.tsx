@@ -93,13 +93,21 @@ export default function Pagination({ total }: PaginationProps) {
   };
 
   return (
-    <div>
-      {startPage > 1 && <button onClick={goBackward}>&laquo;</button>}
+    <div className="space-x-1 pt-5 pb-5">
+      {startPage > 1 && (
+        <button
+          className="h-8 w-8 border-solid border border-black rounded-md"
+          onClick={goBackward}
+        >
+          &laquo;
+        </button>
+      )}
       {Array.from(
         { length: Math.min(maxPagesToShow, totalPages - startPage + 1) },
         (_, i) => i + startPage
       ).map((page) => (
         <button
+          className="h-8 w-8 border-solid border border-black rounded-md"
           key={page}
           style={page === currentPage ? highlightedStyle : {}}
           onClick={(e) => {
@@ -113,7 +121,12 @@ export default function Pagination({ total }: PaginationProps) {
         </button>
       ))}
       {startPage + maxPagesToShow - 1 < totalPages && (
-        <button onClick={goForward}>&raquo;</button>
+        <button
+          className="h-8 w-8 border-solid border border-black rounded-md"
+          onClick={goForward}
+        >
+          &raquo;
+        </button>
       )}
     </div>
   );

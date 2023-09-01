@@ -1,5 +1,6 @@
 import { ICapsuleToy } from "@/lib/models/capsule-model";
 import Link from "next/link";
+import Image from "next/image";
 import { getCurrentMonthForSearch } from "@/lib/search-date-string";
 import { setDisplayImg } from "@/lib/set-display-img";
 import { useTranslation } from "../i18n";
@@ -32,16 +33,21 @@ export default async function Page({
   setDisplayImg(data.capsules, false);
 
   return (
-    <div>
-      <h1>
+    <div className="p-3">
+      <h1 className="text-heading3-bold pb-6">
         {t("new-arrival")} ({getCurrentMonthForSearch()})
       </h1>
-      <ul>
+      <ul className="grid grid-cols-4 gap-6">
         {data.capsules.map((capsule: ICapsuleToy) => {
           return capsule.display_img ? (
             <li key={capsule._id}>
               <Link href={"/" + lng + "/capsule/" + capsule._id}>
-                <img src={IMAGE_URI + capsule.display_img} alt={capsule.name} />
+                <Image
+                  src={IMAGE_URI + capsule.display_img}
+                  alt={capsule.name}
+                  width={300}
+                  height={300}
+                />
                 <h1>{capsule.name}</h1>
                 <p>{capsule.date}</p>
               </Link>
