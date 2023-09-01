@@ -1,5 +1,6 @@
 import { ICapsuleToy } from "@/lib/models/capsule-model";
 import Image from "next/image";
+import ImageGallery from "../../components/image-gallery";
 
 const IMAGE_URI = process.env.IMAGE_SERVER_URL || "";
 const API_URI = process.env.APP_SERVER_URL || "";
@@ -16,28 +17,25 @@ async function fetchData(id: string) {
 export default async function Page({ params }: { params: { id: string } }) {
   const capsule: ICapsuleToy = await fetchData(params.id);
 
-  const main_image = capsule.img ? capsule.img : "images/prepare.jpg";
+  const main_image = capsule.img
+    ? IMAGE_URI + capsule.img
+    : IMAGE_URI + "images/prepare.jpg";
+
+  let detail_images: string[] = [];
+
+  if (capsule.detail_img.length !== 0) {
+    capsule.detail_img.map((img: string) => {
+      detail_images.push(IMAGE_URI + img);
+    });
+  }
 
   return (
     <div className="grid grid-cols-2">
       <div className="p-5">
         <div className="flex justify-center border border-black ">
-          <img src={IMAGE_URI + main_image} alt={capsule.name} />
+          <img src={main_image} alt={capsule.name} />
         </div>
-        <div className="grid grid-cols-4 gap-3 pt-5">
-          {capsule.detail_img.length > 0
-            ? capsule.detail_img.map((img: string) => (
-                <div className="border border-black rounded-lg p-1">
-                  <Image
-                    src={IMAGE_URI + img}
-                    alt={capsule.name}
-                    width={200}
-                    height={200}
-                  />
-                </div>
-              ))
-            : null}
-        </div>
+        <ImageGallery detail_img={detail_images} />
       </div>
       <div className="p-5">
         <h1 className="text-heading2-bold pb-5">{capsule.name}</h1>
