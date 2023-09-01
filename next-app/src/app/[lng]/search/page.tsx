@@ -53,20 +53,26 @@ export default async function Page({
   // setLanguage(data.capsules, params.lng);
 
   return (
-    <div>
-      <h1>{t("title")}</h1>
-      <div>
+    <div className="p-3">
+      <h1 className="text-heading3-bold">{t("title")}</h1>
+      <div className="pt-5 pb-5">
         <SearchForm lng={params.lng} />
-        <SearchLimit lng={params.lng} />
       </div>
       {data ? (
         <div>
-          <h1>{t("result")}</h1>
-          <h2>
-            {t("total-count")}: {data.totalCount}
-          </h2>
+          <div className="flex justify-between">
+            <div className="flex space-x-5">
+              <h1 className="text-heading3-bold ">{t("result")}</h1>
+              <h2 className="text-heading4-medium self-center">
+                {t("total-count")}: {data.totalCount}
+              </h2>
+            </div>
+            <div className="self-center">
+              <SearchLimit lng={params.lng} />
+            </div>
+          </div>
           <Pagination total={data.totalCount} />
-          <ul>
+          <ul className="grid grid-cols-4 gap-6 pt-5">
             {data.capsules.map((capsule: ICapsuleToy) => {
               return capsule.display_img ? (
                 <li key={capsule._id}>

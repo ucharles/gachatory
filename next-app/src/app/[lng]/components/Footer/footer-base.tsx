@@ -19,27 +19,29 @@ export function FooterBase({ t, lng }: FooterBaseProps) {
   // extract pathname index 4~end
   const otherPath = pathname.split("/").slice(2).join("/");
   return (
-    <footer style={{ marginTop: 50 }}>
-      <Trans i18nKey="languageSwitcher" t={t} values={{ lng }}>
-        Switch from <strong>{lng.toUpperCase()}</strong> to:{" "}
-      </Trans>
+    <footer className="p-10 flex justify-end">
+      <div>
+        <Trans i18nKey="languageSwitcher" t={t} values={{ lng }}>
+          Switch from <strong>{lng.toUpperCase()}</strong> to:{" "}
+        </Trans>
 
-      {languages
-        .filter((l) => lng !== l)
-        .map((l, index) => {
-          return (
-            <span key={l}>
-              {index > 0 && " or "}
-              <Link
-                href={`/${l}/${otherPath}${
-                  searchParams ? "?" + searchParams.toString() : null
-                }`}
-              >
-                {l.toUpperCase()}
-              </Link>
-            </span>
-          );
-        })}
+        {languages
+          .filter((l) => lng !== l)
+          .map((l, index) => {
+            return (
+              <span key={l}>
+                {index > 0 && " or "}
+                <Link
+                  href={`/${l}/${otherPath}${
+                    searchParams ? "?" + searchParams.toString() : null
+                  }`}
+                >
+                  {l.toUpperCase()}
+                </Link>
+              </span>
+            );
+          })}
+      </div>
     </footer>
   );
 }

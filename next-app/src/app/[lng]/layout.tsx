@@ -4,11 +4,13 @@ import { Inter } from "next/font/google";
 import Navbar from "@/app/[lng]/components/navbar";
 import { Footer } from "@/app/[lng]/components/Footer/client";
 
+import "@/app/global.css";
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Gotcha-Story",
-  description: "Gotcha-Story",
+  title: "Gachatory",
+  description: "Gachatory",
 };
 
 interface RootLayoutProps {
@@ -22,10 +24,12 @@ export default function RootLayout({
 }: RootLayoutProps) {
   return (
     <html lang={lng} dir={dir(lng)}>
-      <body className={inter.className}>
-        <Navbar lng={lng} />
-        {children}
-        <Footer lng={lng} />
+      <body className={`${inter.className} container bg-[#FEFEFE] w-[1280px]`}>
+        <div>
+          <Navbar lng={lng} />
+          {children}
+          <Footer lng={lng} />
+        </div>
       </body>
     </html>
   );
