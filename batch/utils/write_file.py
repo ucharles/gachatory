@@ -24,3 +24,10 @@ def write_file(list, file_name=""):
     )
     fo.write(json.dumps(list, ensure_ascii=False))
     fo.close()
+
+
+def open_json_file_to_list(file_name):
+    with open(file_name, "r", encoding="utf-8") as f:
+        data = f.read()
+        data = json.loads(data)
+    return data
