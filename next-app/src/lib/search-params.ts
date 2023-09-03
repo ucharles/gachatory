@@ -1,10 +1,5 @@
 import { dateConveter } from "@/lib/date-converter";
-
-enum perPageEnum {
-  SMALL = 20,
-  MEDIUM = 40,
-  LARGE = 60,
-}
+import { perPageEnum } from "@/lib/per-page-enum";
 
 export function searchParams(url: string) {
   const params = new URLSearchParams(new URL(url).search);

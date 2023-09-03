@@ -3,6 +3,7 @@
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
+import { perPageEnum } from "@/lib/per-page-enum";
 
 interface PaginationProps {
   total: number; // total number of items
@@ -14,7 +15,7 @@ export default function Pagination({ total }: PaginationProps) {
   const searchParams = useSearchParams();
 
   const currentPage = Number(searchParams.get("page")) || 1;
-  const itemsPerPage = Number(searchParams.get("limit")) || 15;
+  const itemsPerPage = Number(searchParams.get("limit")) || perPageEnum.SMALL;
   const totalPages = Math.ceil(total / itemsPerPage);
 
   const maxPagesToShow = 10;

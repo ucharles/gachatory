@@ -375,52 +375,53 @@ def scraping_detail_info(product_list_json, start_idx=0, mode=0):
 #     f.close()
 
 
-# 오늘 날짜를 YYYYMMDD 형식으로 출력
-today = datetime.today().strftime("%Y%m%d")
-print(today)
-# 데일리 스크래핑 순서
+if __name__ == "__main__":
+    # 오늘 날짜를 YYYYMMDD 형식으로 출력
+    today = datetime.today().strftime("%Y%m%d")
+    print(today)
+    # 데일리 스크래핑 순서
 
-# 1. bandai_capsule_toy_list() 실행
-# 이번달부터 1년치의 상품 리스트를 가져온다.
-# 출력 파일은 'daily-scraping-YYYYMMDD.json'
-print("bandai_capsule_toy_list")
-bandai_capsule_toy_list()
+    # 1. bandai_capsule_toy_list() 실행
+    # 이번달부터 1년치의 상품 리스트를 가져온다.
+    # 출력 파일은 'daily-scraping-YYYYMMDD.json'
+    print("bandai_capsule_toy_list")
+    bandai_capsule_toy_list()
 
+    # 2. search_new_product() 실행
+    # 입력 파일은 'daily-scraping-YYYYMMDD.json'
+    # DB에 저장된 상품 리스트와 비교
+    # DB에 저장된 상품이면 기존 dict에 'date_added'를 추가
+    # DB에 저장되지 않은 상품이면 별다른 편집 없음
+    # 출력 파일은 'new-product-YYYYMMDD.json'
+    print("search_new_product")
+    write_file(
+        search_new_product(absolute_path_bandai + "daily-scraping/" + today + ".json"),
+        absolute_path_bandai + "new-product/",
+    )
 
-# 2. search_new_product() 실행
-# 입력 파일은 'daily-scraping-YYYYMMDD.json'
-# DB에 저장된 상품 리스트와 비교
-# DB에 저장된 상품이면 기존 dict에 'date_added'를 추가
-# DB에 저장되지 않은 상품이면 별다른 편집 없음
-# 출력 파일은 'new-product-YYYYMMDD.json'
-print("search_new_product")
-write_file(
-    search_new_product(absolute_path_bandai + "daily-scraping/" + today + ".json"),
-    absolute_path_bandai + "new-product/",
-)
+    # 3. scraping_detail_info() 실행
+    # 입력 파일은 'new-product-YYYYMMDD.json'
+    # 입력 파일의 각 'detail_url'에 접속하여 상품 정보를 가져온다.
+    # 출력 파일은 'image-updated-YYYYMMDD.json'
+    print("scraping_detail_info")
+    scraping_detail_info(
+        absolute_path_bandai + "new-product/" + today + ".json", mode=0
+    )
 
-# 3. scraping_detail_info() 실행
-# 입력 파일은 'new-product-YYYYMMDD.json'
-# 입력 파일의 각 'detail_url'에 접속하여 상품 정보를 가져온다.
-# 출력 파일은 'image-updated-YYYYMMDD.json'
-print("scraping_detail_info")
-scraping_detail_info(absolute_path_bandai + "new-product/" + today + ".json", mode=0)
+    # 4. insert_new_product() 실행
+    print("insert_new_product")
+    insert_new_product(absolute_path_bandai + "new-product/detail-" + today + ".json")
 
-# 4. insert_new_product() 실행
-print("insert_new_product")
-insert_new_product(absolute_path_bandai + "new-product/detail-" + today + ".json")
+    # DB에 저장된 상품의 이미지를 업데이트하는 순서
 
+    # 이미지가 없는 상품을 DB에서 찾아 그 결과를 출력하는 함수
+    print("search_blank_image")
+    write_file(search_blank_image("BANDAI"), absolute_path_bandai + "blank-img/")
 
-# DB에 저장된 상품의 이미지를 업데이트하는 순서
+    # 이미지가 없는 상품의 상세 페이지에서 이미지를 가져오는 함수
+    print("scraping_detail_info")
+    scraping_detail_info(absolute_path_bandai + "blank-img/" + today + ".json", mode=1)
 
-# 이미지가 없는 상품을 DB에서 찾아 그 결과를 출력하는 함수
-print("search_blank_image")
-write_file(search_blank_image("BANDAI"), absolute_path_bandai + "blank-img/")
-
-# 이미지가 없는 상품의 상세 페이지에서 이미지를 가져오는 함수
-print("scraping_detail_info")
-scraping_detail_info(absolute_path_bandai + "blank-img/" + today + ".json", mode=1)
-
-# 가져온 이미지 정보를 DB에 업데이트하는 함수
-print("insert_updated_image")
-insert_updated_image(absolute_path_bandai + "blank-img/updated-" + today + ".json")
+    # 가져온 이미지 정보를 DB에 업데이트하는 함수
+    print("insert_updated_image")
+    insert_updated_image(absolute_path_bandai + "blank-img/updated-" + today + ".json")
