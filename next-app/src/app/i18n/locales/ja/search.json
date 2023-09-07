@@ -9,5 +9,6 @@
   "submit": "検索",
   "result": "検索結果",
   "total-count": "検索件数",
-  "no-result": "検索結果がありません"
+  "no-result": "検索結果がありません",
+  "reset": "クリア"
 }

@@ -12,12 +12,14 @@
 //   }
 
 import Link from "next/link";
+import Image from "next/image";
 import { ICapsuleToy } from "@/lib/models/capsule-model";
 import { setDisplayImg } from "@/lib/set-display-img";
 import SearchForm from "@/app/[lng]/components/search-form-copy";
 import Pagination from "@/app/[lng]/components/pagination";
 import SearchLimit from "@/app/[lng]/components/search-limit";
-import { useTranslation } from "@/app/i18n";
+import { translate } from "@/app/i18n";
+import { cacheTimeEnum } from "@/lib/enums";
 
 const IMAGE_URI = process.env.IMAGE_SERVER_URL || "";
 const API_URI = process.env.APP_SERVER_URL || "";
@@ -29,7 +31,7 @@ async function fetchData(lng: string, searchParams: Record<string, string>) {
     API_URI + `/api/capsules?lng=${lng}&${params.toString()}`,
     {
       method: "GET",
-      cache: "no-store",
+      next: { revalidate: cacheTimeEnum.FIVE_MINUTES },
     }
   );
   const data = await response.json();
@@ -44,7 +46,7 @@ export default async function Page({
   searchParams: { param1: string; param2: string };
 }) {
   const queryParams = searchParams;
-  const { t } = await useTranslation(params.lng, "search");
+  const { t } = await translate(params.lng, "search");
 
   let data: any = null;
 
@@ -77,9 +79,12 @@ export default async function Page({
               return capsule.display_img ? (
                 <li key={capsule._id}>
                   <Link href={"/capsule/" + capsule._id}>
-                    <img
+                    <Image
                       src={IMAGE_URI + capsule.display_img}
                       alt={capsule.name}
+                      width={300}
+                      height={300}
+                      unoptimized={true}
                     />
                     <h1>{capsule.name}</h1>
                     <p>{capsule.date}</p>

@@ -3,7 +3,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { getCurrentMonthForSearch } from "@/lib/search-date-string";
 import { setDisplayImg } from "@/lib/set-display-img";
-import { useTranslation } from "../i18n";
+import { translate } from "../i18n";
+import { perPageEnum, cacheTimeEnum } from "@/lib/enums";
 
 const IMAGE_URI = process.env.IMAGE_SERVER_URL || "";
 const API_URI = process.env.APP_SERVER_URL || "";
@@ -11,10 +12,12 @@ const API_URI = process.env.APP_SERVER_URL || "";
 async function fetchData(lng: string) {
   const response = await fetch(
     API_URI +
-      `/api/capsules?lng=${lng}&startDate=${getCurrentMonthForSearch()}`,
+      `/api/capsules?lng=${lng}&startDate=${getCurrentMonthForSearch()}&limit=${
+        perPageEnum.MEDIUM
+      }`,
     {
       method: "GET",
-      cache: "no-store",
+      next: { revalidate: cacheTimeEnum.FIVE_MINUTES },
     }
   );
   const data = await response.json();
@@ -27,7 +30,7 @@ export default async function Page({
   params: { lng: string };
 }) {
   const data = await fetchData(lng);
-  const { t } = await useTranslation(lng);
+  const { t } = await translate(lng);
 
   // set display_img
   setDisplayImg(data.capsules, false);
@@ -47,6 +50,7 @@ export default async function Page({
                   alt={capsule.name}
                   width={300}
                   height={300}
+                  unoptimized={true}
                 />
                 <h1>{capsule.name}</h1>
                 <p>{capsule.date}</p>

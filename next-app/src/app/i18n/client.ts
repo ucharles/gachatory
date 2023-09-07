@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import i18next from "i18next";
 import {
   initReactI18next,
-  useTranslation as useTranslationOrg,
+  useTranslation as translateOrg,
 } from "react-i18next";
 import resourcesToBackend from "i18next-resources-to-backend";
 import LanguageDetector from "i18next-browser-languagedetector";
@@ -32,8 +32,8 @@ i18next
   });
 
 //
-export function useTranslation(lng: string, ns: string, options?: any) {
-  const ret = useTranslationOrg(ns, options);
+export function translate(lng: string, ns: string, options?: any) {
+  const ret = translateOrg(ns, options);
   const { i18n } = ret;
   if (runsOnServerSide && lng && i18n.resolvedLanguage !== lng) {
     i18n.changeLanguage(lng);

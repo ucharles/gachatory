@@ -1,4 +1,4 @@
-import { useTranslation } from "../../../i18n";
+import { translate } from "../../../i18n";
 import { FooterBase } from "./footer-base";
 
 interface FooterProps {
@@ -6,6 +6,6 @@ interface FooterProps {
 }
 
 export async function Footer({ lng }: FooterProps) {
-  const { t } = await useTranslation(lng, "footer");
+  const { t } = await translate(lng, "footer");
   return <FooterBase t={t} lng={lng} />;
 }

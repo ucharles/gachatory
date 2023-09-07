@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useCallback } from "react";
+import Image from "next/image";
 
 interface ImageGalleryProps {
   detail_img: string[];
@@ -16,7 +17,6 @@ function ImageGallery({ detail_img }: ImageGalleryProps) {
   }, []);
 
   const handleImageHover = useCallback((image: string | null) => {
-    console.log("hover", image);
     // Clear any existing timeout
     if (hoverTimeout) {
       clearTimeout(hoverTimeout);
@@ -29,7 +29,6 @@ function ImageGallery({ detail_img }: ImageGalleryProps) {
   }, []);
 
   const handleClose = useCallback(() => {
-    console.log("close");
     setSelectedImage(null);
   }, []);
 
@@ -37,13 +36,16 @@ function ImageGallery({ detail_img }: ImageGalleryProps) {
     <div className="grid grid-cols-4 gap-2 pt-2">
       {detail_img.map((image, index) => (
         <div key={index} className="border border-black rounded-lg p-2">
-          <img
+          <Image
             src={image}
             alt={`Image ${index}`}
             onClick={() => handleImageClick(image)}
             onMouseEnter={() => handleImageHover(image)}
             onMouseLeave={() => handleImageHover(null)}
             className="cursor-pointer hover:scale-105 transform transition ease-in-out"
+            width={200}
+            height={200}
+            unoptimized={true}
           />
         </div>
       ))}
@@ -52,10 +54,13 @@ function ImageGallery({ detail_img }: ImageGalleryProps) {
           className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 pointer-events-none"
           onClick={handleClose}
         >
-          <img
+          <Image
             src={selectedImage}
             alt="Selected Image"
             className="max-w-full max-h-full"
+            width={500}
+            height={500}
+            unoptimized={true}
           />
         </div>
       )}

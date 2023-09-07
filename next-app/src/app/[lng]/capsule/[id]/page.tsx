@@ -2,6 +2,7 @@ import { ICapsuleToy } from "@/lib/models/capsule-model";
 import Image from "next/image";
 import ImageGallery from "../../components/image-gallery";
 import Link from "next/link";
+import { cacheTimeEnum } from "@/lib/enums";
 
 const IMAGE_URI = process.env.IMAGE_SERVER_URL || "";
 const API_URI = process.env.APP_SERVER_URL || "";
@@ -9,7 +10,7 @@ const API_URI = process.env.APP_SERVER_URL || "";
 async function fetchData(id: string) {
   const response = await fetch(API_URI + "/api/capsules/" + id, {
     method: "GET",
-    cache: "no-store",
+    next: { revalidate: cacheTimeEnum.FIVE_MINUTES },
   });
   const data = await response.json();
   return data;
@@ -34,7 +35,13 @@ export default async function Page({ params }: { params: { id: string } }) {
     <div className="grid grid-cols-2">
       <div className="p-5">
         <div className="flex justify-center border border-black ">
-          <img src={main_image} alt={capsule.name} />
+          <Image
+            src={main_image}
+            alt={capsule.name}
+            width={560}
+            height={560}
+            unoptimized={true}
+          />
         </div>
         <ImageGallery detail_img={detail_images} />
       </div>

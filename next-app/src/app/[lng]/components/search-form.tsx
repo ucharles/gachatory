@@ -37,9 +37,6 @@ export default function SearchForm() {
     const value = e.target.value;
     setLimit(value);
 
-    console.log("value: ", value);
-    console.log("setLimit: ", limit);
-
     queryParams.append("page", "1");
 
     if (brand) queryParams.append("brand", brand);
