@@ -22,7 +22,7 @@ export function FooterBase({ t, lng }: FooterBaseProps) {
     <footer className="p-10 flex justify-end">
       <div>
         <Trans i18nKey="languageSwitcher" t={t} values={{ lng }}>
-          Switch from <strong>{lng.toUpperCase()}</strong> to:{" "}
+          Switch from <strong>{lng}</strong> to:{" "}
         </Trans>
 
         {languages

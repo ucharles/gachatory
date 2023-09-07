@@ -2,7 +2,7 @@
 
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { useTranslation } from "@/app/i18n/client";
+import { translate } from "@/app/i18n/client";
 
 interface ISearchLimitProps {
   lng: string;
@@ -13,7 +13,7 @@ export default function SearchLimit({ lng }: ISearchLimitProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const { t } = useTranslation(lng, "search");
+  const { t } = translate(lng, "search");
 
   const [limit, setLimit] = useState("20");
 

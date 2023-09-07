@@ -19,7 +19,7 @@ const initI18next = async (lng: string, ns?: string) => {
 };
 
 // This function is responsible for initializing i18next and returning the t function and the i18n instance.
-export async function useTranslation(
+export async function translate(
   lng: string,
   ns?: string,
   options = { keyPrefix: "" }

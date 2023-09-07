@@ -9,5 +9,6 @@
   "submit": "Submit",
   "result": "Result",
   "total-count": "Total Count",
-  "no-result": "No Result"
+  "no-result": "No Result",
+  "reset": "Clear"
 }

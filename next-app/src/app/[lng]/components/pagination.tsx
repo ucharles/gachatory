@@ -3,7 +3,7 @@
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { perPageEnum } from "@/lib/per-page-enum";
+import { perPageEnum } from "@/lib/enums";
 
 interface PaginationProps {
   total: number; // total number of items

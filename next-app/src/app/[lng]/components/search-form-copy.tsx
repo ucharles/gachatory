@@ -6,7 +6,7 @@
 
 import { useState, FormEvent, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useTranslation } from "@/app/i18n/client";
+import { translate } from "@/app/i18n/client";
 
 interface ISearchFormProps {
   lng: string;
@@ -18,7 +18,7 @@ export default function SearchForm({ lng }: ISearchFormProps) {
   const [year, setYear] = useState("");
   const [month, setMonth] = useState("");
 
-  const { t } = useTranslation(lng, "search");
+  const { t } = translate(lng, "search");
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -46,10 +46,17 @@ export default function SearchForm({ lng }: ISearchFormProps) {
     brand ? queryParams.set("brand", brand) : queryParams.delete("brand");
     name ? queryParams.set("name", name) : queryParams.delete("name");
     year && month
-      ? queryParams.set("startDate", year + "-" + month)
+      ? queryParams.set("startDate", year + "-" + month.padStart(2, "0"))
       : queryParams.delete("startDate");
 
     router.push(`/${lng}/search?${queryParams.toString()}`);
+  };
+
+  const handleReset = () => {
+    setBrand("");
+    setName("");
+    setYear("");
+    setMonth("");
   };
 
   return (
@@ -109,12 +116,21 @@ export default function SearchForm({ lng }: ISearchFormProps) {
           </div>
         </div>
         <div className="flex justify-end">
-          <button
-            className="bg-gradient-to-r from-purple-500 to-yellow-500 hover:from-purple-600 hover:to-yellow-600 focus:outline-none focus:ring focus:ring-purple-300 active:bg-yellow-700 px-6 py-3 rounded-lg text-white font-semibold shadow-md transition duration-300 ease-in-out transform hover:scale-105"
-            type="submit"
-          >
-            {t("submit")}
-          </button>
+          <div className="space-x-3">
+            <button
+              className="bg-gradient-to-r from-purple-500 to-yellow-500 hover:from-purple-600 hover:to-yellow-600 focus:outline-none focus:ring focus:ring-purple-300 active:bg-yellow-700 px-6 py-3 rounded-lg text-white font-semibold shadow-md transition duration-300 ease-in-out transform hover:scale-105"
+              type="submit"
+            >
+              {t("submit")}
+            </button>
+            <button
+              className="bg-gradient-to-r from-green-500 to-orange-500 hover:from-green-600 hover:to-orange-600 focus:outline-none focus:ring focus:ring-green-300 active:bg-orange-700 px-6 py-3 rounded-lg text-white font-semibold shadow-md transition duration-300 ease-in-out transform hover:scale-105"
+              type="reset"
+              onClick={handleReset}
+            >
+              {t("reset")}
+            </button>
+          </div>
         </div>
       </div>
     </form>
