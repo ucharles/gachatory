@@ -24,22 +24,33 @@
 
 ```mermaid
 flowchart LR
-    subgraph ubuntu[Batch Server]
-        B[(Image Server)]
-        D[Scraper\nData Processing]
-    end
+    subgraph ubuntu[Linux Ubuntu]
+    subgraph docker[Docker]
     subgraph next[Next.js 13]
-        A[Next.js 13\nAPI]
         E[Next.js 13\nAPP]
+        A[Next.js 13\nAPI]
     end
-    subgraph cloud[MongoDB Atlas]
+        B[Image Server]
+        G[Nginx]
+    end
+        D[Scraper\nData Processing]
+        F[(Image\nContents)]
+    end
+    subgraph cloud[Mongo DB Atlas]
         C[(Mongo DB)]
     end
+    H[Client]
+    I[Web]
 A --> E
 B --> E
 C --> A
 D --> C
-D --> B
+D --> F
+F --> B
+G <--> next
+G <--> B
+G <--> H
+I --> D
 ```
 
 ### 설명
@@ -60,5 +71,3 @@ D --> B
 3. Web Server
    - 수집한 정보를 브라우저로 열람 가능
    - 검색 기능 지원, 다국어 기능 지원
-
-## 작동 흐름
