@@ -6,6 +6,8 @@ export function searchParams(url: string) {
 
   const query: any = {};
 
+  query.$and = [{}];
+
   const sort = params.get("sort");
 
   const lng = params.get("lng");
@@ -15,10 +17,12 @@ export function searchParams(url: string) {
 
   const name = params.get("name");
   name
-    ? (query.$or = [
-        { name: new RegExp(name as string, "i") },
-        { description: new RegExp(name as string, "i") },
-      ])
+    ? query.$and.push({
+        $or: [
+          { name: new RegExp(name as string, "i") },
+          { description: new RegExp(name as string, "i") },
+        ],
+      })
     : null;
 
   const price = params.get("price");
@@ -43,6 +47,12 @@ export function searchParams(url: string) {
     else if (perPage > perPageEnum.MEDIUM) perPage = perPageEnum.LARGE;
     else perPage = perPageEnum.LARGE;
   }
+  const blkimg = params.get("blankimg");
+  blkimg
+    ? query.$and.push({
+        $and: [{ img: { $ne: "" } }, { detail_img: { $ne: [] } }],
+      })
+    : null;
 
   return { lng, query, sort, currentPage, perPage };
 }

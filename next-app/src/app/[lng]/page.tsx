@@ -14,7 +14,7 @@ async function fetchData(lng: string) {
     API_URI +
       `/api/capsules?lng=${lng}&startDate=${getCurrentMonthForSearch()}&limit=${
         perPageEnum.MEDIUM
-      }`,
+      }&blankimg=1`,
     {
       method: "GET",
       next: { revalidate: cacheTimeEnum.FIVE_MINUTES },
