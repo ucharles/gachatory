@@ -21,6 +21,7 @@ import dbConnect from "@/lib/db/db-connect";
 import CapsuleToy from "@/lib/models/capsule-model";
 import Localization, { ILocalization } from "@/lib/models/localization-model";
 import { searchParams } from "@/lib/search-params";
+import { dateTranslator } from "@/lib/date-converter";
 
 enum Sort {
   ASC = "asc",
@@ -51,18 +52,8 @@ export async function GET(request: Request) {
     resultCapsules.forEach((capsule) => {
       let temp = capsule.toObject();
 
-      let year = "";
-      let month = "";
-
-      if (lng === "ko") {
-        year = "년 ";
-        month = "월";
-      } else if (lng === "en") {
-        year = "-";
-        month = "";
-      }
       temp.date = capsule.date.map((date: string) => {
-        return date.substring(0, 8).replace("年", year).replace("月", month);
+        return dateTranslator(date, lng);
       });
 
       capsule.localization?.forEach((language: ILocalization) => {

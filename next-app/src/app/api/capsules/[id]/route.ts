@@ -7,7 +7,9 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/db/db-connect";
 import { ObjectId } from "mongodb";
-import Capsule from "@/lib/models/capsule-model";
+import CapsuleToy from "@/lib/models/capsule-model";
+import Localization, { ILocalization } from "@/lib/models/localization-model";
+import { dateTranslator } from "@/lib/date-converter";
 
 export async function GET(
   request: Request,
@@ -16,8 +18,30 @@ export async function GET(
   try {
     // DB 연결하기
     dbConnect();
+
+    const queryParams = new URLSearchParams(new URL(request.url).search);
+    const lng = queryParams.get("lng");
+
     // DB 검색하기
-    const capsule = await Capsule.findById(new ObjectId(params.id)).exec();
+    const resultCapsules = await CapsuleToy.findById(
+      new ObjectId(params.id)
+    ).populate({
+      path: "localization",
+      model: Localization,
+    });
+
+    let capsule = resultCapsules.toObject();
+    capsule.date = capsule.date.map((date: string) => {
+      return dateTranslator(date, lng);
+    });
+    capsule.localization?.forEach((language: ILocalization) => {
+      if (language.lng === lng) {
+        capsule.originalName = capsule.name;
+        capsule.name = language.name;
+        capsule.description = language.description;
+        capsule.header = language.header;
+      }
+    });
     // 결과 반환하기
     return NextResponse.json(capsule, { status: 200 });
   } catch (error) {

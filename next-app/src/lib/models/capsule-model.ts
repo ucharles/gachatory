@@ -16,6 +16,7 @@ export interface ICapsuleToy extends Document {
   newest?: boolean;
   display_img?: string;
   localization?: ILocalization[];
+  originalName?: string;
 }
 
 export const capsuleToySchema = new Schema<ICapsuleToy>(
