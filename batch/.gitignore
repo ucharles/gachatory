@@ -11,3 +11,5 @@ images/
 *.txt
 *.png
 *.db
+/node_modules
+*.log
