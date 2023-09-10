@@ -5,6 +5,7 @@ import { getCurrentMonthForSearch } from "@/lib/search-date-string";
 import { setDisplayImg } from "@/lib/set-display-img";
 import { translate } from "../i18n";
 import { perPageEnum, cacheTimeEnum } from "@/lib/enums";
+import { dateTranslator } from "@/lib/date-converter";
 
 const IMAGE_URI = process.env.IMAGE_SERVER_URL || "";
 const API_URI = process.env.APP_SERVER_URL || "";
@@ -38,7 +39,7 @@ export default async function Page({
   return (
     <div className="p-3">
       <h1 className="text-heading3-bold pb-6">
-        {t("new-arrival")} ({getCurrentMonthForSearch()})
+        {t("new-arrival")} ({dateTranslator(getCurrentMonthForSearch(), lng)})
       </h1>
       <ul className="grid grid-cols-4 gap-6">
         {data.capsules.map((capsule: ICapsuleToy) => {
