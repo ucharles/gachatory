@@ -45,7 +45,7 @@ export default async function Page({
         {data.capsules.map((capsule: ICapsuleToy) => {
           return capsule.display_img ? (
             <li key={capsule._id}>
-              <Link href={"/" + lng + "/capsule/" + capsule._id}>
+              <Link href={`/${lng}/capsule/${capsule._id}`}>
                 <Image
                   src={IMAGE_URI + capsule.display_img}
                   alt={capsule.name}

@@ -39,18 +39,18 @@ async function fetchData(lng: string, searchParams: Record<string, string>) {
 }
 
 export default async function Page({
-  params,
+  params: { lng },
   searchParams,
 }: {
   params: { lng: string };
   searchParams: { param1: string; param2: string };
 }) {
   const queryParams = searchParams;
-  const { t } = await translate(params.lng, "search");
+  const { t } = await translate(lng, "search");
 
   let data: any = null;
 
-  data = await fetchData(params.lng, queryParams);
+  data = await fetchData(lng, queryParams);
   setDisplayImg(data.capsules, true);
   // setLanguage(data.capsules, params.lng);
 
@@ -58,7 +58,7 @@ export default async function Page({
     <div className="p-3">
       <h1 className="text-heading3-bold">{t("title")}</h1>
       <div className="pt-5 pb-5">
-        <SearchForm lng={params.lng} />
+        <SearchForm lng={lng} />
       </div>
       {data ? (
         <div>
@@ -70,7 +70,7 @@ export default async function Page({
               </h2>
             </div>
             <div className="self-center">
-              <SearchLimit lng={params.lng} />
+              <SearchLimit lng={lng} />
             </div>
           </div>
           <Pagination total={data.totalCount} />
@@ -78,7 +78,7 @@ export default async function Page({
             {data.capsules.map((capsule: ICapsuleToy) => {
               return capsule.display_img ? (
                 <li key={capsule._id}>
-                  <Link href={"/capsule/" + capsule._id}>
+                  <Link href={`/${lng}/capsule/${capsule._id}`}>
                     <Image
                       src={IMAGE_URI + capsule.display_img}
                       alt={capsule.name}
