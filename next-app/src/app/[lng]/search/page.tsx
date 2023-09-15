@@ -30,7 +30,6 @@ async function fetchData(lng: string, searchParams: Record<string, string>) {
   const response = await fetch(
     API_URI + `/api/capsules?lng=${lng}&${params.toString()}`,
     {
-      method: "GET",
       next: { revalidate: cacheTimeEnum.FIVE_MINUTES },
     }
   );

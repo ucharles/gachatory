@@ -15,19 +15,15 @@ from mongoengine import (
 )
 from mongoengine.queryset.visitor import Q
 
-sys.path.append(
-    os.path.dirname(
-        os.path.abspath(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-    )
-)
+sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 
 
 # utils
-from utils.write_file import write_file
-from utils.log import log
+from write_file import write_file
+from log import log
 
 # models
-from models.capsule_toy import CapsuleToy
+from models.capsule_toy import CapsuleToy, CapsuleTag
 
 # dotenv
 load_dotenv()
@@ -229,3 +225,77 @@ def insert_updated_image(file_name):
                     updatedAt=datetime.utcnow().isoformat(),
                 )
                 log(product["brand"], product["name"], "", 0, "'image data updated'")
+
+
+def insert_new_tag(file_name):
+    # Connect to MongoDB
+    connect(
+        db=database_name,
+        host=database_url,
+        alias="default",
+    )
+
+    try:
+        # json 파일 열기
+        with open(file_name, "r", encoding="utf-8") as f:
+            tag_list = json.load(f)
+    except Exception as e:
+        print(e)
+        return
+
+    for tag in tag_list:
+        # dict에 date_added가 있으면
+        capsule_tag = CapsuleTag.objects(ja=tag["ja"]).first()
+
+        if capsule_tag:
+            print("capsule_tag", capsule_tag.to_mongo().to_dict())
+
+        # 해당 태그가 존재하지 않으면
+        if capsule_tag is None:
+            CapsuleTag(
+                ja=tag["ja"],
+                ko=tag["ko"],
+                en=tag["en"],
+                property=tag["property"],
+                linkCount=0,
+                createdAt=datetime.utcnow().isoformat(),
+            ).save()
+
+
+def search_capsule_toy_and_update_tag():
+    connect(
+        db=database_name,
+        host=database_url,
+        alias="default",
+    )
+
+    capsule_tags = CapsuleTag.objects(linkCount=0)
+    for capsule_tag in capsule_tags:
+        count = 0
+        # print("capsule_tag:", capsule_tag.to_mongo().to_dict())
+        tag_info = capsule_tag.to_mongo().to_dict()
+        regex = "|".join(tag_info["ja"])
+        print("regex:", regex)
+        print("tag_info:", tag_info)
+
+        capsule_toys = CapsuleToy.objects(
+            Q(name__regex=regex) | Q(description__regex=regex)
+        )
+
+        for capsule_toy in capsule_toys:
+            capsule_toy.update(
+                push__tagId=tag_info["_id"], updatedAt=datetime.utcnow().isoformat()
+            )
+            count = count + 1
+            print("capsule_toy:", capsule_toy.to_mongo().to_dict()["name"])
+
+        if count > 0:
+            capsule_tag.update(linkCount=count)
+            print("count:", count)
+
+
+if __name__ == "__main__":
+    # insert_new_product("new_product.json")
+    # insert_updated_image("updated_image.json")
+    # insert_new_tag("E:/Git/gachatory/batch/tagging/tag-list-translated-edited-20230915.json")
+    search_capsule_toy_and_update_tag()

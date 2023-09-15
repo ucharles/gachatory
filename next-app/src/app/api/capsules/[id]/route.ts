@@ -9,6 +9,7 @@ import dbConnect from "@/lib/db/db-connect";
 import { ObjectId } from "mongodb";
 import CapsuleToy from "@/lib/models/capsule-model";
 import Localization, { ILocalization } from "@/lib/models/localization-model";
+import CapsuleTag, { ICapsuleTag } from "@/lib/models/capsule-tag-model";
 import { dateTranslator } from "@/lib/date-converter";
 
 export async function GET(
@@ -25,10 +26,16 @@ export async function GET(
     // DB 검색하기
     const resultCapsules = await CapsuleToy.findById(
       new ObjectId(params.id)
-    ).populate({
-      path: "localization",
-      model: Localization,
-    });
+    ).populate([
+      {
+        path: "localization",
+        model: Localization,
+      },
+      {
+        path: "tagId",
+        model: CapsuleTag,
+      },
+    ]);
 
     let capsule = resultCapsules.toObject();
     capsule.date = capsule.date.map((date: string) => {
