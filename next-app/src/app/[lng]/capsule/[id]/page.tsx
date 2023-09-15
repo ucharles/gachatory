@@ -1,6 +1,7 @@
 import { ICapsuleToy } from "@/lib/models/capsule-model";
 import Image from "next/image";
 import ImageGallery from "../../components/image-gallery";
+import DisplayCapsuleTags from "../../components/display-capsule-tag";
 import Link from "next/link";
 import { cacheTimeEnum } from "@/lib/enums";
 import { translate } from "@/app/i18n";
@@ -10,7 +11,6 @@ const API_URI = process.env.APP_SERVER_URL || "";
 
 async function fetchData(id: string, lng: string) {
   const response = await fetch(API_URI + `/api/capsules/${id}?lng=${lng}`, {
-    method: "GET",
     next: { revalidate: cacheTimeEnum.FIVE_MINUTES },
   });
   const data = await response.json();
@@ -66,7 +66,12 @@ export default async function Page({
           {t("release-date")}: {capsule.date}
         </p>
         <p className="text-body-medium pb-5">{capsule.description}</p>
-        <p className="text-body-medium pb-5 underline text-gray-500">
+        {capsule.tagId.length !== 0 ? (
+          <div className="pb-3">
+            <DisplayCapsuleTags tags={capsule.tagId} lng={lng} />
+          </div>
+        ) : null}
+        <p className="text-body-small pb-5 underline text-gray-500">
           <Link href={capsule.detail_url} as={capsule.detail_url}>
             {t("site-link")}
           </Link>

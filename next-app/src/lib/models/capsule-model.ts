@@ -1,5 +1,6 @@
 import mongoose, { Document, Schema } from "mongoose";
 import { ILocalization } from "./localization-model";
+import { ICapsuleTag } from "./capsule-tag-model";
 
 // 인터페이스와 모델에서 _id를 string, String으로 정의하면 findById()에서 검색이 안됨
 
@@ -13,6 +14,7 @@ export interface ICapsuleToy extends Document {
   detail_url: string;
   detail_img: string[];
   description: string;
+  tagId: Array<ICapsuleTag>;
   newest?: boolean;
   display_img?: string;
   localization?: ILocalization[];
@@ -31,6 +33,7 @@ export const capsuleToySchema = new Schema<ICapsuleToy>(
     detail_img: [String],
     description: String,
     newest: Boolean,
+    tagId: [String],
     localization: [
       {
         type: mongoose.Types.ObjectId,

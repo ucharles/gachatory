@@ -5,6 +5,8 @@ from mongoengine import (
     IntField,
     ListField,
     DateTimeField,
+    ObjectIdField,
+    ReferenceField,
 )
 
 
@@ -21,7 +23,20 @@ class CapsuleToy(DynamicDocument):
     lng = StringField()
     description = StringField()
     localization = ListField(StringField())
+    tagId = ListField(ReferenceField("CapsuleTag"))
     createdAt = DateTimeField()
     updatedAt = DateTimeField()
 
     meta = {"collection": "capsule-toy"}
+
+
+class CapsuleTag(DynamicDocument):
+    ja = ListField(StringField(required=True))
+    ko = ListField(StringField(required=True))
+    en = ListField(StringField(required=True))
+    property = StringField(required=True)
+    linkCount = IntField()
+    createdAt = DateTimeField()
+    updatedAt = DateTimeField()
+
+    meta = {"collection": "capsule-tag"}
