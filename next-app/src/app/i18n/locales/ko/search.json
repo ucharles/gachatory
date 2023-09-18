@@ -10,5 +10,7 @@
   "result": "검색 결과",
   "total-count": "총 상품 수",
   "no-result": "검색 결과가 없습니다.",
-  "reset": "초기화"
+  "reset": "초기화",
+  "tag": "태그",
+  "no-result-found": "검색 결과가 없습니다"
 }

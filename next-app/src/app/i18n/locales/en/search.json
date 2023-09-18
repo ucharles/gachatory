@@ -10,5 +10,7 @@
   "result": "Result",
   "total-count": "Total Count",
   "no-result": "No Result",
-  "reset": "Clear"
+  "reset": "Clear",
+  "tag": "Tag",
+  "no-result-found": "No Result Found"
 }

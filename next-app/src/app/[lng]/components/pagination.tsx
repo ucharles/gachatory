@@ -16,7 +16,7 @@ export default function Pagination({ total }: PaginationProps) {
 
   const currentPage = Number(searchParams.get("page")) || 1;
   const itemsPerPage = Number(searchParams.get("limit")) || perPageEnum.SMALL;
-  const totalPages = Math.ceil(total / itemsPerPage);
+  const totalPages = Math.ceil(total === 0 ? 1 : total / itemsPerPage);
 
   const maxPagesToShow = 10;
 

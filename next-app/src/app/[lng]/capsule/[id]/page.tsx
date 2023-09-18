@@ -65,12 +65,12 @@ export default async function Page({
         <p className="text-body-medium pb-5">
           {t("release-date")}: {capsule.date}
         </p>
-        <p className="text-body-medium pb-5">{capsule.description}</p>
         {capsule.tagId.length !== 0 ? (
           <div className="pb-3">
             <DisplayCapsuleTags tags={capsule.tagId} lng={lng} />
           </div>
         ) : null}
+        <p className="text-body-medium pb-5">{capsule.description}</p>
         <p className="text-body-small pb-5 underline text-gray-500">
           <Link href={capsule.detail_url} as={capsule.detail_url}>
             {t("site-link")}

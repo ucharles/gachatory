@@ -14,7 +14,7 @@ export interface ICapsuleToy extends Document {
   detail_url: string;
   detail_img: string[];
   description: string;
-  tagId: Array<ICapsuleTag>;
+  tagId: ICapsuleTag[];
   newest?: boolean;
   display_img?: string;
   localization?: ILocalization[];
@@ -33,7 +33,7 @@ export const capsuleToySchema = new Schema<ICapsuleToy>(
     detail_img: [String],
     description: String,
     newest: Boolean,
-    tagId: [String],
+    tagId: [{ type: mongoose.Types.ObjectId, ref: "CapsuleTag" }],
     localization: [
       {
         type: mongoose.Types.ObjectId,
