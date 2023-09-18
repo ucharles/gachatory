@@ -50,7 +50,7 @@ export default async function Page({
   let data: any = null;
 
   data = await fetchData(lng, queryParams);
-  setDisplayImg(data.capsules, true);
+  data.capsules?.length > 0 ? setDisplayImg(data.capsules, true) : null;
   // setLanguage(data.capsules, params.lng);
 
   return (
@@ -72,27 +72,29 @@ export default async function Page({
               <SearchLimit lng={lng} />
             </div>
           </div>
-          <Pagination total={data.totalCount} />
+          {data?.totalCount > 0 ? <Pagination total={data.totalCount} /> : null}
           <ul className="grid grid-cols-4 gap-6 pt-5">
-            {data.capsules.map((capsule: ICapsuleToy) => {
-              return capsule.display_img ? (
-                <li key={capsule._id}>
-                  <Link href={`/${lng}/capsule/${capsule._id}`}>
-                    <Image
-                      src={IMAGE_URI + capsule.display_img}
-                      alt={capsule.name}
-                      width={300}
-                      height={300}
-                      unoptimized={true}
-                    />
-                    <h1>{capsule.name}</h1>
-                    <p>{capsule.date}</p>
-                  </Link>
-                </li>
-              ) : null;
-            })}
+            {data.capsules?.length > 0
+              ? data.capsules.map((capsule: ICapsuleToy) => {
+                  return capsule.display_img ? (
+                    <li key={capsule._id}>
+                      <Link href={`/${lng}/capsule/${capsule._id}`}>
+                        <Image
+                          src={IMAGE_URI + capsule.display_img}
+                          alt={capsule.name}
+                          width={300}
+                          height={300}
+                          unoptimized={true}
+                        />
+                        <h1>{capsule.name}</h1>
+                        <p>{capsule.date}</p>
+                      </Link>
+                    </li>
+                  ) : null;
+                })
+              : null}
           </ul>
-          <Pagination total={data.totalCount} />
+          {data?.totalCount > 0 ? <Pagination total={data.totalCount} /> : null}
         </div>
       ) : (
         <h1>{t("no-result")}</h1>
