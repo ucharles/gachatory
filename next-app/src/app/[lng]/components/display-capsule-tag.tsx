@@ -46,7 +46,7 @@ function DisplayCapsuleTags({
   return (
     <React.Fragment>
       {tags.map((tag, index) => (
-        <Link href={`/${lng}/search?name=${tag["ja"][0]}`} key={index}>
+        <Link href={`/${lng}/search?tag=${tag._id}`} key={index}>
           <span
             key={index}
             className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
