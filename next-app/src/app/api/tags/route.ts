@@ -49,7 +49,7 @@ export async function GET(request: Request) {
     } else if (objectIdTagIds) {
       resultCapsuleTags = await CapsuleTag.find({
         _id: { $in: objectIdTagIds },
-      }).sort({ linkCount: -1 });
+      });
     } else if (searchString) {
       resultCapsuleTags = await CapsuleTag.find({
         $or: [{ ja: searchString }, { en: searchString }, { ko: searchString }],
