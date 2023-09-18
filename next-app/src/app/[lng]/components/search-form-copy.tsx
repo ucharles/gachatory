@@ -148,6 +148,7 @@ export default function SearchForm({ lng }: ISearchFormProps) {
     setMonth("");
     setSelectedTag([]);
     setIsHidden(true);
+    router.push(`/${lng}/search`);
   };
 
   useEffect(() => {
