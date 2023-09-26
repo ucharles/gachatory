@@ -12,6 +12,8 @@ import Localization, { ILocalization } from "@/lib/models/localization-model";
 import CapsuleTag, { ICapsuleTag } from "@/lib/models/capsule-tag-model";
 import { dateTranslator } from "@/lib/date-converter";
 
+const IMAGE_URI = process.env.IMAGE_SERVER_URL;
+
 export async function GET(
   request: Request,
   { params }: { params: { id: string } }
@@ -49,6 +51,17 @@ export async function GET(
         capsule.header = language.header;
       }
     });
+
+    capsule.img = capsule.img
+      ? IMAGE_URI + capsule.img
+      : IMAGE_URI + "images/prepare.jpg";
+
+    if (capsule.detail_img.length > 0) {
+      capsule.detail_img = capsule.detail_img.map((img: string) => {
+        return IMAGE_URI + img;
+      });
+    }
+
     // 결과 반환하기
     return NextResponse.json(capsule, { status: 200 });
   } catch (error) {
