@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Navbar from "@/app/[lng]/components/navbar";
 import { Footer } from "@/app/[lng]/components/Footer/client";
+import TenstackProvider from "./components/Providers/TenstackProvider";
 
 import "@/app/global.css";
 
@@ -25,11 +26,13 @@ export default function RootLayout({
   return (
     <html lang={lng} dir={dir(lng)}>
       <body className={`${inter.className} container bg-[#FEFEFE] w-[1280px]`}>
-        <div>
-          <Navbar lng={lng} />
-          {children}
-          <Footer lng={lng} />
-        </div>
+        <TenstackProvider>
+          <div>
+            <Navbar lng={lng} />
+            {children}
+            <Footer lng={lng} />
+          </div>
+        </TenstackProvider>
       </body>
     </html>
   );

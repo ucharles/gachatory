@@ -22,17 +22,19 @@ import CapsuleToy from "@/lib/models/capsule-model";
 import Localization, { ILocalization } from "@/lib/models/localization-model";
 import { searchParams } from "@/lib/search-params";
 import { dateTranslator } from "@/lib/date-converter";
+import { setDisplayImg } from "@/lib/set-display-img";
 
 enum Sort {
   ASC = "asc",
   DESC = "desc",
 }
 
+const IMAGE_URI = process.env.IMAGE_SERVER_URL;
+
 export async function GET(request: Request) {
   try {
-    const { lng, query, sort, currentPage, perPage } = searchParams(
-      request.url
-    );
+    const { lng, query, sort, currentPage, perPage, showDetailImg } =
+      searchParams(request.url);
     const capsules: any = [];
 
     // DB 연결하기
@@ -64,9 +66,21 @@ export async function GET(request: Request) {
         }
       });
 
+      temp.img
+        ? (temp.img = IMAGE_URI + temp.img)
+        : (temp.img = IMAGE_URI + "images/prepare.jpg");
+
+      if (temp.detail_img.length > 0) {
+        temp.detail_img = temp.detail_img.map((img: string) => {
+          return IMAGE_URI + img;
+        });
+      }
+
       delete temp.localization;
       capsules.push(temp);
     });
+
+    setDisplayImg(capsules, showDetailImg);
 
     // 결과 반환하기
     return NextResponse.json(

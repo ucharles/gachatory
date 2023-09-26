@@ -1,65 +1,38 @@
-import { ICapsuleToy } from "@/lib/models/capsule-model";
-import Link from "next/link";
-import Image from "next/image";
-import { getCurrentMonthForSearch } from "@/lib/search-date-string";
-import { setDisplayImg } from "@/lib/set-display-img";
 import { translate } from "../i18n";
-import { perPageEnum, cacheTimeEnum } from "@/lib/enums";
 import { dateTranslator } from "@/lib/date-converter";
-
-const IMAGE_URI = process.env.IMAGE_SERVER_URL || "";
-const API_URI = process.env.APP_SERVER_URL || "";
-
-async function fetchData(lng: string) {
-  const response = await fetch(
-    API_URI +
-      `/api/capsules?lng=${lng}&startDate=${getCurrentMonthForSearch()}&limit=${
-        perPageEnum.MEDIUM
-      }&blankimg=1`,
-    {
-      method: "GET",
-      next: { revalidate: cacheTimeEnum.FIVE_MINUTES },
-    }
-  );
-  const data = await response.json();
-  return data;
-}
+import getQueryClient from "./components/Providers/getQueryClient";
+import { dehydrate } from "@tanstack/query-core";
+import Hydrate from "./components/Providers/HydrateClient";
+import CapsuleCards from "./components/CapsuleCards";
+import { arrivalFetchData } from "@/lib/fetch-data";
+import { getCurrentMonthForSearch } from "@/lib/search-date-string";
 
 export default async function Page({
   params: { lng },
 }: {
   params: { lng: string };
 }) {
-  const data = await fetchData(lng);
-  const { t } = await translate(lng);
+  const queryClient = getQueryClient();
+  await queryClient.prefetchQuery(["arrivalCapsules", lng], () => {
+    return arrivalFetchData(lng);
+  });
+  const dehydratedState = dehydrate(queryClient);
 
-  // set display_img
-  setDisplayImg(data.capsules, false);
+  // const data = await fetchData(lng);
+  const { t } = await translate(lng);
 
   return (
     <div className="p-3">
       <h1 className="text-heading3-bold pb-6">
         {t("new-arrival")} ({dateTranslator(getCurrentMonthForSearch(), lng)})
       </h1>
-      <ul className="grid grid-cols-4 gap-6">
-        {data.capsules.map((capsule: ICapsuleToy) => {
-          return capsule.display_img ? (
-            <li key={capsule._id}>
-              <Link href={`/${lng}/capsule/${capsule._id}`}>
-                <Image
-                  src={IMAGE_URI + capsule.display_img}
-                  alt={capsule.name}
-                  width={300}
-                  height={300}
-                  unoptimized={true}
-                />
-                <h1>{capsule.name}</h1>
-                <p>{capsule.date}</p>
-              </Link>
-            </li>
-          ) : null;
-        })}
-      </ul>
+      <Hydrate state={dehydratedState}>
+        <CapsuleCards
+          lng={lng}
+          queryKey={["arrivalCapsules", lng]}
+          pageName="arrival"
+        />
+      </Hydrate>
     </div>
   );
 }
