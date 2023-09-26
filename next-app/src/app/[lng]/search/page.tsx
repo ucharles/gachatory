@@ -11,32 +11,15 @@
 //   return <h1>My Page</h1>
 //   }
 
-import Link from "next/link";
-import Image from "next/image";
-import { ICapsuleToy } from "@/lib/models/capsule-model";
-import { setDisplayImg } from "@/lib/set-display-img";
 import SearchForm from "@/app/[lng]/components/search-form-copy";
 import Pagination from "@/app/[lng]/components/pagination";
 import SearchLimit from "@/app/[lng]/components/search-limit";
 import { translate } from "@/app/i18n";
-import { cacheTimeEnum } from "@/lib/enums";
-
-const IMAGE_URI = process.env.IMAGE_SERVER_URL || "";
-const API_URI = process.env.APP_SERVER_URL || "";
-
-async function fetchData(lng: string, searchParams: Record<string, string>) {
-  const params = new URLSearchParams(searchParams);
-
-  const response = await fetch(
-    API_URI + `/api/capsules?lng=${lng}&${params.toString()}`,
-    {
-      next: { revalidate: cacheTimeEnum.FIVE_MINUTES },
-    }
-  );
-  const data = await response.json();
-  return data;
-}
-
+import getQueryClient from "../components/Providers/getQueryClient";
+import { dehydrate } from "@tanstack/query-core";
+import Hydrate from "../components/Providers/HydrateClient";
+import CapsuleCards from "../components/CapsuleCards";
+import { searchFetchData } from "@/lib/fetch-data";
 export default async function Page({
   params: { lng },
   searchParams,
@@ -47,58 +30,52 @@ export default async function Page({
   const queryParams = searchParams;
   const { t } = await translate(lng, "search");
 
-  let data: any = null;
-
-  data = await fetchData(lng, queryParams);
-  data.capsules?.length > 0 ? setDisplayImg(data.capsules, true) : null;
-  // setLanguage(data.capsules, params.lng);
+  const queryClient = getQueryClient();
+  const data = await queryClient.fetchQuery(
+    ["searchCapsules", queryParams, lng],
+    () => {
+      return searchFetchData(lng, queryParams);
+    }
+  );
+  const dehydratedState = dehydrate(queryClient);
 
   return (
     <div className="p-3">
       <h1 className="text-heading3-bold">{t("title")}</h1>
-      <div className="pt-5 pb-5">
-        <SearchForm lng={lng} />
-      </div>
-      {data ? (
-        <div>
-          <div className="flex justify-between">
-            <div className="flex space-x-5">
-              <h1 className="text-heading3-bold ">{t("result")}</h1>
-              <h2 className="text-heading4-medium self-center">
-                {t("total-count")}: {data.totalCount}
-              </h2>
-            </div>
-            <div className="self-center">
-              <SearchLimit lng={lng} />
-            </div>
-          </div>
-          {data?.totalCount > 0 ? <Pagination total={data.totalCount} /> : null}
-          <ul className="grid grid-cols-4 gap-6 pt-5">
-            {data.capsules?.length > 0
-              ? data.capsules.map((capsule: ICapsuleToy) => {
-                  return capsule.display_img ? (
-                    <li key={capsule._id}>
-                      <Link href={`/${lng}/capsule/${capsule._id}`}>
-                        <Image
-                          src={IMAGE_URI + capsule.display_img}
-                          alt={capsule.name}
-                          width={300}
-                          height={300}
-                          unoptimized={true}
-                        />
-                        <h1>{capsule.name}</h1>
-                        <p>{capsule.date}</p>
-                      </Link>
-                    </li>
-                  ) : null;
-                })
-              : null}
-          </ul>
-          {data?.totalCount > 0 ? <Pagination total={data.totalCount} /> : null}
+      <Hydrate state={dehydratedState}>
+        <div className="pt-5 pb-5">
+          <SearchForm lng={lng} />
         </div>
-      ) : (
-        <h1>{t("no-result")}</h1>
-      )}
+        {data ? (
+          <div>
+            <div className="flex justify-between">
+              <div className="flex space-x-5">
+                <h1 className="text-heading3-bold ">{t("result")}</h1>
+                <h2 className="text-heading4-medium self-center">
+                  {t("total-count")}: {data.totalCount}
+                </h2>
+              </div>
+              <div className="self-center">
+                <SearchLimit lng={lng} />
+              </div>
+            </div>
+            {data?.totalCount > 0 ? (
+              <Pagination total={data.totalCount} />
+            ) : null}
+            <CapsuleCards
+              lng={lng}
+              queryKey={["searchCapsules", queryParams, lng]}
+              pageName="search"
+              queryParams={queryParams}
+            />
+            {data?.totalCount > 0 ? (
+              <Pagination total={data.totalCount} />
+            ) : null}
+          </div>
+        ) : (
+          <h1>{t("no-result")}</h1>
+        )}
+      </Hydrate>
     </div>
   );
 }

@@ -69,7 +69,10 @@ export function searchParams(url: string) {
     query.$and.push({ tagId: { $all: objectIdTagIds } });
   }
 
+  const showDetailImgParam = params.get("showDetailImg");
+  const showDetailImg = showDetailImgParam ? true : false;
+
   console.log(query);
 
-  return { lng, query, sort, currentPage, perPage };
+  return { lng, query, sort, currentPage, perPage, showDetailImg };
 }
