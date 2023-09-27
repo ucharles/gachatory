@@ -49,7 +49,7 @@ function CapsuleCards({
         return capsule.display_img ? (
           <li key={capsule._id} className="border-2 rounded-md shadow-sm">
             <div className="divide-y">
-              <div className="relative overflow-hidden">
+              <div className="relative overflow-hidden h-72 fold:h-52">
                 <Link href={`/${lng}/capsule/${capsule._id}`}>
                   <Image
                     src={capsule.display_img}

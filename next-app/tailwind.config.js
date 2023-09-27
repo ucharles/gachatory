@@ -12,7 +12,7 @@ module.exports = {
       center: true,
     },
     fontFamily: {
-      Pretendard: ["Pretendard"],
+      Pretendard: ["Pretendard Variable"],
       NotoSansJP: ["var(--font-noto-sans-jp)"],
     },
     fontSize: {
