@@ -7,11 +7,17 @@ export default function Navbar({ lng }: { lng: string }) {
     <nav className="h-20">
       <div className="h-16 flex justify-between items-center p-6">
         <Link href={`/${lng}`}>
-          <Image priority src={pngLogo} alt="logo" width={200} height={40} />
+          <Image
+            priority
+            src={pngLogo}
+            alt="logo"
+            width={200}
+            height={40}
+            className="w-52 h-auto"
+          />
         </Link>
         <Link href={`/${lng}/search`}>Search</Link>
       </div>
-      <div className="h-[1px] bg-black"></div>
     </nav>
   );
 }

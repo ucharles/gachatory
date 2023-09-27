@@ -2,6 +2,7 @@ import { dir } from "i18next";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Noto_Sans_JP } from "next/font/google";
+import localFont from "next/font/local";
 import Navbar from "@/app/[lng]/components/navbar";
 import { Footer } from "@/app/[lng]/components/Footer/client";
 import TenstackProvider from "./components/Providers/TenstackProvider";
@@ -16,6 +17,13 @@ const noto = Noto_Sans_JP({
 
 const inter = Inter({
   subsets: ["latin"],
+});
+
+const pretendard = localFont({
+  src: "../../../public/fonts/PretendardVariable.woff2",
+  variable: "--font-pretendard",
+  weight: "400",
+  style: "normal",
 });
 
 export const metadata: Metadata = {
@@ -35,7 +43,7 @@ export default function RootLayout({
   let font;
 
   if (lng === "ko") {
-    font = "font-Pretendard";
+    font = pretendard.className;
   } else if (lng === "ja") {
     font = noto.className;
   } else {
