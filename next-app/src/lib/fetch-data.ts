@@ -10,7 +10,7 @@ export async function arrivalFetchData(lng: string) {
       }&blankimg=1`,
     {
       method: "GET",
-      cache: "no-store",
+      next: { revalidate: cacheTimeEnum.FIVE_MINUTES },
     }
   );
   const data = await response.json();
@@ -27,7 +27,7 @@ export async function searchFetchData(
     API_URI + `/api/capsules?lng=${lng}&showDetailImg=1&${params.toString()}`,
     {
       method: "GET",
-      cache: "no-store",
+      next: { revalidate: cacheTimeEnum.FIVE_MINUTES },
     }
   );
   const data = await response.json();
@@ -37,7 +37,7 @@ export async function searchFetchData(
 export async function capsuleFetchData(id: string, lng: string) {
   const response = await fetch(API_URI + `/api/capsules/${id}?lng=${lng}`, {
     method: "GET",
-    cache: "no-store",
+    next: { revalidate: cacheTimeEnum.FIVE_MINUTES },
   });
   const data = await response.json();
   return data;
