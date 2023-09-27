@@ -18,7 +18,7 @@ export default function Pagination({ total }: PaginationProps) {
   const itemsPerPage = Number(searchParams.get("limit")) || perPageEnum.SMALL;
   const totalPages = Math.ceil(total === 0 ? 1 : total / itemsPerPage);
 
-  const maxPagesToShow = 10;
+  const maxPagesToShow = 7;
 
   const [startPage, setStartPage] = useState(currentPage);
 
@@ -89,7 +89,7 @@ export default function Pagination({ total }: PaginationProps) {
   };
 
   const highlightedStyle = {
-    backgroundColor: "#0ea5e9", // Choose highlight color
+    backgroundColor: "#6757d4", // Choose highlight color
     color: "white",
   };
 

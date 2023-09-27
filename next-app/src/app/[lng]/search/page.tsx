@@ -41,21 +41,17 @@ export default async function Page({
 
   return (
     <div className="p-3">
-      <h1 className="text-heading3-bold">{t("title")}</h1>
       <Hydrate state={dehydratedState}>
-        <div className="pt-5 pb-5">
-          <SearchForm lng={lng} />
-        </div>
         {data ? (
           <div>
-            <div className="flex justify-between">
-              <div className="flex space-x-5">
-                <h1 className="text-heading3-bold ">{t("result")}</h1>
-                <h2 className="text-heading4-medium self-center">
+            <div className="">
+              <div className="pb-3">
+                <h1 className="text-heading3-bold">{t("result")}</h1>
+              </div>
+              <div className="flex justify-between self-center w-full">
+                <h2 className="text-heading4-medium">
                   {t("total-count")}: {data.totalCount}
                 </h2>
-              </div>
-              <div className="self-center">
                 <SearchLimit lng={lng} />
               </div>
             </div>
