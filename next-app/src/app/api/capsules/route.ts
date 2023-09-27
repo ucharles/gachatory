@@ -66,16 +66,6 @@ export async function GET(request: Request) {
         }
       });
 
-      temp.img
-        ? (temp.img = IMAGE_URI + temp.img)
-        : (temp.img = IMAGE_URI + "images/prepare.jpg");
-
-      if (temp.detail_img.length > 0) {
-        temp.detail_img = temp.detail_img.map((img: string) => {
-          return IMAGE_URI + img;
-        });
-      }
-
       delete temp.localization;
       capsules.push(temp);
     });

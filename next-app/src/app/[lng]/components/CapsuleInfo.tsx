@@ -55,20 +55,14 @@ function CapsuleInfo({
         <>
           <div className="p-5">
             <div className="flex justify-center border border-black ">
-              <Image
-                src={data.img}
-                alt={data.name}
-                width={560}
-                height={560}
-                unoptimized={true}
-              />
+              <Image src={data.img} alt={data.name} width={560} height={560} />
             </div>
             <ImageGallery detail_img={data.detail_img} />
           </div>
           <div className="p-5">
             <h1 className="text-heading2-bold pb-5">{data.name}</h1>
             {data.originalName ? (
-              <p className="text-body-medium pb-5 text-gray-500">
+              <p className="text-body-medium pb-5 text-gray-500 font-NotoSansJP">
                 {data.originalName}
               </p>
             ) : null}
@@ -86,7 +80,7 @@ function CapsuleInfo({
             ) : null}
             <p className="text-body-medium pb-5">{data.description}</p>
             <p className="text-body-small pb-5 underline text-gray-500">
-              <Link href={data.detail_url} as={data.detail_url}>
+              <Link href={data.detail_url} as={data.detail_url} target="_blank">
                 {t("site-link")}
               </Link>
             </p>
