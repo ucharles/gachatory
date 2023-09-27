@@ -89,7 +89,7 @@ export default function Pagination({ total }: PaginationProps) {
   };
 
   const highlightedStyle = {
-    backgroundColor: "blue", // Choose highlight color
+    backgroundColor: "#0ea5e9", // Choose highlight color
     color: "white",
   };
 
@@ -97,7 +97,7 @@ export default function Pagination({ total }: PaginationProps) {
     <div className="space-x-1 pt-5 pb-5">
       {startPage > 1 && (
         <button
-          className="h-8 w-8 border-solid border border-black rounded-md"
+          className="h-8 w-8 border border-gray-400 shadow rounded-md"
           onClick={goBackward}
         >
           &laquo;
@@ -108,7 +108,7 @@ export default function Pagination({ total }: PaginationProps) {
         (_, i) => i + startPage
       ).map((page) => (
         <button
-          className="h-8 w-8 border-solid border border-black rounded-md"
+          className="h-8 w-8 border border-gray-400 shadow rounded-md"
           key={page}
           style={page === currentPage ? highlightedStyle : {}}
           onClick={(e) => {
@@ -123,7 +123,7 @@ export default function Pagination({ total }: PaginationProps) {
       ))}
       {startPage + maxPagesToShow - 1 < totalPages && (
         <button
-          className="h-8 w-8 border-solid border border-black rounded-md"
+          className="h-8 w-8 border border-gray-400 shadow rounded-md"
           onClick={goForward}
         >
           &raquo;
