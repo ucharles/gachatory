@@ -9,6 +9,10 @@ export function searchParams(url: string) {
 
   query.$and = [{}];
 
+  query.$and.push({
+    name: new RegExp("^((?!箱売).)*$", "i"),
+  });
+
   const sort = params.get("sort");
 
   const lng = params.get("lng");
