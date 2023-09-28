@@ -15,7 +15,7 @@ export function dateTranslator(date: string, lng: string | null) {
   const matched = date.match(regex);
 
   if (!matched) {
-    return null;
+    return "";
   }
 
   const year = matched[1];

@@ -29,6 +29,12 @@ function SearchBar({ lng }: { lng: string }) {
           onChange={(e) => setSearch(e.target.value)}
         />
         <button
+          type="reset"
+          className="absolute right-12 bottom-2 text-heading4-medium text-gray-700 hover:text-gray-500"
+        >
+          ×
+        </button>
+        <button
           type="submit"
           className="absolute top-0 right-0 p-2.5 text-sm font-medium h-full text-white bg-gigas-700 rounded-r-lg border border-gigas-700 hover:bg-gigas-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
         >

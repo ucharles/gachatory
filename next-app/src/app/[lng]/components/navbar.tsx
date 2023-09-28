@@ -27,7 +27,9 @@ export default function Navbar({ lng }: { lng: string }) {
             />
           </Link>
         </div>
-        <SearchBar lng={lng} />
+        <div className="pt-3 2xs:pt-1 3xs:pt-1 fold:pt-1">
+          <SearchBar lng={lng} />
+        </div>
       </div>
     </nav>
   );
