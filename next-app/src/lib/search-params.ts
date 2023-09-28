@@ -21,9 +21,11 @@ export function searchParams(url: string) {
   brand ? (query.brand = new RegExp(brand as string, "i")) : null;
 
   const name = params.get("name");
+  let locSearchName = "";
 
   if (name) {
     const escapedName = name.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&");
+    locSearchName = escapedName;
     query.$and.push({
       $or: [
         { name: new RegExp(escapedName as string, "i") },
@@ -78,5 +80,13 @@ export function searchParams(url: string) {
 
   console.log(query);
 
-  return { lng, query, sort, currentPage, perPage, showDetailImg };
+  return {
+    lng,
+    query,
+    sort,
+    currentPage,
+    perPage,
+    showDetailImg,
+    locSearchName,
+  };
 }

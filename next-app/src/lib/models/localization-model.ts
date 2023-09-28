@@ -1,4 +1,5 @@
 import mongoose, { Document, Schema } from "mongoose";
+import { ICapsuleToy } from "./capsule-model";
 
 export interface ILocalization extends Document {
   lng: string;
@@ -6,7 +7,7 @@ export interface ILocalization extends Document {
   name: string;
   header: string;
   description: string;
-  capsuleId: string;
+  capsuleId: mongoose.Types.ObjectId | ICapsuleToy;
 }
 
 // schema with createAt, updateAt field
