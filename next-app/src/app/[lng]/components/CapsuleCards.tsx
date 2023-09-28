@@ -44,12 +44,12 @@ function CapsuleCards({
   // 좋아요 기능 추가 시 useMutation을 사용하여 캐시 업데이트
 
   return (
-    <ul className="grid 2xl:grid-cols-4 xl:grid-cols-4 lg:grid-cols-4 md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-2 2xs:grid-cols-1 3xs:grid-cols-1 fold:grid-cols-1 gap-4">
+    <ul className="grid 2xl:grid-cols-4 xl:grid-cols-4 lg:grid-cols-4 md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-2 2xs:grid-cols-2 3xs:grid-cols-2 fold:grid-cols-1 gap-x-5 gap-y-6 ">
       {data?.capsules?.map((capsule: ICapsuleToy) => {
         return capsule.display_img ? (
           <li key={capsule._id} className="border-2 rounded-md shadow-sm">
             <div className="divide-y">
-              <div className="relative overflow-hidden h-72 fold:h-52">
+              <div className="relative overflow-hidden">
                 <Link href={`/${lng}/capsule/${capsule._id}`}>
                   <Image
                     src={capsule.display_img}
@@ -58,16 +58,18 @@ function CapsuleCards({
                     height={400}
                     className="scale-110 translate-y-4 hover:opacity-80 hover:scale-100 hover:translate-y-0 transition duration-300"
                   />
-                  <CommentButton count={0} />
+                  {/* <CommentButton count={0} /> */}
                 </Link>
-                <LikeButton like={false} count={0} />
+                {/* <LikeButton like={false} count={0} /> */}
               </div>
-              <div className="px-4 pt-3 pb-4">
+              <div className="px-4 py-2 pb-5">
                 <Link href={`/${lng}/capsule/${capsule._id}`}>
-                  <h1>{capsule.name}</h1>
-                  <p className="mt-3 inline-block bg-gray-200 rounded-full px-3 py-1 text-small-regular text-gray-700">
+                  <p className="inline-block text-small-regular text-gray-600">
                     {capsule.date}
                   </p>
+                  <h1 className="text-body-semibold 3xs:text-base-semibold text-gray-800 overflow-hidden">
+                    {capsule.name}
+                  </h1>
                 </Link>
               </div>
             </div>
