@@ -35,7 +35,10 @@ function ImageGallery({ detail_img }: ImageGalleryProps) {
   return (
     <div className="grid grid-cols-4 gap-2 pt-2">
       {detail_img.map((image, index) => (
-        <div key={index} className="border border-black rounded-lg p-2">
+        <div
+          key={index}
+          className="border rounded-lg p-2 shadow-sm border-gigas-200"
+        >
           <Image
             src={image}
             alt={`Image ${index}`}

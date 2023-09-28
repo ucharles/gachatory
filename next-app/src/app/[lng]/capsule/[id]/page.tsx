@@ -20,7 +20,7 @@ export default async function Page({
   const dehydratedState = dehydrate(queryClient);
 
   return (
-    <div className="grid grid-cols-2">
+    <div className="grid grid-cols-2 xs:grid-cols-1 2xs:grid-cols-1 3xs:grid-cols-1 fold:grid-cols-1">
       <Hydrate state={dehydratedState}>
         <CapsuleInfo lng={lng} queryKey={["capsule", id, lng]} id={id} />
       </Hydrate>

@@ -54,13 +54,18 @@ function CapsuleInfo({
       {data ? (
         <>
           <div className="p-5">
-            <div className="flex justify-center border border-black ">
+            <h1 className="text-heading2-bold pb-5 xl:hidden lg:hidden md:hidden sm:hidden">
+              {data.name}
+            </h1>
+            <div className="flex justify-center border-2 rounded-md shadow-sm border-gigas-200">
               <Image src={data.img} alt={data.name} width={560} height={560} />
             </div>
             <ImageGallery detail_img={data.detail_img} />
           </div>
           <div className="p-5">
-            <h1 className="text-heading2-bold pb-5">{data.name}</h1>
+            <h1 className="text-heading2-bold pb-5 xs:hidden 2xs:hidden 3xs:hidden fold:hidden">
+              {data.name}
+            </h1>
             {data.originalName ? (
               <p className="text-body-medium pb-5 text-gray-500 font-NotoSansJP">
                 {data.originalName}
