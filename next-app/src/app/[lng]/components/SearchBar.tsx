@@ -31,6 +31,7 @@ function SearchBar({ lng }: { lng: string }) {
         <button
           type="reset"
           className="absolute right-12 bottom-2 text-heading4-medium text-gray-700 hover:text-gray-500"
+          onClick={() => setSearch("")}
         >
           ×
         </button>
