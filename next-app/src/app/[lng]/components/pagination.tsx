@@ -75,7 +75,10 @@ export default function Pagination({ total }: PaginationProps) {
     router.push(
       pathname +
         "?" +
-        createQueryString("page", (calculateStartIndex() + 10).toString())
+        createQueryString(
+          "page",
+          (calculateStartIndex() + maxPagesToShow).toString()
+        )
     );
   };
 
