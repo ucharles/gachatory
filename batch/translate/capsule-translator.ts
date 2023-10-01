@@ -23,10 +23,17 @@ mongoose
     console.log("Connected to MongoDB");
 
     const capsules = await CapsuleToy.find({
-      localization: [],
+      name: new RegExp("^((?!箱売).)*$", "i"),
+      localization: { $exists: false },
     })
       .sort({ _id: -1 })
-      .limit(10);
+      .limit(100);
+    const capsuleCounts = await CapsuleToy.countDocuments({
+      name: new RegExp("^((?!箱売).)*$", "i"),
+      localization: { $exists: false },
+    });
+
+    console.log("Capsules:", capsuleCounts);
 
     // mongoose model initialization
 
@@ -67,12 +74,18 @@ mongoose
 
       // console.log(capsuleId, brand, name, header, description);
 
-      // translate ja to ko
-      const resultJaToKo = await translator.translateText(
-        originalArray,
-        "ja",
-        "ko"
-      );
+      let resultJaToKo: deepl.TextResult[];
+      try {
+        // translate ja to ko
+        resultJaToKo = await translator.translateText(
+          originalArray,
+          "ja",
+          "ko"
+        );
+      } catch (err) {
+        console.error("Error Occured", err);
+        logger.logError("Error Occured, record not saved");
+      }
 
       const headesKo = arrayOrganizer(resultJaToKo, header, description);
 

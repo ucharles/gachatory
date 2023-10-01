@@ -1,17 +1,22 @@
 import { getCurrentMonthForSearch } from "@/lib/search-date-string";
-import { perPageEnum, cacheTimeEnum } from "@/lib/enums";
+import { perPageEnum, cacheTimeEnum, sortEnum } from "@/lib/enums";
 
 const API_URI = process.env.APP_SERVER_URL || "";
-export async function arrivalFetchData(lng: string) {
+export async function arrivalFetchData(
+  lng: string,
+  searchParams?: Record<string, string>,
+) {
+  const params = new URLSearchParams(searchParams);
+  const date = params.get("date") || getCurrentMonthForSearch();
+  const sort = params.get("sort") || sortEnum.DESC;
+
   const response = await fetch(
     API_URI +
-      `/api/capsules?lng=${lng}&startDate=${getCurrentMonthForSearch()}&limit=${
-        perPageEnum.MEDIUM
-      }&blankimg=1`,
+      `/api/capsules?lng=${lng}&startDate=${date}&limit=${perPageEnum.MEDIUM}&blankimg=1&sort=${sort}`,
     {
       method: "GET",
       next: { revalidate: cacheTimeEnum.FIVE_MINUTES },
-    }
+    },
   );
   const data = await response.json();
   return data;
@@ -19,7 +24,7 @@ export async function arrivalFetchData(lng: string) {
 
 export async function searchFetchData(
   lng: string,
-  searchParams: Record<string, string>
+  searchParams: Record<string, string>,
 ) {
   const params = new URLSearchParams(searchParams);
 
@@ -28,7 +33,7 @@ export async function searchFetchData(
     {
       method: "GET",
       next: { revalidate: cacheTimeEnum.FIVE_MINUTES },
-    }
+    },
   );
   const data = await response.json();
   return data;

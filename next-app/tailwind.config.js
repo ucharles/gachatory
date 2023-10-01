@@ -14,8 +14,18 @@ module.exports = {
     fontFamily: {
       Pretendard: ["Pretendard Variable"],
       NotoSansJP: ["var(--font-noto-sans-jp)"],
+      YgJalnan: ["yg-jalnan"],
     },
     fontSize: {
+      xs: ".75rem",
+      sm: ".875rem",
+      base: "1rem",
+      lg: "1.125rem",
+      xl: "1.25rem",
+      "2xl": "1.563rem",
+      "3xl": "1.953rem",
+      "4xl": "2.441rem",
+      "5xl": "3.052rem",
       "heading1-bold": [
         "36px",
         {
@@ -58,6 +68,14 @@ module.exports = {
           fontWeight: "500",
         },
       ],
+      "heading4-bold": [
+        "20px",
+        {
+          lineHeight: "140%",
+          fontWeight: "700",
+        },
+      ],
+
       "body-bold": [
         "18px",
         {
@@ -163,6 +181,14 @@ module.exports = {
           fontWeight: "500",
         },
       ],
+      "tiny-bold": [
+        "10px",
+        {
+          lineHeight: "140%",
+          fontWeight: "700",
+        },
+      ],
+
       "x-small-semibold": [
         "7px",
         {
@@ -173,6 +199,7 @@ module.exports = {
     },
     extend: {
       colors: {
+        "background-white": "#FEFEFE",
         "primary-700": "#5141AE",
         "secondary-500": "#FFB620",
         "logout-btn": "#FF5A5A",
@@ -233,4 +260,7 @@ module.exports = {
     },
   },
   plugins: [require("tailwindcss-animate")],
+  future: {
+    hoverOnlyWhenSupported: true,
+  },
 };

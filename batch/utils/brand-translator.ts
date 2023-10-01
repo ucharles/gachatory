@@ -9,7 +9,8 @@ export function brandTranslator(brand: string, lng: string) {
         return "반다이 남코";
       case "KOROKORO":
         return "코로코로";
-
+      case "BUSHIROAD CREATIVE":
+        return "부시로드 크리에이티브";
       default:
         return brand;
     }
@@ -23,6 +24,8 @@ export function brandTranslator(brand: string, lng: string) {
         return "Bandai Namco";
       case "KOROKORO":
         return "Korokoro";
+      case "BUSHIROAD CREATIVE":
+        return "Bushiroad Creative";
       default:
         return brand;
     }

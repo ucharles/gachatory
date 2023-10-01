@@ -19,7 +19,7 @@ export function FooterBase({ t, lng }: FooterBaseProps) {
   // extract pathname index 4~end
   const otherPath = pathname.split("/").slice(2).join("/");
   return (
-    <footer className="p-10 flex justify-end">
+    <footer className="flex justify-end py-10">
       <div>
         <Trans i18nKey="languageSwitcher" t={t} values={{ lng }}>
           Switch from <strong>{lng}</strong> to:{" "}

@@ -2,10 +2,12 @@
 
 import React, { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { translate } from "@/app/i18n/client";
 
 function SearchBar({ lng }: { lng: string }) {
   const router = useRouter();
   const [search, setSearch] = useState("");
+  const { t } = translate(lng, "translation");
 
   function submitHandler(e: FormEvent) {
     e.preventDefault();
@@ -16,7 +18,7 @@ function SearchBar({ lng }: { lng: string }) {
     <form onSubmit={submitHandler}>
       <label
         htmlFor="default-search"
-        className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
+        className="sr-only text-sm font-medium text-gray-900 dark:text-white"
       >
         Search
       </label>
@@ -24,38 +26,33 @@ function SearchBar({ lng }: { lng: string }) {
         <input
           type="search"
           id="name"
-          className="block w-full p-2 pl-4 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          placeholder="Search"
+          className="h-12 w-full rounded-[32px] bg-[#F0EFF3] p-2 pl-12 text-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-gigas-500 focus:ring-offset-2 fold:text-sm 3xs:text-sm"
+          placeholder={t("search")}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <button
-          type="reset"
-          className="absolute right-12 bottom-2 text-heading4-medium text-gray-700 hover:text-gray-500"
-          onClick={() => setSearch("")}
-        >
-          ×
-        </button>
-        <button
-          type="submit"
-          className="absolute top-0 right-0 p-2.5 text-sm font-medium h-full text-white bg-gigas-700 rounded-r-lg border border-gigas-700 hover:bg-gigas-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-        >
+        <div className="absolute left-4 top-3">
           <svg
-            className="w-4 h-4"
-            aria-hidden="true"
+            id="검색_아이콘"
+            data-name="검색 아이콘"
             xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 20 20"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
           >
             <path
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+              id="패스_19"
+              data-name="패스 19"
+              d="M0,0H24V24H0Z"
+              fill="none"
+            />
+            <path
+              id="패스_20"
+              data-name="패스 20"
+              d="M15.5,14h-.79l-.28-.27a6.51,6.51,0,1,0-.7.7l.27.28v.79l5,4.99L20.49,19Zm-6,0A4.5,4.5,0,1,1,14,9.5,4.494,4.494,0,0,1,9.5,14Z"
+              fill="#707070"
             />
           </svg>
-          <span className="sr-only">Search</span>
-        </button>
+        </div>
       </div>
     </form>
   );
