@@ -20,6 +20,7 @@ import { dehydrate } from "@tanstack/query-core";
 import Hydrate from "../components/Providers/HydrateClient";
 import CapsuleCards from "../components/CapsuleCards";
 import { searchFetchData } from "@/lib/fetch-data";
+import MoveOnTopAndDisplayDate from "../components/MoveOnTopAndDisplayDate";
 export default async function Page({
   params: { lng },
   searchParams,
@@ -35,12 +36,12 @@ export default async function Page({
     ["searchCapsules", queryParams, lng],
     () => {
       return searchFetchData(lng, queryParams);
-    }
+    },
   );
   const dehydratedState = dehydrate(queryClient);
 
   return (
-    <div className="p-3">
+    <div>
       <Hydrate state={dehydratedState}>
         {data ? (
           <div>
@@ -48,7 +49,7 @@ export default async function Page({
               <div className="pb-3">
                 <h1 className="text-heading3-bold">{t("result")}</h1>
               </div>
-              <div className="flex justify-between self-center w-full">
+              <div className="flex w-full justify-between self-center">
                 <h2 className="text-heading4-medium">
                   {t("total-count")}: {data.totalCount}
                 </h2>
@@ -72,6 +73,7 @@ export default async function Page({
           <h1>{t("no-result")}</h1>
         )}
       </Hydrate>
+      <MoveOnTopAndDisplayDate date="" />
     </div>
   );
 }

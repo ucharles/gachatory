@@ -20,15 +20,11 @@ import { NextResponse } from "next/server";
 import dbConnect from "@/lib/db/db-connect";
 import CapsuleToy, { ICapsuleToy } from "@/lib/models/capsule-model";
 import Localization, { ILocalization } from "@/lib/models/localization-model";
+import CapsuleTag from "@/lib/models/capsule-tag-model";
 import { searchParams } from "@/lib/search-params";
 import { dateTranslator } from "@/lib/date-converter";
 import { setDisplayImg } from "@/lib/set-display-img";
-import { set } from "mongoose";
-
-enum Sort {
-  ASC = "asc",
-  DESC = "desc",
-}
+import { sortEnum } from "@/lib/enums";
 
 export async function GET(request: Request) {
   try {
@@ -51,11 +47,12 @@ export async function GET(request: Request) {
     const resultCapsules = await CapsuleToy.find(query)
       .skip((currentPage - 1) * perPage)
       .limit(perPage)
-      .sort({ _id: sort === Sort.ASC ? 1 : -1 })
+      .sort({ _id: sort === sortEnum.ASC ? 1 : -1 })
       .populate({
         path: "localization",
         model: Localization,
-      });
+      })
+      .populate({ path: "tagId", model: CapsuleTag });
 
     let locSearchCapsules: ILocalization[] = [];
     let locTotalCount = 0;
@@ -70,12 +67,15 @@ export async function GET(request: Request) {
       })
         .skip((currentPage - 1) * perPage)
         .limit(perPage)
-        .sort({ _id: sort === Sort.ASC ? 1 : -1 })
-        .populate({
-          path: "capsuleId",
-          model: CapsuleToy,
-          match: { name: new RegExp("^((?!箱売).)*$", "i") },
-        });
+        .sort({ _id: sort === sortEnum.ASC ? 1 : -1 })
+        .populate([
+          {
+            path: "capsuleId",
+            model: CapsuleToy,
+            match: { name: new RegExp("^((?!箱売).)*$", "i") },
+            populate: { path: "tagId", model: CapsuleTag },
+          },
+        ]);
     }
 
     // populate된 도큐먼트에 箱売가 포함된 경우를 제외하고 반환했기 때문에 후가공 필요
@@ -91,7 +91,7 @@ export async function GET(request: Request) {
       const anotherLocSearchCapsules = await Localization.find({
         capsuleId: {
           $in: locSearchCapsules.map(
-            (capsule: ILocalization) => capsule.capsuleId._id
+            (capsule: ILocalization) => capsule.capsuleId._id,
           ),
         },
         lng: { $ne: locSearchCapsules[0].lng },
@@ -150,13 +150,13 @@ export async function GET(request: Request) {
     // 결과 반환하기
     return NextResponse.json(
       { totalCount: returnConut, capsules },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error(error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

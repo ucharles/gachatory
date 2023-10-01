@@ -3,5 +3,9 @@
   "site-link": "🔗Site Link",
   "price": "Price",
   "yen": " Yen",
-  "release-date": "Release Date"
+  "release-date": "Release Date",
+  "search": "Search",
+  "release_discription": "Capsule toys coming this month",
+  "past-release-discription": "Capsule toys released in the past",
+  "sort-by": "Sort By"
 }

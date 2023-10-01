@@ -49,13 +49,38 @@ function DisplayCapsuleTags({
         <Link href={`/${lng}/search?tag=${tag._id}`} key={index}>
           <span
             key={index}
-            className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
+            className="mb-2 mr-2 inline-block rounded-full bg-gray-200 px-3 py-1 text-sm font-semibold text-gray-700"
           >
             {switchTagLng(tag, lng)}
           </span>
         </Link>
       ))}
     </React.Fragment>
+  );
+}
+
+export function DisplayCapsuleOneTag({
+  tags,
+  lng,
+}: {
+  tags: Array<ICapsuleTag>;
+  lng: string;
+}) {
+  tags.sort((a, b) => propertyOrder(a) - propertyOrder(b));
+
+  return (
+    <>
+      {tags.length > 0 ? (
+        <Link href={`/${lng}/search?tag=${tags[0]._id}`}>
+          <div
+            className="rounded-2xl border border-gigas-700 px-2 py-1 text-small-semibold text-gigas-700 transition duration-200 hover:bg-gigas-700 hover:text-background-white"
+            key={tags[0]._id}
+          >
+            <p className="truncate">{switchTagLng(tags[0], lng)}</p>
+          </div>
+        </Link>
+      ) : null}
+    </>
   );
 }
 

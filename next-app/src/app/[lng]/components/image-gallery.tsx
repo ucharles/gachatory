@@ -37,7 +37,7 @@ function ImageGallery({ detail_img }: ImageGalleryProps) {
       {detail_img.map((image, index) => (
         <div
           key={index}
-          className="border rounded-lg p-2 shadow-sm border-gigas-200"
+          className="rounded-lg border border-gigas-200 p-2 shadow-sm"
         >
           <Image
             src={image}
@@ -45,7 +45,7 @@ function ImageGallery({ detail_img }: ImageGalleryProps) {
             onClick={() => handleImageClick(image)}
             onMouseEnter={() => handleImageHover(image)}
             onMouseLeave={() => handleImageHover(null)}
-            className="cursor-pointer hover:scale-105 transform transition ease-in-out"
+            className="transform cursor-pointer transition ease-in-out hover:scale-105"
             width={200}
             height={200}
             unoptimized={true}
@@ -54,13 +54,13 @@ function ImageGallery({ detail_img }: ImageGalleryProps) {
       ))}
       {selectedImage && (
         <div
-          className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 pointer-events-none"
+          className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
           onClick={handleClose}
         >
           <Image
             src={selectedImage}
             alt="Selected Image"
-            className="max-w-full max-h-full"
+            className="max-h-full max-w-full"
             width={500}
             height={500}
             unoptimized={true}

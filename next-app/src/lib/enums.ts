@@ -20,3 +20,8 @@ export enum capsuleTagPropertyEnum {
   CATEGORY = 6,
   ELEMENT = 7,
 }
+
+export enum sortEnum {
+  ASC = "asc",
+  DESC = "desc",
+}
