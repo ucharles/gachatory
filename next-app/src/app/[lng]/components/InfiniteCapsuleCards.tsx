@@ -55,12 +55,12 @@ function InfiniteCapsuleCards({
     if (inView) {
       fetchNextPage();
     }
-  }, [inView]);
+  }, [inView && hasNextPage]);
 
   // 좋아요 기능 추가 시 useMutation을 사용하여 캐시 업데이트
 
   return (
-    <React.Fragment>
+    <>
       <ul className="grid gap-x-6 gap-y-10 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4 fold:grid-cols-2 3xs:grid-cols-2 2xs:grid-cols-2 xs:grid-cols-2">
         {data?.pages?.map((page: any) => {
           return page.capsules?.map((capsule: ICapsuleToy) => {
@@ -81,9 +81,6 @@ function InfiniteCapsuleCards({
                   <div>
                     <div className="pb-2 pt-4">
                       <Link href={`/${lng}/capsule/${capsule._id}`}>
-                        {/* <p className="inline-block text-small-regular text-gray-600">
-                    {capsule.date}
-                  </p> */}
                         <h1 className="max-lines-3 break-words text-body-bold text-gray-800 3xs:text-base-semibold">
                           {capsule.name}
                         </h1>
@@ -158,7 +155,7 @@ function InfiniteCapsuleCards({
       <div>
         {isFetching && !isFetchingNextPage ? <CapsuleCardSkeleton /> : null}
       </div>
-    </React.Fragment>
+    </>
   );
 }
 
