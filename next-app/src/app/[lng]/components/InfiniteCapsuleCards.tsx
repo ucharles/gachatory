@@ -45,7 +45,6 @@ function InfiniteCapsuleCards({
     },
     {
       getNextPageParam: (lastPage) => {
-        console.log("getNextPageParam", lastPage);
         return lastPage.totalCount - perPageEnum.SMALL * lastPage.page > 0
           ? lastPage.page
           : undefined;
@@ -55,7 +54,6 @@ function InfiniteCapsuleCards({
 
   useEffect(() => {
     if (inView && hasNextPage && !isFetchingNextPage) {
-      console.log("setPage", page);
       setPage((prevPage) => prevPage + 1);
     }
   }, [inView && hasNextPage]);
