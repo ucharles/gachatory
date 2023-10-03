@@ -68,6 +68,7 @@ export default async function Page({
   await queryClient.prefetchInfiniteQuery(
     ["arrivalCapsules", lng, cacheParams],
     () => {
+      console.log("prefetch");
       return arrivalFetchData(lng, searchParams);
     },
   );

@@ -1,5 +1,5 @@
 function CapsuleCardSkeleton() {
-  const items = Array.from({ length: 20 });
+  const items = Array.from({ length: 4 });
   return (
     <ul className="grid gap-x-6 gap-y-10 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4 fold:grid-cols-2 3xs:grid-cols-2 2xs:grid-cols-2 xs:grid-cols-2">
       {items.map((_, index) => (

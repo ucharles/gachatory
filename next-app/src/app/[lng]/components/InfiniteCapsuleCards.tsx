@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { ICapsuleToy } from "@/lib/models/capsule-model";
 import { arrivalFetchData } from "@/lib/fetch-data";
@@ -23,6 +23,7 @@ function InfiniteCapsuleCards({
 }) {
   const queryClient = useQueryClient();
   const { ref, inView } = useInView();
+  const [page, setPage] = useState(1);
 
   const {
     status,
@@ -38,24 +39,37 @@ function InfiniteCapsuleCards({
   } = useInfiniteQuery(
     queryKey,
     async ({ pageParam = 1 }) => {
-      queryParams = { ...queryParams, page: pageParam.toString() };
-      const data = await arrivalFetchData(lng, queryParams);
+      const params = { ...queryParams, page: pageParam.toString() };
+      const data = await arrivalFetchData(lng, params);
       return data;
     },
     {
       getNextPageParam: (lastPage) => {
+        console.log("getNextPageParam", lastPage);
         return lastPage.totalCount - perPageEnum.SMALL * lastPage.page > 0
-          ? lastPage.page + 1
+          ? lastPage.page
           : undefined;
       },
     },
   );
 
   useEffect(() => {
-    if (inView) {
-      fetchNextPage();
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      console.log("setPage", page);
+      setPage((prevPage) => prevPage + 1);
     }
   }, [inView && hasNextPage]);
+
+  useEffect(() => {
+    if (page > 1) {
+      fetchNextPage({ pageParam: page });
+    }
+  }, [page, fetchNextPage]);
+
+  useEffect(() => {
+    // if change query params, reset page
+    setPage(1);
+  }, [queryParams]);
 
   // 좋아요 기능 추가 시 useMutation을 사용하여 캐시 업데이트
 
@@ -145,16 +159,7 @@ function InfiniteCapsuleCards({
           });
         })}
       </ul>
-      <div ref={ref}>
-        {isFetchingNextPage ? (
-          <CapsuleCardSkeleton />
-        ) : hasNextPage ? (
-          <CapsuleCardSkeleton />
-        ) : null}
-      </div>
-      <div>
-        {isFetching && !isFetchingNextPage ? <CapsuleCardSkeleton /> : null}
-      </div>
+      <div ref={ref}>{isFetchingNextPage && "isFetchingNextPage"}</div>
     </>
   );
 }
