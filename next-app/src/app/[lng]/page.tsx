@@ -65,9 +65,12 @@ export default async function Page({
   // sort가 asc나 desc가 아닐 경우, default(desc)로 설정
 
   const queryClient = getQueryClient();
-  await queryClient.prefetchQuery(["arrivalCapsules", lng, cacheParams], () => {
-    return arrivalFetchData(lng, searchParams);
-  });
+  await queryClient.prefetchInfiniteQuery(
+    ["arrivalCapsules", lng, cacheParams],
+    () => {
+      return arrivalFetchData(lng, searchParams);
+    },
+  );
   const dehydratedState = dehydrate(queryClient);
 
   // const data = await fetchData(lng);
