@@ -46,7 +46,7 @@ function InfiniteCapsuleCards({
     {
       getNextPageParam: (lastPage) => {
         return lastPage.totalCount - perPageEnum.SMALL * lastPage.page > 0
-          ? lastPage.page
+          ? lastPage.page + 1
           : undefined;
       },
     },
@@ -54,20 +54,9 @@ function InfiniteCapsuleCards({
 
   useEffect(() => {
     if (inView && hasNextPage && !isFetchingNextPage) {
-      setPage((prevPage) => prevPage + 1);
+      fetchNextPage();
     }
   }, [inView && hasNextPage]);
-
-  useEffect(() => {
-    if (page > 1) {
-      fetchNextPage({ pageParam: page });
-    }
-  }, [page, fetchNextPage]);
-
-  useEffect(() => {
-    // if change query params, reset page
-    setPage(1);
-  }, [queryParams]);
 
   // 좋아요 기능 추가 시 useMutation을 사용하여 캐시 업데이트
 
@@ -157,7 +146,7 @@ function InfiniteCapsuleCards({
           });
         })}
       </ul>
-      <div ref={ref}>{isFetchingNextPage && "isFetchingNextPage"}</div>
+      <div ref={ref}>{isFetchingNextPage && <CapsuleCardSkeleton />}</div>
     </>
   );
 }
