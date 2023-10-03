@@ -10,15 +10,23 @@
 
 ### Web
 
-- Frontend: Next.js 13.4 (React), tailwindcss, TypeScript
-- Backend: Next.js 13.4 (Node.js, express)
+- Frontend: Next.js 13.5 (React), tailwindcss, TypeScript
+- Backend: Next.js 13.5 (Node.js, express), TypeScript
 - Database: MongoDB Atlas
+- Library: TanStack Query, next-auth, i18next
 
 ### Data Scraping & Image Server
 
-- Image Server: node.js, express
+- Image Server: Node.js, express
 - Data Scraping: Python (BeautifulSoup)
 - Data Processing: Python, TypeScript
+
+### Infra
+
+- Raspberry Pi 4B 8GB
+- Linux Ubuntu 22.04.3 LTS
+- Nginx
+- Docker
 
 ## 구조
 
