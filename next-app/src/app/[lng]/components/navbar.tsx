@@ -7,7 +7,7 @@ import SearchBar from "./SearchBar";
 export default function Navbar({ lng }: { lng: string }) {
   // flex와 w-full을 동시에 사용하면, 부모의 width만큼 너비가 늘어나지 않으니 주의
   return (
-    <nav className="sticky top-0 z-40 bg-background-white/95 py-3">
+    <nav className="sticky top-0 z-40 bg-background-white/95 py-3 sm:pt-6 md:pt-6 lg:pt-6 xl:pt-6 fold:pt-6">
       <div className="flex flex-row items-center space-x-4">
         <div className="flex basis-2/12 sm:justify-center fold:justify-center 3xs:justify-center 2xs:justify-center xs:justify-center">
           <Link href={`/${lng}`}>
@@ -25,7 +25,7 @@ export default function Navbar({ lng }: { lng: string }) {
               alt="logo"
               width={50}
               height={40}
-              className="w-9 md:hidden lg:hidden xl:hidden"
+              className="h-auto w-10 md:hidden lg:hidden xl:hidden"
             />
           </Link>
         </div>

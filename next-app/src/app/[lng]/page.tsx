@@ -3,12 +3,11 @@ import { redirect } from "next/navigation";
 import getQueryClient from "./components/Providers/getQueryClient";
 import { dehydrate } from "@tanstack/query-core";
 import Hydrate from "./components/Providers/HydrateClient";
-import CapsuleCards from "./components/CapsuleCards";
+import InfiniteCapsuleCards from "./components/InfiniteCapsuleCards";
 import { arrivalFetchData } from "@/lib/fetch-data";
 import {
   getCurrentMonthYYYYMM,
   isYYYYMMFormat,
-  addMonthsToYYYYMM,
 } from "@/lib/search-date-string";
 import MoveOnTopAndDisplayDate from "./components/MoveOnTopAndDisplayDate";
 import { sortEnum } from "@/lib/enums";
@@ -73,6 +72,7 @@ export default async function Page({
 
   // const data = await fetchData(lng);
   const { t } = await translate(lng);
+  console.log(cacheParams);
 
   return (
     <div className="">
@@ -88,11 +88,10 @@ export default async function Page({
         </div>
       </div>
       <Hydrate state={dehydratedState}>
-        <CapsuleCards
+        <InfiniteCapsuleCards
           lng={lng}
-          queryParams={searchParams}
+          queryParams={cacheParams}
           queryKey={["arrivalCapsules", lng, cacheParams]}
-          pageName="arrival"
         />
       </Hydrate>
       <MoveOnTopAndDisplayDate date={date} displayDate={true} />

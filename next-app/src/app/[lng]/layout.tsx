@@ -28,7 +28,9 @@ const pretendard = localFont({
 
 export const metadata: Metadata = {
   title: "Gachatory",
-  description: "Gachatory",
+  openGraph: {
+    title: "Gachatory",
+  },
 };
 
 interface RootLayoutProps {

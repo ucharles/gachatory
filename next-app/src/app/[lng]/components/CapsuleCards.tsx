@@ -62,7 +62,7 @@ function CapsuleCards({
   // 좋아요 기능 추가 시 useMutation을 사용하여 캐시 업데이트
 
   return (
-    <ul className="grid gap-x-6 gap-y-10 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4 fold:grid-cols-1 3xs:grid-cols-2 2xs:grid-cols-2 xs:grid-cols-2">
+    <ul className="grid gap-x-6 gap-y-10 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4 fold:grid-cols-2 3xs:grid-cols-2 2xs:grid-cols-2 xs:grid-cols-2">
       {isLoading ? <p>Loading...</p> : null}
       {data?.capsules?.map((capsule: ICapsuleToy) => {
         return capsule.display_img ? (

@@ -16,12 +16,6 @@ function SearchBar({ lng }: { lng: string }) {
 
   return (
     <form onSubmit={submitHandler}>
-      <label
-        htmlFor="default-search"
-        className="sr-only text-sm font-medium text-gray-900 dark:text-white"
-      >
-        Search
-      </label>
       <div className="relative">
         <input
           type="search"

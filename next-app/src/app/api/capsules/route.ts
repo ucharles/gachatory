@@ -57,7 +57,7 @@ export async function GET(request: Request) {
     let locSearchCapsules: ILocalization[] = [];
     let locTotalCount = 0;
 
-    if (locSearchName !== "") {
+    if (locSearchName !== "" && resultCapsules?.length === 0) {
       locSearchCapsules = await Localization.find({
         capsuleId: { $exists: true },
         $or: [
@@ -149,7 +149,7 @@ export async function GET(request: Request) {
 
     // 결과 반환하기
     return NextResponse.json(
-      { totalCount: returnConut, capsules },
+      { totalCount: returnConut, capsules, page: currentPage },
       { status: 200 },
     );
   } catch (error) {

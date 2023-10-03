@@ -26,8 +26,11 @@ export default async function Page({
   searchParams,
 }: {
   params: { lng: string };
-  searchParams: { param1: string; param2: string };
+  searchParams: Record<string, string>;
 }) {
+  if (searchParams.page === undefined) {
+    searchParams.page = "1";
+  }
   const queryParams = searchParams;
   const { t } = await translate(lng, "search");
 
