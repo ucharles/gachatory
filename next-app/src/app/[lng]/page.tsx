@@ -64,15 +64,15 @@ export default async function Page({
   // date가 현재 년월로부터 6개월 이전일 경우, 검색으로 보내도록 함
   // sort가 asc나 desc가 아닐 경우, default(desc)로 설정
 
-  const queryClient = getQueryClient();
-  await queryClient.prefetchInfiniteQuery(
-    ["arrivalCapsules", lng, cacheParams],
-    () => {
-      console.log("prefetch");
-      return arrivalFetchData(lng, searchParams);
-    },
-  );
-  const dehydratedState = dehydrate(queryClient);
+  // const queryClient = getQueryClient();
+  // await queryClient.prefetchInfiniteQuery(
+  //   ["arrivalCapsules", lng, cacheParams],
+  //   () => {
+  //     console.log("prefetch");
+  //     return arrivalFetchData(lng, searchParams);
+  //   },
+  // );
+  // const dehydratedState = dehydrate(queryClient);
 
   // const data = await fetchData(lng);
   const { t } = await translate(lng);
@@ -91,13 +91,13 @@ export default async function Page({
           <SortCapsuleList lng={lng} searchParams={searchParams} />
         </div>
       </div>
-      <Hydrate state={dehydratedState}>
-        <InfiniteCapsuleCards
-          lng={lng}
-          queryParams={cacheParams}
-          queryKey={["arrivalCapsules", lng, cacheParams]}
-        />
-      </Hydrate>
+      {/* <Hydrate state={dehydratedState}> */}
+      <InfiniteCapsuleCards
+        lng={lng}
+        queryParams={cacheParams}
+        queryKey={["arrivalCapsules", lng, cacheParams]}
+      />
+      {/* </Hydrate> */}
       <MoveOnTopAndDisplayDate date={date} displayDate={true} />
     </div>
   );

@@ -23,7 +23,6 @@ function InfiniteCapsuleCards({
 }) {
   const queryClient = useQueryClient();
   const { ref, inView } = useInView();
-  const [page, setPage] = useState(1);
 
   const {
     status,
@@ -146,6 +145,11 @@ function InfiniteCapsuleCards({
           });
         })}
       </ul>
+      <div>
+        {isFetching && !isFetchingNextPage && (
+          <CapsuleCardSkeleton isFirst={true} />
+        )}
+      </div>
       <div ref={ref}>{isFetchingNextPage && <CapsuleCardSkeleton />}</div>
     </>
   );
