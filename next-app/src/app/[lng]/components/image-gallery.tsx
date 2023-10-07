@@ -33,11 +33,11 @@ function ImageGallery({ detail_img }: ImageGalleryProps) {
   }, []);
 
   return (
-    <div className="grid grid-cols-4 gap-2 pt-2">
+    <div className="grid grid-cols-6 gap-2 pt-6">
       {detail_img.map((image, index) => (
         <div
           key={index}
-          className="rounded-lg border border-gigas-200 p-2 shadow-sm"
+          className="overflow-hidden rounded-lg border border-gray-300 p-1 shadow-sm"
         >
           <Image
             src={image}

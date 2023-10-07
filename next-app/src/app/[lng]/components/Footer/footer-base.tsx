@@ -20,9 +20,9 @@ export function FooterBase({ t, lng }: FooterBaseProps) {
   const otherPath = pathname.split("/").slice(2).join("/");
   return (
     <footer className="flex justify-end py-10">
-      <div>
+      <div className="container w-[1200px] text-end">
         <Trans i18nKey="languageSwitcher" t={t} values={{ lng }}>
-          Switch from <strong>{lng}</strong> to:{" "}
+          Switch from <strong>{lng.toUpperCase()}</strong> to:{" "}
         </Trans>
 
         {languages

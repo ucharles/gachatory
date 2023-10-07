@@ -49,7 +49,7 @@ function DisplayCapsuleTags({
         <Link href={`/${lng}/search?tag=${tag._id}`} key={index}>
           <span
             key={index}
-            className="mb-2 mr-2 inline-block rounded-full bg-gray-200 px-3 py-1 text-sm font-semibold text-gray-700"
+            className="mr-2 inline-block rounded-full border border-gigas-700 px-2 py-1 text-small-regular font-semibold text-gigas-700"
           >
             {switchTagLng(tag, lng)}
           </span>
