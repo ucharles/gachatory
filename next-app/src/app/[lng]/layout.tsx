@@ -54,15 +54,11 @@ export default function RootLayout({
 
   return (
     <html lang={lng} dir={dir(lng)}>
-      <body
-        className={`${font} ${noto.variable} container relative w-[1280px] bg-background-white`}
-      >
+      <body className={`${font} ${noto.variable} relative bg-background-white`}>
         <TenstackProvider>
-          <div className="container w-[1200px]">
-            <Navbar lng={lng} />
-            {children}
-            <Footer lng={lng} />
-          </div>
+          <Navbar lng={lng} />
+          <div className="container w-[1200px]">{children}</div>
+          <Footer lng={lng} />
         </TenstackProvider>
       </body>
     </html>

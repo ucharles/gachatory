@@ -9,6 +9,7 @@ import { DisplayCapsuleOneTag } from "./display-capsule-tag";
 
 import Link from "next/link";
 import Image from "next/image";
+import LikeButton from "./LikeButton";
 
 function CapsuleCards({
   lng,
@@ -92,53 +93,9 @@ function CapsuleCards({
                 </div>
                 <div className="flex flex-row justify-between">
                   <div className="flex space-x-2 text-subtle-medium text-gray-500">
-                    <button className="group">
-                      <div className="flex items-center space-x-1">
-                        <svg
-                          id="favorite_black_18dp"
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          viewBox="0 0 16 16"
-                          className="transition duration-200 group-hover:fill-gigas-700"
-                          fill="#9f9f9f"
-                        >
-                          <path
-                            id="패스_14"
-                            data-name="패스 14"
-                            d="M0,0H16V16H0Z"
-                            fill="none"
-                          />
-                          <path
-                            id="패스_15"
-                            data-name="패스 15"
-                            d="M8,13.35l-.87-.745C4.04,9.971,2,8.234,2,6.1A3.174,3.174,0,0,1,5.3,3,3.691,3.691,0,0,1,8,4.179,3.691,3.691,0,0,1,10.7,3,3.174,3.174,0,0,1,14,6.1c0,2.132-2.04,3.869-5.13,6.509Z"
-                          />
-                        </svg>
-                        <p className="transition duration-200 group-hover:text-gigas-700">
-                          0
-                        </p>
-                      </div>
-                    </button>
-                    <div className="flex items-center space-x-1 3xs:hidden">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="12"
-                        height="12"
-                        viewBox="0 0 12 12"
-                      >
-                        <path
-                          id="패스_17"
-                          data-name="패스 17"
-                          d="M12.8,2H3.2A1.2,1.2,0,0,0,2,3.2V14l2.4-2.4h8.4A1.2,1.2,0,0,0,14,10.4V3.2A1.2,1.2,0,0,0,12.8,2Z"
-                          transform="translate(-2 -2)"
-                          fill="#9f9f9f"
-                        />
-                      </svg>
-                      <p>0</p>
-                    </div>
+                    <LikeButton like={false} />
                   </div>
-                  <div className="truncate-70">
+                  <div className="truncate-70 fold:invisible">
                     <DisplayCapsuleOneTag tags={capsule.tagId} lng={lng} />
                   </div>
                 </div>

@@ -7,7 +7,7 @@ function CapsuleCardSkeleton({ isFirst }: { isFirst?: boolean }) {
       }`}
     >
       {items.map((_, index) => (
-        <li key={index}>
+        <li key={index} className="animate-pulse">
           <div className="mb-4 flex aspect-square items-center justify-center overflow-hidden rounded-md bg-gray-100"></div>
           <div className="w-full rounded-md bg-gray-100 py-14"></div>
         </li>

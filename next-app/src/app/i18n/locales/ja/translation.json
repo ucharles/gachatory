@@ -1,11 +1,18 @@
 {
   "new-arrival": "今月の新商品",
-  "site-link": "🔗サイトリンク",
+  "site-link": "メーカーの公式ページへ移動",
   "price": "価格",
   "yen": "円",
   "release-date": "発売年月",
   "search": "検索",
   "release_discription": "今月発売のカプセルトイ",
   "past-release-discription": "先月発売のカプセルトイ",
-  "sort-by": "並び替え | 登録順"
+  "sort-by": "並び替え | 登録順",
+  "like": "いいね",
+  "go-to-like-list": "いいね一覧へ",
+  "go-to-like": "いいね一覧",
+  "date-explain": "*メーカーの事情により発売日が変更される可能性があります",
+  "brand": "メーカー",
+  "product-info": "Product Info | 製品情報",
+  "link-copied": "リンクがコピーされました"
 }
