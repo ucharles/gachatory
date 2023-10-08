@@ -98,7 +98,7 @@ export default async function Page({
               <div className="pb-3">
                 <h1 className="space-x-2 text-heading3-bold">
                   <span className="text-gigas-700">
-                    '{keyword ? `${keyword}` : tagId ? `#${tagId}` : ""}'
+                    {keyword ? `'${keyword}'` : tagId ? `'#${tagId}'` : "''"}
                   </span>
                   <span>{t("result")}</span>
                 </h1>
