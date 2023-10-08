@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { translate } from "@/app/i18n/client";
 import { sortEnum } from "@/lib/enums";
 
@@ -18,6 +18,8 @@ function SortCapsuleList({
 
   const paramSort = params.get("sort") || sortEnum.DESC;
 
+  const pathname = usePathname();
+
   const [sort, setSort] = useState(paramSort);
 
   useEffect(() => {
@@ -28,11 +30,11 @@ function SortCapsuleList({
     if (sort === sortEnum.DESC) {
       setSort(sortEnum.ASC);
       params.set("sort", sortEnum.ASC);
-      router.replace(`/${lng}?${params.toString()}`);
+      router.replace(`?${params.toString()}`);
     } else {
       setSort(sortEnum.DESC);
       params.set("sort", sortEnum.DESC);
-      router.replace(`/${lng}?${params.toString()}`);
+      router.replace(`?${params.toString()}`);
     }
   }
 

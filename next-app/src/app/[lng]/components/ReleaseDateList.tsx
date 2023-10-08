@@ -105,9 +105,9 @@ function ReleaseDateList({
                 className="py-2 hover:bg-gigas-100"
               >
                 <p
-                  className={`text-center font-YgJalnan ${
+                  className={`text-center ${
                     selectedDate === date ? "text-gigas-700" : "text-gray-600"
-                  } text-heading4-bold `}
+                  } text-body-bold`}
                 >
                   {addDotToYYYYMM(date!)}
                 </p>

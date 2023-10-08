@@ -4,12 +4,14 @@
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { perPageEnum } from "@/lib/enums";
+import { set } from "mongoose";
 
 interface PaginationProps {
   total: number; // total number of items
+  maxPages?: number; // max number of pages to show
 }
 
-export default function Pagination({ total }: PaginationProps) {
+export default function Pagination({ total, maxPages }: PaginationProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -17,8 +19,7 @@ export default function Pagination({ total }: PaginationProps) {
   const currentPage = Number(searchParams.get("page")) || 1;
   const itemsPerPage = Number(searchParams.get("limit")) || perPageEnum.SMALL;
   const totalPages = Math.ceil(total === 0 ? 1 : total / itemsPerPage);
-
-  const maxPagesToShow = 6;
+  const maxPagesToShow = maxPages || 5;
 
   const [startPage, setStartPage] = useState(currentPage);
 
@@ -30,7 +31,7 @@ export default function Pagination({ total }: PaginationProps) {
 
       return params.toString();
     },
-    [searchParams]
+    [searchParams],
   );
 
   // function to calculate the start index of the items to show
@@ -61,77 +62,187 @@ export default function Pagination({ total }: PaginationProps) {
   // if changed limit and if current page is out of range, reset to max page
   useEffect(() => {
     if (currentPage > totalPages) {
-      setStartPage(totalPages - maxPagesToShow + 1);
       router.push(
-        pathname + "?" + createQueryString("page", totalPages.toString())
+        pathname + "?" + createQueryString("page", totalPages.toString()),
       );
+      setStartPage(totalPages - maxPagesToShow + 1);
     } else {
       setStartPage(calculateStartIndex);
     }
   }, [searchParams.get("limit")]);
 
   const goForward = () => {
-    setStartPage((prevStart) => prevStart + maxPagesToShow);
+    if (currentPage === totalPages) {
+      return;
+    }
     router.push(
       pathname +
         "?" +
         createQueryString(
           "page",
-          (calculateStartIndex() + maxPagesToShow).toString()
-        )
+          (calculateStartIndex() + maxPagesToShow).toString(),
+        ),
     );
+    setStartPage((prevStart) => prevStart + maxPagesToShow);
   };
 
   const goBackward = () => {
-    setStartPage((prevStart) => prevStart - maxPagesToShow);
-    router.push(
-      pathname +
-        "?" +
-        createQueryString("page", (calculateStartIndex() - 1).toString())
-    );
+    if (calculateStartIndex() === 1) {
+      router.push(pathname + "?" + createQueryString("page", "1"));
+      setStartPage(1);
+    } else {
+      router.push(
+        pathname +
+          "?" +
+          createQueryString("page", (calculateStartIndex() - 1).toString()),
+      );
+      setStartPage((prevStart) => prevStart - maxPagesToShow);
+    }
+  };
+
+  const goNext = () => {
+    if (currentPage === totalPages) {
+      return;
+    } else {
+      router.push(
+        pathname +
+          "?" +
+          createQueryString("page", (currentPage + 1).toString()),
+      );
+    }
+  };
+
+  const goPrev = () => {
+    if (currentPage === 1) {
+      return;
+    } else {
+      router.push(
+        pathname +
+          "?" +
+          createQueryString("page", (currentPage - 1).toString()),
+      );
+    }
   };
 
   const highlightedStyle = {
-    backgroundColor: "#6757d4", // Choose highlight color
-    color: "white",
+    color: "#6757d4",
+    fontWeight: "bold",
+    textDecoration: "underline",
   };
 
   return (
-    <div className="space-x-1 pt-5 pb-5">
-      {startPage > 1 && (
-        <button
-          className="h-8 w-8 border border-gray-400 shadow rounded-md"
-          onClick={goBackward}
-        >
-          &laquo;
-        </button>
-      )}
-      {Array.from(
-        { length: Math.min(maxPagesToShow, totalPages - startPage + 1) },
-        (_, i) => i + startPage
-      ).map((page) => (
-        <button
-          className="h-8 w-8 border border-gray-400 shadow rounded-md"
-          key={page}
-          style={page === currentPage ? highlightedStyle : {}}
-          onClick={(e) => {
-            router.push(
-              pathname + "?" + createQueryString("page", page.toString())
-            );
-          }}
-          disabled={page === currentPage}
-        >
-          {page}
-        </button>
-      ))}
-      {startPage + maxPagesToShow - 1 < totalPages && (
-        <button
-          className="h-8 w-8 border border-gray-400 shadow rounded-md"
-          onClick={goForward}
-        >
-          &raquo;
-        </button>
-      )}
+    <div>
+      <div className="flex items-center justify-center space-x-1">
+        {currentPage > maxPagesToShow ? (
+          <>
+            <button
+              className={`flex h-6 items-center justify-center ${
+                currentPage > 100 ? "w-8" : "w-6"
+              }`}
+              onClick={goBackward}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="14.467"
+                height="14"
+                viewBox="0 0 14.467 14"
+              >
+                <path
+                  id="last_page_FILL0_wght400_GRAD0_opsz24"
+                  d="M225.633-706,224-707.634,229.367-713,224-718.367,225.633-720l7,7Zm10.5,0v-14h2.333v14Z"
+                  transform="translate(238.467 -706) rotate(180)"
+                  fill="#707070"
+                />
+              </svg>
+            </button>
+            <button
+              className={`flex h-6 items-center justify-center ${
+                currentPage > 100 ? "w-8" : "w-6"
+              }`}
+              onClick={goPrev}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="8.633"
+                height="14"
+                viewBox="0 0 8.633 14"
+              >
+                <path
+                  id="last_page_FILL0_wght400_GRAD0_opsz24"
+                  d="M225.633-706,224-707.634,229.367-713,224-718.367,225.633-720l7,7Z"
+                  transform="translate(232.633 -706) rotate(180)"
+                  fill="#707070"
+                />
+              </svg>
+            </button>
+          </>
+        ) : null}
+        {Array.from(
+          { length: Math.min(maxPagesToShow, totalPages - startPage + 1) },
+          (_, i) => i + startPage,
+        ).map((page) => (
+          <button
+            className={`flex h-6 items-center justify-center ${
+              currentPage > 100 ? "w-8" : "w-6"
+            }`}
+            key={page}
+            style={page === currentPage ? highlightedStyle : {}}
+            onClick={(e) => {
+              router.push(
+                pathname + "?" + createQueryString("page", page.toString()),
+              );
+            }}
+            disabled={page === currentPage}
+          >
+            {page}
+          </button>
+        ))}
+        {currentPage < totalPages ? (
+          <>
+            <button
+              className={`flex h-6 items-center justify-center ${
+                currentPage > 100 ? "w-8" : "w-6"
+              }`}
+              onClick={goNext}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="8.633"
+                height="14"
+                viewBox="0 0 8.633 14"
+              >
+                <path
+                  id="last_page_FILL0_wght400_GRAD0_opsz24"
+                  d="M225.633-706,224-707.634,229.367-713,224-718.367,225.633-720l7,7Z"
+                  transform="translate(-224 720)"
+                  fill="#707070"
+                />
+              </svg>
+            </button>
+            <button
+              className={`flex h-6 items-center justify-center ${
+                currentPage > 100 ? "w-8" : "w-6"
+              }`}
+              onClick={goForward}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="14.467"
+                height="14"
+                viewBox="0 0 14.467 14"
+              >
+                <path
+                  id="last_page_FILL0_wght400_GRAD0_opsz24"
+                  d="M225.633-706,224-707.634,229.367-713,224-718.367,225.633-720l7,7Zm10.5,0v-14h2.333v14Z"
+                  transform="translate(-224 720)"
+                  fill="#707070"
+                />
+              </svg>
+            </button>
+          </>
+        ) : null}
+      </div>
+      <div></div>
     </div>
   );
 }

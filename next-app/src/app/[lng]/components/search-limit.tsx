@@ -30,17 +30,17 @@ export default function SearchLimit({ lng }: ISearchLimitProps) {
 
       return params.toString();
     },
-    [searchParams]
+    [searchParams],
   );
 
   return (
     <div>
-      <label htmlFor="limit">{t("page-limit")}: </label>
+      <label htmlFor="limit">{t("page-limit")}</label>
       <select
         id="limit"
         onChange={(e) => {
-          router.push(
-            pathname + "?" + createQueryString("limit", e.target.value)
+          router.replace(
+            pathname + "?" + createQueryString("limit", e.target.value),
           );
         }}
         value={limit}
