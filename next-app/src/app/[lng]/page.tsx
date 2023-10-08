@@ -80,7 +80,7 @@ export default async function Page({
 
   return (
     <div className="">
-      <div className="z-30 bg-background-white/95 py-4">
+      <div className="z-30 bg-background-white/95 py-4 pb-6">
         <ReleaseDateList lng={lng} searchParams={searchParams} />
         <div className="flex justify-between text-small-medium">
           <div className="fold:hidden">

@@ -11,9 +11,9 @@
 //   return <h1>My Page</h1>
 //   }
 
-import SearchForm from "@/app/[lng]/components/search-form-copy";
 import Pagination from "@/app/[lng]/components/pagination";
 import SearchLimit from "@/app/[lng]/components/search-limit";
+import { redirect } from "next/navigation";
 import { translate } from "@/app/i18n";
 import getQueryClient from "../components/Providers/getQueryClient";
 import { dehydrate } from "@tanstack/query-core";
@@ -21,6 +21,12 @@ import Hydrate from "../components/Providers/HydrateClient";
 import CapsuleCards from "../components/CapsuleCards";
 import { searchFetchData } from "@/lib/fetch-data";
 import MoveOnTopAndDisplayDate from "../components/MoveOnTopAndDisplayDate";
+import SortCapsuleList from "../components/SortCapsuleList";
+import { sortEnum } from "@/lib/enums";
+
+function calculateTotalPages(total: number, itemsPerPage: number) {
+  return Math.ceil(total === 0 ? 1 : total / itemsPerPage);
+}
 export default async function Page({
   params: { lng },
   searchParams,
@@ -31,6 +37,14 @@ export default async function Page({
   if (searchParams.page === undefined) {
     searchParams.page = "1";
   }
+
+  const page = searchParams.page || "1";
+  const limit = searchParams.limit || "20";
+  const paramSort = searchParams.sort || sortEnum.DESC;
+
+  const keyword = searchParams.name;
+  const tagId = searchParams.tag;
+
   const queryParams = searchParams;
   const { t } = await translate(lng, "search");
 
@@ -41,26 +55,80 @@ export default async function Page({
       return searchFetchData(lng, queryParams);
     },
   );
+
   const dehydratedState = dehydrate(queryClient);
+  const maxPageDesktop = 10;
+  const maxPageMobile = 5;
+
+  // 유효성 검사: sort / 서버에서 수행
+  if (paramSort !== sortEnum.ASC && paramSort !== sortEnum.DESC) {
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set("sort", sortEnum.DESC);
+    redirect(`?${newParams.toString()}`);
+  }
+
+  const pagenation = (lng: string) => {
+    switch (lng) {
+      case "ko":
+        return `${calculateTotalPages(
+          data.totalCount,
+          Number(limit),
+        )} 페이지 중 ${page} 페이지`;
+      case "ja":
+        return `全${calculateTotalPages(data.totalCount, Number(limit))}ページ`;
+      case "en":
+        return `Page ${page} of ${calculateTotalPages(
+          data.totalCount,
+          Number(limit),
+        )}`;
+      default:
+        return `Page ${page} of ${calculateTotalPages(
+          data.totalCount,
+          Number(limit),
+        )}`;
+    }
+  };
 
   return (
-    <div>
+    <div className="pt-5">
       <Hydrate state={dehydratedState}>
         {data ? (
           <div>
-            <div className="">
+            <div className="pb-3">
               <div className="pb-3">
-                <h1 className="text-heading3-bold">{t("result")}</h1>
+                <h1 className="space-x-2 text-heading3-bold">
+                  <span className="text-gigas-700">
+                    '{keyword ? `${keyword}` : tagId ? `#${tagId}` : ""}'
+                  </span>
+                  <span>{t("result")}</span>
+                </h1>
               </div>
-              <div className="flex w-full justify-between self-center">
-                <h2 className="text-heading4-medium">
-                  {t("total-count")}: {data.totalCount}
-                </h2>
-                <SearchLimit lng={lng} />
+              <div className="flex w-full items-end justify-between">
+                <h2 className="text-heading4-medium">{data.totalCount}건</h2>
+                <div className="flex items-center justify-center space-x-6 text-small-medium">
+                  <SearchLimit lng={lng} />
+                  <SortCapsuleList lng={lng} searchParams={searchParams} />
+                </div>
               </div>
             </div>
             {data?.totalCount > 0 ? (
-              <Pagination total={data.totalCount} />
+              <>
+                <div className="flex justify-end sm:hidden md:hidden lg:hidden xl:hidden">
+                  <Pagination
+                    total={data.totalCount}
+                    maxPages={maxPageMobile}
+                  />
+                </div>
+                <div className="flex justify-end fold:hidden 3xs:hidden 2xs:hidden xs:hidden">
+                  <Pagination
+                    total={data.totalCount}
+                    maxPages={maxPageDesktop}
+                  />
+                </div>
+                <div className="flex justify-end pb-6 pt-3 text-small-medium">
+                  {pagenation(lng)}
+                </div>
+              </>
             ) : null}
             <CapsuleCards
               lng={lng}
@@ -69,7 +137,23 @@ export default async function Page({
               queryParams={queryParams}
             />
             {data?.totalCount > 0 ? (
-              <Pagination total={data.totalCount} />
+              <div className="pt-10">
+                <div className="flex justify-end sm:hidden md:hidden lg:hidden xl:hidden">
+                  <Pagination
+                    total={data.totalCount}
+                    maxPages={maxPageMobile}
+                  />
+                </div>
+                <div className="flex justify-end fold:hidden 3xs:hidden 2xs:hidden xs:hidden">
+                  <Pagination
+                    total={data.totalCount}
+                    maxPages={maxPageDesktop}
+                  />
+                </div>
+                <div className="flex justify-end pb-6 pt-3 text-small-medium">
+                  {pagenation(lng)}
+                </div>
+              </div>
             ) : null}
           </div>
         ) : (
