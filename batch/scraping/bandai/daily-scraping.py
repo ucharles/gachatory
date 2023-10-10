@@ -183,6 +183,7 @@ def bandai_capsule_toy_detail(product, idx=0):
 
     # 상품 정보 추출
     description = soup.find("div", class_="pg-productInfo__desc").text
+    date = soup.find("div", class_="pg-productInfo__date").text
 
     # 상품 대표 이미지가 존재하는지 확인
     # 반다이는 대표 이미지명에 _1이 붙어 있음
@@ -192,11 +193,13 @@ def bandai_capsule_toy_detail(product, idx=0):
         updated_image.remove(updated_product["img"])
 
     updated_product["detail_img"] = updated_image
+    updated_product["date"] = date.strip().replace("発売", "")
 
     updated_product["description"] = description.strip()
     updated_product["lng"] = "ja"
     updated_product["createdAt"] = datetime.utcnow().isoformat()
     updated_product["header"] = ""
+    updated_product["dateISO"] = ""
 
     return updated_product
 

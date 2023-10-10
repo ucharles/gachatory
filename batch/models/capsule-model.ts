@@ -16,6 +16,7 @@ export interface ICapsuleToy extends Document {
   newest?: boolean;
   display_img?: string;
   localization?: ILocalization[];
+  dateISO?: Date[];
 }
 
 export const capsuleToySchema = new Schema<ICapsuleToy>(
@@ -36,6 +37,7 @@ export const capsuleToySchema = new Schema<ICapsuleToy>(
         ref: "Localization",
       },
     ],
+    dateISO: [Date],
   },
   { timestamps: true }
 );
