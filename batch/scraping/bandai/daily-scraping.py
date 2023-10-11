@@ -27,6 +27,8 @@ from utils.crud_mongodb import (
     insert_updated_image,
 )
 
+from utils.date_convert_to_ISO import date_convert_to_iso
+
 # from utils.google_image_search import google_image_search
 
 
@@ -199,7 +201,7 @@ def bandai_capsule_toy_detail(product, idx=0):
     updated_product["lng"] = "ja"
     updated_product["createdAt"] = datetime.utcnow().isoformat()
     updated_product["header"] = ""
-    updated_product["dateISO"] = ""
+    updated_product["dateISO"] = date_convert_to_iso(updated_product["date"])
 
     return updated_product
 

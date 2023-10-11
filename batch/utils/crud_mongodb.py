@@ -49,7 +49,7 @@ def search_new_product(file_name):
     for product in product_list:
         capsule = CapsuleToy.objects(
             brand=product["brand"],
-            name=product["name"],
+            detail_url=product["detail_url"],
         ).first()
 
         if capsule:
@@ -60,6 +60,7 @@ def search_new_product(file_name):
                     continue
 
                 date = [product["date"]] + capsule["date"]
+                dateISO = [product["dateISO"]] + capsule["dateISO"]
                 new_product_list.append(
                     {
                         "brand": product["brand"],
@@ -112,6 +113,7 @@ def insert_new_product(file_name):
             if capsule:
                 # DB에 재판 날짜 정보 추가
                 capsule.update(date=product["date"])
+                capsule.update(dateISO=product["dateISO"])
                 log(product["brand"], product["name"], "", 0, "resale data update")
 
         # dict에 date_added가 없으면
@@ -133,6 +135,7 @@ def insert_new_product(file_name):
                 detail_url=product["detail_url"],
                 lng=product["lng"],
                 createdAt=product["createdAt"],
+                dateISO=[product["dateISO"]],
             )
             # DB에 저장
             capsule.save()
