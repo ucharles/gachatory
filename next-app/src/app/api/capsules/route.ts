@@ -79,7 +79,6 @@ export async function GET(request: Request) {
       })
         .skip((currentPage - 1) * perPage)
         .limit(perPage)
-        .sort(sortQuery)
         .populate([
           {
             path: "capsuleId",
