@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import re
 import sys
 import requests
@@ -185,7 +187,7 @@ def bandai_capsule_toy_detail(product, idx=0):
 
     # 상품 정보 추출
     description = soup.find("div", class_="pg-productInfo__desc").text
-    date = soup.find("div", class_="pg-productInfo__date").text
+    date = soup.find("div", class_="pg-productInfo__date").strip().text
 
     # 상품 대표 이미지가 존재하는지 확인
     # 반다이는 대표 이미지명에 _1이 붙어 있음
