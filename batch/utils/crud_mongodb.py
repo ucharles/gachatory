@@ -19,8 +19,8 @@ sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 
 
 # utils
-from write_file import write_file
-from log import log
+from utils.write_file import write_file
+from utils.log import log
 
 # models
 from models.capsule_toy import CapsuleToy, CapsuleTag
@@ -48,9 +48,7 @@ def search_new_product(file_name):
 
     for product in product_list:
         capsule = CapsuleToy.objects(
-            brand=product["brand"],
-            detail_url=product["detail_url"],
-        ).first()
+            Q(brand=product["brand"]) &( Q(name=product["name"]) | Q(detail_url=product["detail_url"]))).first()
 
         if capsule:
             if product["resale"] == True:
@@ -69,6 +67,7 @@ def search_new_product(file_name):
                         "detail_url": product["detail_url"],
                         "resale": True,
                         "date_added": True,
+                        "dateISO": dateISO,
                     }
                 )
 
@@ -105,9 +104,7 @@ def insert_new_product(file_name):
         if "date_added" in product:
             # DB를 검색하여 해당 상품이 존재하는지 확인
             capsule = CapsuleToy.objects(
-                brand=product["brand"],
-                name=product["name"],
-            )
+                Q(brand=product["brand"]) &( Q(name=product["name"]) | Q(detail_url=product["detail_url"]))).first()
 
             # 해당 상품이 존재하면
             if capsule:

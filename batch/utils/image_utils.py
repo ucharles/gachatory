@@ -4,6 +4,8 @@ import cv2
 import requests
 import numpy as np
 
+from . import log
+
 
 def save_img(img_url, location, img_name_init=""):
     img_name = img_url.split("/")[-1]
@@ -47,5 +49,6 @@ def compare_images(image1, image2):
     except:
         log("error", 0, "", 0, "img error" + image1 + ", " + image2)
         mse_value = 0
+        similarity = 0
     finally:
         return similarity
