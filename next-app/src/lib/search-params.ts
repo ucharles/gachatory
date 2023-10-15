@@ -15,6 +15,8 @@ export function searchParams(url: string) {
 
   const sort = params.get("sort");
 
+  const sortField = params.get("sortField");
+
   const lng = params.get("lng");
 
   const brand = params.get("brand");
@@ -84,6 +86,7 @@ export function searchParams(url: string) {
     lng,
     query,
     sort,
+    sortField,
     currentPage,
     perPage,
     showDetailImg,

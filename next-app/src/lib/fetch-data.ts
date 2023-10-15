@@ -13,7 +13,7 @@ export async function arrivalFetchData(
 
   const response = await fetch(
     API_URI +
-      `/api/capsules?lng=${lng}&startDate=${date}&limit=${perPageEnum.SMALL}&blankimg=1&sort=${sort}&page=${page}`,
+      `/api/capsules?lng=${lng}&startDate=${date}&limit=${perPageEnum.SMALL}&sort=${sort}&page=${page}`,
     {
       method: "GET",
       next: { revalidate: cacheTimeEnum.FIVE_MINUTES },
@@ -30,7 +30,8 @@ export async function searchFetchData(
   const params = new URLSearchParams(searchParams);
 
   const response = await fetch(
-    API_URI + `/api/capsules?lng=${lng}&showDetailImg=1&${params.toString()}`,
+    API_URI +
+      `/api/capsules?lng=${lng}&showDetailImg=1&sortField=date&${params.toString()}`,
     {
       method: "GET",
       next: { revalidate: cacheTimeEnum.FIVE_MINUTES },
