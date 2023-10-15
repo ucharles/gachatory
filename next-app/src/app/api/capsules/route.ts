@@ -32,6 +32,7 @@ export async function GET(request: Request) {
       lng,
       query,
       sort,
+      sortField,
       currentPage,
       perPage,
       showDetailImg,
@@ -43,11 +44,22 @@ export async function GET(request: Request) {
     dbConnect();
     // DB 검색하기
 
+    let sortQuery = {};
+
+    if (sortField === "date") {
+      sortQuery = {
+        dateISO: sort === sortEnum.ASC ? 1 : -1,
+        _id: sort === sortEnum.ASC ? 1 : -1,
+      };
+    } else {
+      sortQuery = { _id: sort === sortEnum.ASC ? 1 : -1 };
+    }
+
     const countCapsules = await CapsuleToy.countDocuments(query);
     const resultCapsules = await CapsuleToy.find(query)
       .skip((currentPage - 1) * perPage)
       .limit(perPage)
-      .sort({ _id: sort === sortEnum.ASC ? 1 : -1 })
+      .sort(sortQuery)
       .populate({
         path: "localization",
         model: Localization,
@@ -67,7 +79,7 @@ export async function GET(request: Request) {
       })
         .skip((currentPage - 1) * perPage)
         .limit(perPage)
-        .sort({ _id: sort === sortEnum.ASC ? 1 : -1 })
+        .sort(sortQuery)
         .populate([
           {
             path: "capsuleId",
@@ -143,6 +155,26 @@ export async function GET(request: Request) {
     }
 
     setDisplayImg(capsules, showDetailImg);
+    // capsules의 dateISO(배열로 구성된 날짜)를 sort를 기준으로 정렬하기
+    // sort가 dateISO일 때만 정렬하기
+    if (sortField === "date" && capsules?.length > 0) {
+      capsules.sort((a, b) => {
+        // dateISO가 존재할 때만 정렬하기
+        if (!a.dateISO || !b.dateISO) {
+          return 0;
+        }
+
+        const aDate = a.dateISO[0];
+        const bDate = b.dateISO[0];
+        if (aDate < bDate) {
+          return sort === sortEnum.ASC ? -1 : 1;
+        }
+        if (aDate > bDate) {
+          return sort === sortEnum.ASC ? 1 : -1;
+        }
+        return 0;
+      });
+    }
 
     const returnConut =
       locSearchCapsules?.length > 0 ? locTotalCount : countCapsules;

@@ -24,6 +24,7 @@ class CapsuleToy(DynamicDocument):
     description = StringField()
     localization = ListField(StringField())
     tagId = ListField(ReferenceField("CapsuleTag"))
+    dateISO = ListField(DateTimeField())
     createdAt = DateTimeField()
     updatedAt = DateTimeField()
 
