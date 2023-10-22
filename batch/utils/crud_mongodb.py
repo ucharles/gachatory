@@ -48,7 +48,9 @@ def search_new_product(file_name):
 
     for product in product_list:
         capsule = CapsuleToy.objects(
-            Q(brand=product["brand"]) &( Q(name=product["name"]) | Q(detail_url=product["detail_url"]))).first()
+            Q(brand=product["brand"])
+            & (Q(name=product["name"]) | Q(detail_url=product["detail_url"]))
+        ).first()
 
         if capsule:
             if product["resale"] == True:
@@ -104,7 +106,9 @@ def insert_new_product(file_name):
         if "date_added" in product:
             # DB를 검색하여 해당 상품이 존재하는지 확인
             capsule = CapsuleToy.objects(
-                Q(brand=product["brand"]) &( Q(name=product["name"]) | Q(detail_url=product["detail_url"]))).first()
+                Q(brand=product["brand"])
+                & (Q(name=product["name"]) | Q(detail_url=product["detail_url"]))
+            ).first()
 
             # 해당 상품이 존재하면
             if capsule:
@@ -269,7 +273,7 @@ def search_capsule_toy_and_update_tag():
         alias="default",
     )
 
-    capsule_tags = CapsuleTag.objects(linkCount=0)
+    capsule_tags = CapsuleTag.objects()
     for capsule_tag in capsule_tags:
         count = 0
         # print("capsule_tag:", capsule_tag.to_mongo().to_dict())
@@ -279,10 +283,15 @@ def search_capsule_toy_and_update_tag():
         print("tag_info:", tag_info)
 
         capsule_toys = CapsuleToy.objects(
-            Q(name__regex=regex) | Q(description__regex=regex)
+            Q(tagId__nin=tag_info["_id"])
+            & (Q(name__regex=regex) | Q(description__regex=regex))
         )
 
         for capsule_toy in capsule_toys:
+            # if tag_info["_id"]가 capsule_toy["tagId"]에 이미 존재하면
+            if tag_info["_id"] in capsule_toy["tagId"]:
+                continue
+
             capsule_toy.update(
                 push__tagId=tag_info["_id"], updatedAt=datetime.utcnow().isoformat()
             )
@@ -294,8 +303,26 @@ def search_capsule_toy_and_update_tag():
             print("count:", count)
 
 
+def search_capsule_toy_in_duplicate_tag():
+    connect(
+        db=database_name,
+        host=database_url,
+        alias="default",
+    )
+
+    capsule_toys = CapsuleToy.objects()
+
+    for capsule_toy in capsule_toys:
+        # if capsule_toy["tagId"]에 중복된 값이 있으면
+        if len(capsule_toy["tagId"]) != len(set(capsule_toy["tagId"])):
+            # 중복된 값 제거
+            capsule_toy.update(tagId=list(set(capsule_toy["tagId"])))
+            print("capsule_toy:", capsule_toy.to_mongo().to_dict()["name"])
+
+
 if __name__ == "__main__":
     # insert_new_product("new_product.json")
     # insert_updated_image("updated_image.json")
     # insert_new_tag("E:/Git/gachatory/batch/tagging/tag-list-translated-edited-20230915.json")
-    search_capsule_toy_and_update_tag()
+    # search_capsule_toy_and_update_tag()
+    search_capsule_toy_in_duplicate_tag()
