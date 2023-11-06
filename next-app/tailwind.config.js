@@ -54,6 +54,21 @@ module.exports = {
           fontWeight: "600",
         },
       ],
+      "heading2.5-bold": [
+        "28px",
+        {
+          lineHeight: "140%",
+          fontWeight: "700",
+        },
+      ],
+      "heading2.5-semibold": [
+        "28px",
+        {
+          lineHeight: "140%",
+          fontWeight: "600",
+        },
+      ],
+
       "heading3-bold": [
         "24px",
         {
@@ -212,7 +227,7 @@ module.exports = {
         "light-2": "#EFEFEF",
         "light-3": "#7878A3",
         "light-4": "#5C5C7B",
-        "gray-1": "#697C89",
+        "bg-footer": "#F0EFF3",
         glassmorphism: "rgba(16, 16, 18, 0.60)",
         gigas: {
           50: "#f0f2fd",

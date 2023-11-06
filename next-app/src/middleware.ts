@@ -12,7 +12,9 @@ acceptLanguage.languages(languages);
 // a negative lookahead to exclude the api routes, the static folder, the image folder, the assets folder, the favicon and the service worker
 export const config = {
   // matcher: '/:lng*'
-  matcher: ["/((?!api|_next/static|_next/image|assets|favicon.ico|sw.js).*)"],
+  matcher: [
+    "/((?!api|auth|_next/static|_next/image|assets|favicon.ico|sw.js).*)",
+  ],
 };
 
 const cookieName = "i18next";

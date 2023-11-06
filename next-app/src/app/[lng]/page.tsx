@@ -47,7 +47,7 @@ export default async function Page({
   const date = paramDate;
   const sort = paramSort;
 
-  const cacheParams = { date: date, sort: sort };
+  const cacheParams = { date: date, sort: sort, lng: lng };
 
   // URL의 Search Parameter를 가져옴
   // { param1: "value1", param2: "value2" ...}
@@ -79,8 +79,8 @@ export default async function Page({
   console.log(cacheParams);
 
   return (
-    <div className="">
-      <div className="z-30 bg-background-white/95 py-4 pb-6">
+    <main>
+      <div className="z-30 bg-background-white/95 pb-6">
         <ReleaseDateList lng={lng} searchParams={searchParams} />
         <div className="flex justify-between text-small-medium">
           <div className="fold:hidden">
@@ -95,10 +95,10 @@ export default async function Page({
       <InfiniteCapsuleCards
         lng={lng}
         queryParams={cacheParams}
-        queryKey={["arrivalCapsules", lng, cacheParams]}
+        queryKey={["arrivalCapsules", cacheParams]}
       />
       {/* </Hydrate> */}
       <MoveOnTopAndDisplayDate date={date} displayDate={true} />
-    </div>
+    </main>
   );
 }

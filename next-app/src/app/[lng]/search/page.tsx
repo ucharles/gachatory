@@ -23,6 +23,7 @@ import { searchFetchData } from "@/lib/fetch-data";
 import MoveOnTopAndDisplayDate from "../components/MoveOnTopAndDisplayDate";
 import SortCapsuleList from "../components/SortCapsuleList";
 import { sortEnum } from "@/lib/enums";
+import { cookies } from "next/headers";
 
 function calculateTotalPages(total: number, itemsPerPage: number) {
   return Math.ceil(total === 0 ? 1 : total / itemsPerPage);
@@ -46,13 +47,16 @@ export default async function Page({
   const tagId = searchParams.tag;
 
   const queryParams = searchParams;
+  const cacheParams = { ...queryParams, lng: lng };
   const { t } = await translate(lng, "search");
+
+  const cookie = cookies();
 
   const queryClient = getQueryClient();
   const data = await queryClient.fetchQuery(
-    ["searchCapsules", queryParams, lng],
+    ["searchCapsules", cacheParams],
     () => {
-      return searchFetchData(lng, queryParams);
+      return searchFetchData(lng, queryParams, cookie);
     },
   );
 
@@ -90,7 +94,7 @@ export default async function Page({
   };
 
   return (
-    <div className="pt-5">
+    <div>
       <Hydrate state={dehydratedState}>
         {data ? (
           <div>
@@ -132,7 +136,7 @@ export default async function Page({
             ) : null}
             <CapsuleCards
               lng={lng}
-              queryKey={["searchCapsules", queryParams, lng]}
+              queryKey={["searchCapsules", cacheParams]}
               pageName="search"
               queryParams={queryParams}
             />

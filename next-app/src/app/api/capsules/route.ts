@@ -16,7 +16,7 @@
 // 모델 이름이 겹쳐서 생기는 문제?
 // https://stackoverflow.com/questions/28688437/mongoose-overwritemodelerror-cannot-overwrite-model-once-compiled
 
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import dbConnect from "@/lib/db/db-connect";
 import CapsuleToy, { ICapsuleToy } from "@/lib/models/capsule-model";
 import Localization, { ILocalization } from "@/lib/models/localization-model";
@@ -24,9 +24,12 @@ import CapsuleTag from "@/lib/models/capsule-tag-model";
 import { searchParams } from "@/lib/search-params";
 import { dateTranslator } from "@/lib/date-converter";
 import { setDisplayImg } from "@/lib/set-display-img";
+import { convertToObjectId } from "@/lib/db/convertObjectId";
+import Like, { ILike } from "@/lib/models/like-model";
+import { getToken } from "next-auth/jwt";
 import { sortEnum } from "@/lib/enums";
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   try {
     const {
       lng,
@@ -42,6 +45,7 @@ export async function GET(request: Request) {
 
     // DB 연결하기
     dbConnect();
+
     // DB 검색하기
 
     let sortQuery = {};
@@ -153,6 +157,46 @@ export async function GET(request: Request) {
       });
     }
 
+    // JWT 토큰에서 유저 정보 가져오기
+    let token;
+    try {
+      token = await getToken({ req: request });
+    } catch (error) {
+      console.error("JWT Token Error: ", error);
+      return NextResponse.json({
+        status: 500,
+        message: "Internal Server Error",
+      });
+    }
+
+    if (token) {
+      // 좋아요 여부 확인하기
+      const capsuleIds = capsules.map((capsule) =>
+        convertToObjectId(capsule._id),
+      );
+
+      const userId = token.sub;
+
+      let likeCapsules: ILike[] = [];
+      try {
+        likeCapsules = await Like.find({
+          userId: convertToObjectId(userId!),
+          capsuleId: { $in: capsuleIds },
+        });
+      } catch (error) {
+        console.error(error);
+      }
+
+      capsules.forEach((capsule) => {
+        capsule.like = false;
+        likeCapsules.forEach((like) => {
+          if (like.capsuleId.toString() === capsule._id.toString()) {
+            capsule.like = like.state;
+          }
+        });
+      });
+    }
+
     setDisplayImg(capsules, showDetailImg);
     // capsules의 dateISO(배열로 구성된 날짜)를 sort를 기준으로 정렬하기
     // sort가 dateISO일 때만 정렬하기
@@ -191,14 +235,3 @@ export async function GET(request: Request) {
     );
   }
 }
-// else if (req.method === "POST") {
-//     try {
-//         dbConnect();
-//         // 모델 가져오기
-//         const data = req.body;
-//         const { title, content, date } = data;
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).json({ message: "Internal server error" });
-//     }
-// }

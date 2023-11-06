@@ -1,11 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import { Trans } from "react-i18next/TransWithoutContext";
 import { languages } from "../../../i18n/settings";
 import { TFunction } from "i18next";
+import bigLogo from "../../../../../public/images/pnglogo.png";
 
 interface FooterBaseProps {
   t: TFunction;
@@ -18,29 +20,49 @@ export function FooterBase({ t, lng }: FooterBaseProps) {
   const searchParams = useSearchParams();
   // extract pathname index 4~end
   const otherPath = pathname.split("/").slice(2).join("/");
-  return (
-    <footer className="flex justify-end py-10">
-      <div className="container w-[1200px] text-end">
-        <Trans i18nKey="languageSwitcher" t={t} values={{ lng }}>
-          Switch from <strong>{lng.toUpperCase()}</strong> to:{" "}
-        </Trans>
 
-        {languages
-          .filter((l) => lng !== l)
-          .map((l, index) => {
-            return (
-              <span key={l}>
-                {index > 0 && " or "}
-                <Link
-                  href={`/${l}/${otherPath}${
-                    searchParams ? "?" + searchParams.toString() : null
-                  }`}
-                >
+  return (
+    <footer className="bg-bg-footer flex justify-center pb-16 pt-10">
+      <div className="w-[1200px] space-y-5 sm:px-12 md:px-12 lg:px-12 fold:px-12 3xs:px-12 2xs:px-12 xs:px-12">
+        <article>
+          <Link href={`/${lng}`}>
+            <Image
+              priority
+              src={bigLogo}
+              alt="logo"
+              width={200}
+              height={32}
+              className="h-auto w-44"
+            />
+          </Link>
+        </article>
+        <article className="flex space-x-4">
+          <div>
+            <Trans i18nKey="languageSwitcher" t={t} values={{ lng }}>
+              LNG:
+            </Trans>
+          </div>
+          <div>
+            <select
+              id="languageSwitcher"
+              value={lng}
+              onChange={(e) => {
+                const selectedLng = e.target.value;
+                const href = `/${selectedLng}/${otherPath}${
+                  searchParams ? "?" + searchParams.toString() : ""
+                }`;
+                window.location.href = href; // 페이지 리디렉션
+              }}
+              className="border-none bg-transparent"
+            >
+              {languages.map((l) => (
+                <option key={l} value={l}>
                   {l.toUpperCase()}
-                </Link>
-              </span>
-            );
-          })}
+                </option>
+              ))}
+            </select>
+          </div>
+        </article>
       </div>
     </footer>
   );

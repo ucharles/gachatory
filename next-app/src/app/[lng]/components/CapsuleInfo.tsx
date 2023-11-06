@@ -9,6 +9,9 @@ import { translate } from "@/app/i18n/client";
 import ImageGallery from "./image-gallery";
 import DisplayCapsuleTags from "./display-capsule-tag";
 import { capsuleFetchData } from "@/lib/fetch-data";
+import { useSession } from "next-auth/react";
+import LoginAlert from "./LoginAlert";
+import SuccessNoti from "./SuccessNoti";
 
 function CapsuleInfo({
   lng,
@@ -20,8 +23,11 @@ function CapsuleInfo({
   id: string;
 }) {
   const { t } = translate(lng, "translation");
+  const { data: session } = useSession({
+    required: false,
+    onUnauthenticated() {},
+  });
   const queryClient = useQueryClient();
-  const [like, setLike] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
 
   const { data, isLoading, isError } = useQuery(
@@ -30,7 +36,8 @@ function CapsuleInfo({
       const data: ICapsuleToy = await queryClient.fetchQuery(
         ["capsule", id, lng],
         () => {
-          capsuleFetchData(id, lng);
+          console.log("capsuleFetchData");
+          return capsuleFetchData(id, lng);
         },
       );
       return data;
@@ -42,9 +49,98 @@ function CapsuleInfo({
     },
   );
 
+  const [isLiked, setIsLiked] = useState(data?.like ?? false);
+  const [isLikeLoading, setIsLikeLoading] = useState(false);
+  const [isLogginAlert, setIsLogginAlert] = useState(false);
+
+  const getMostRecentData = () => {
+    const matchingQueries = queryClient.getQueriesData(["arrivalCapsules"]);
+
+    if (matchingQueries.length > 0) {
+      const mostRecentQuery = matchingQueries[0];
+      return mostRecentQuery;
+    }
+
+    return null;
+  };
+
   function handleLike() {
-    setLike(!like);
+    // 버튼을 누르면 로그인이 되어있는지 확인하고
+    // 로그인이 되어있으면 좋아요를 누른다.
+    // 로그인 된 상태에서 좋아요를 누른 경우, 1초간 버튼을 비활성화한다.
+
+    if (session) {
+      if (isLikeLoading) return;
+      setIsLikeLoading(true);
+      setTimeout(() => {
+        setIsLikeLoading(false);
+      }, 1000);
+
+      setIsLiked(!isLiked);
+
+      queryClient.setQueryData(queryKey, (oldData: any) => {
+        return {
+          ...oldData,
+          like: !oldData.like,
+        };
+      });
+
+      fetchLike();
+
+      const mostRecentData = getMostRecentData();
+      if (mostRecentData) {
+        const mostRecentDataQueryKey = mostRecentData[0];
+
+        queryClient.setQueryData(mostRecentDataQueryKey, (oldData: any) => {
+          const newPages = oldData.pages.map((page: any) => {
+            return {
+              ...page,
+              capsules: page.capsules.map((capsule: any) => {
+                if (capsule._id === id) {
+                  return {
+                    ...capsule,
+                    like: !capsule.like,
+                  };
+                }
+                return capsule;
+              }),
+            };
+          });
+          return {
+            ...oldData,
+            pages: newPages,
+          };
+        });
+      }
+    } else {
+      // 로그인이 되어있지 않으면 로그인을 하라는 알림을 띄운다.
+      // 2초 동안 입력을 받지 않는다.
+      if (!isLogginAlert) {
+        setIsLogginAlert(true);
+        setTimeout(() => {
+          setIsLogginAlert(false);
+        }, 2000);
+      }
+    }
   }
+
+  const fetchLike = async () => {
+    if (!session) return;
+
+    setTimeout(async () => {
+      const response = await fetch(`/api/like`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          capsuleId: id,
+        }),
+      });
+      const data = await response.json();
+      console.log(data);
+    }, 500);
+  };
 
   async function handleLinkCopy() {
     await navigator.clipboard.writeText(window.location.href);
@@ -52,21 +148,32 @@ function CapsuleInfo({
     // 복사가 성공하면 isCopied 상태를 true로 업데이트합니다.
     if (!isCopied) {
       setIsCopied(true);
+      // 2초 후에 isCopied를 false로 다시 설정하여 풍선이 사라지게 합니다.
+      setTimeout(() => {
+        setIsCopied(false);
+      }, 2000);
     }
+  }
 
-    // 2초 후에 isCopied를 false로 다시 설정하여 풍선이 사라지게 합니다.
-    setTimeout(() => {
-      setIsCopied(false);
-    }, 2000);
+  async function handleLikeList() {
+    // 좋아요 리스트로 이동
+    if (session) {
+    } else {
+      // 로그인이 되어있지 않으면 로그인을 하라는 알림을 띄운다.
+      // 2초 동안 입력을 받지 않는다.
+      if (!isLogginAlert) {
+        setIsLogginAlert(true);
+        setTimeout(() => {
+          setIsLogginAlert(false);
+        }, 2000);
+      }
+    }
   }
 
   return (
     <>
-      {isCopied && (
-        <div className="fixed bottom-7 left-1/2 z-50 w-max -translate-x-1/2 rounded-full bg-black px-5 py-2 text-base-medium text-white shadow-md">
-          {t("link-copied")}
-        </div>
-      )}
+      <LoginAlert lng={lng} isDisplay={isLogginAlert} />
+      <SuccessNoti lng={lng} isDisplay={isCopied} msg={"link-copied"} />
       {isLoading ? (
         <div className="flex h-96 items-center justify-center">
           <div className="h-32 w-32 animate-spin rounded-full border-b-2 border-t-2 border-gray-900"></div>
@@ -179,9 +286,10 @@ function CapsuleInfo({
             <div className="flex h-14 space-x-1.5">
               <button
                 className={`h-full basis-2/3 rounded-md border border-gigas-600 hover:shadow-md ${
-                  like ? "bg-gigas-700" : ""
+                  isLiked ? "bg-gigas-700" : ""
                 }`}
                 onClick={handleLike}
+                disabled={isLikeLoading}
               >
                 <div className="flex items-center justify-center space-x-2">
                   <svg
@@ -190,6 +298,9 @@ function CapsuleInfo({
                     width="24"
                     height="24"
                     viewBox="0 0 24 24"
+                    className={`transition-transform duration-300 ${
+                      isLiked ? "animate-heartBounce" : ""
+                    }`}
                   >
                     <path
                       id="패스_14"
@@ -202,26 +313,26 @@ function CapsuleInfo({
                       data-name="패스 15"
                       d="M12,21.35l-1.45-1.32C5.4,15.36,2,12.28,2,8.5A5.447,5.447,0,0,1,7.5,3,5.988,5.988,0,0,1,12,5.09,5.988,5.988,0,0,1,16.5,3,5.447,5.447,0,0,1,22,8.5c0,3.78-3.4,6.86-8.55,11.54Z"
                       transform="translate(0 0)"
-                      fill={like ? "#fff" : "#6757d4"}
+                      fill={isLiked ? "#fff" : "#6757d4"}
                     />
                   </svg>
                   <p
                     className={`text-base-medium  ${
-                      like ? "text-white" : "text-gigas-700"
+                      isLiked ? "text-white" : "text-gigas-700"
                     }`}
                   >
                     {t("like")}
                   </p>
                 </div>
               </button>
-              <Link href="" className="basis-1/3">
+              <button className="basis-1/3" onClick={handleLikeList}>
                 <div className="flex h-full items-center justify-center rounded-md border border-gray-400 hover:shadow-md fold:hidden 3xs:hidden 2xs:hidden xs:hidden">
                   <p className="text-gray-400">{t("go-to-like-list")}</p>
                 </div>
                 <div className="flex h-full items-center justify-center rounded-md border border-gray-400 hover:shadow-md sm:hidden md:hidden lg:hidden xl:hidden">
                   <p className="text-gray-400">{t("go-to-like")}</p>
                 </div>
-              </Link>
+              </button>
             </div>
             <div className="space-y-4 pt-6 text-small-medium text-gray-800 sm:hidden md:hidden lg:hidden xl:hidden">
               <div className="flex justify-between">

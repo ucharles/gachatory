@@ -1,7 +1,6 @@
 "use client";
 
-import React from "react";
-import { getCurrentMonthForSearch } from "@/lib/search-date-string";
+import React, { useState, useEffect } from "react";
 
 function MoveOnTopAndDisplayDate({
   date,
@@ -10,13 +9,44 @@ function MoveOnTopAndDisplayDate({
   date?: string;
   displayDate?: boolean;
 }) {
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
   // 클릭시 스크롤바를 맨 위로 이동
   function handleClick() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      if (currentScrollY > lastScrollY) {
+        // 스크롤이 내려감
+        setIsVisible(false);
+      } else {
+        // 스크롤이 올라감
+        setIsVisible(true);
+      }
+
+      // 현재 스크롤 위치를 이전 스크롤 위치로 저장
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    // 컴포넌트 unmount 시 이벤트 리스너 제거
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [lastScrollY]);
+
   return (
-    <div className="fixed bottom-32 right-0 z-50 rounded-l-lg border bg-background-white opacity-90  fold:bottom-16 3xs:bottom-16">
+    <div
+      className={`fixed bottom-32 right-0 z-50 rounded-l-lg border bg-background-white fold:bottom-16 3xs:bottom-16 ${
+        isVisible ? "opacity-85" : "opacity-0"
+      } transition-opacity duration-300`}
+    >
       <div className="divide-y">
         <div className="group">
           <button

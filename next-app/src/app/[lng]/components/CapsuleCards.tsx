@@ -27,31 +27,7 @@ function CapsuleCards({
   const { data, isLoading, isError } = useQuery(
     queryKey,
     async () => {
-      let data;
-      if (pageName === "arrival" && queryParams) {
-        const previousData = queryClient.getQueryData([
-          "arrivalCapsules",
-          lng,
-          queryParams,
-        ]);
-        if (previousData) {
-          data = previousData;
-        } else {
-          data = await arrivalFetchData(lng, queryParams);
-        }
-      } else if (pageName === "search" && queryParams) {
-        const previousData = queryClient.getQueryData([
-          "searchCapsules",
-          queryParams,
-          lng,
-        ]);
-        if (previousData) {
-          data = previousData;
-        } else {
-          data = await searchFetchData(lng, queryParams);
-        }
-      }
-      return data;
+      return searchFetchData(lng, queryParams);
     },
     {
       cacheTime: cacheTimeEnum.FIVE_MINUTES * 1000,
@@ -83,20 +59,25 @@ function CapsuleCards({
               <div>
                 <div className="pb-2 pt-4">
                   <Link href={`/${lng}/capsule/${capsule._id}`}>
-                    {/* <p className="inline-block text-small-regular text-gray-600">
-                    {capsule.date}
-                  </p> */}
+                    <p className="inline-block text-small-regular text-gray-600">
+                      {capsule.date[0]}
+                    </p>
                     <h1 className="max-lines-3 break-words text-body-bold text-gray-800 3xs:text-base-semibold">
                       {capsule.name}
                     </h1>
                   </Link>
                 </div>
                 <div className="flex flex-row justify-between">
-                  <div className="flex space-x-2 text-subtle-medium text-gray-500">
-                    <LikeButton like={false} />
-                  </div>
                   <div className="truncate-70 fold:invisible">
                     <DisplayCapsuleOneTag tags={capsule.tagId} lng={lng} />
+                  </div>
+                  <div className="flex space-x-2 text-subtle-medium text-gray-500">
+                    <LikeButton
+                      lng={lng}
+                      like={capsule.like ?? false}
+                      capsuleId={capsule._id}
+                      queryKey={queryKey}
+                    />
                   </div>
                 </div>
               </div>

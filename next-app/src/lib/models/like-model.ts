@@ -1,18 +1,18 @@
 import mongoose, { Document, Schema } from "mongoose";
 
 export interface ILike extends Document {
-  userId: string;
-  capsuleId: string;
+  userId: mongoose.Types.ObjectId;
+  capsuleId: mongoose.Types.ObjectId;
   state: boolean;
 }
 
 export const likeSchema = new Schema<ILike>(
   {
-    userId: [{ type: mongoose.Types.ObjectId, ref: "User" }],
-    capsuleId: [{ type: mongoose.Types.ObjectId, ref: "CapsuleToy" }],
+    userId: { type: Schema.Types.ObjectId, ref: "User" },
+    capsuleId: { type: Schema.Types.ObjectId, ref: "CapsuleToy" },
     state: Boolean,
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const Like = mongoose.models.Like || mongoose.model("Like", likeSchema);

@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
 import { ICapsuleToy } from "@/lib/models/capsule-model";
 import { arrivalFetchData } from "@/lib/fetch-data";
 import { perPageEnum } from "@/lib/enums";
@@ -88,11 +89,16 @@ function InfiniteCapsuleCards({
                       </Link>
                     </div>
                     <div className="flex h-8 flex-row justify-between">
-                      <div className="flex text-subtle-medium text-gray-500">
-                        <LikeButton like={false} />
-                      </div>
                       <div className="truncate-70 fold:invisible">
                         <DisplayCapsuleOneTag tags={capsule.tagId} lng={lng} />
+                      </div>
+                      <div className="flex text-subtle-medium text-gray-500">
+                        <LikeButton
+                          lng={lng}
+                          like={capsule.like ?? false}
+                          capsuleId={capsule._id}
+                          queryKey={queryKey}
+                        />
                       </div>
                     </div>
                   </div>

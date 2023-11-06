@@ -6,6 +6,7 @@ import localFont from "next/font/local";
 import Navbar from "@/app/[lng]/components/navbar";
 import { Footer } from "@/app/[lng]/components/Footer/client";
 import TenstackProvider from "./components/Providers/TenstackProvider";
+import { AuthProvider } from "./components/Providers/AuthProvider";
 
 import "@/app/global.css";
 
@@ -61,11 +62,13 @@ export default function RootLayout({
         />
       </head>
       <body className={`${font} ${noto.variable} relative bg-background-white`}>
-        <TenstackProvider>
-          <Navbar lng={lng} />
-          <div className="container w-[1200px]">{children}</div>
-          <Footer lng={lng} />
-        </TenstackProvider>
+        <AuthProvider>
+          <TenstackProvider>
+            <Navbar lng={lng} />
+            <div className="container mb-16 mt-5 w-[1200px]">{children}</div>
+            <Footer lng={lng} />
+          </TenstackProvider>
+        </AuthProvider>
       </body>
     </html>
   );

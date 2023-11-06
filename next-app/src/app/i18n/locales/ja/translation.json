@@ -14,5 +14,6 @@
   "date-explain": "*メーカーの事情により発売日が変更される可能性があります",
   "brand": "メーカー",
   "product-info": "Product Info | 製品情報",
-  "link-copied": "リンクがコピーされました"
+  "link-copied": "リンクがコピーされました",
+  "login-required": "ログインが必要です"
 }

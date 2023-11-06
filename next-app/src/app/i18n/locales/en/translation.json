@@ -14,5 +14,6 @@
   "date-explain": "*Depending on the manufacturer, release dates are subject to change.",
   "brand": "Manufacturer",
   "product-info": "Product Info",
-  "link-copied": "Link Copied"
+  "link-copied": "Link Copied",
+  "login-required": "Login Required"
 }
