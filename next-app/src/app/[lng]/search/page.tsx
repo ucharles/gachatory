@@ -22,7 +22,8 @@ import CapsuleCards from "../components/CapsuleCards";
 import { searchFetchData } from "@/lib/fetch-data";
 import MoveOnTopAndDisplayDate from "../components/MoveOnTopAndDisplayDate";
 import SortCapsuleList from "../components/SortCapsuleList";
-import { sortEnum } from "@/lib/enums";
+import { perPageEnum, sortEnum } from "@/lib/enums";
+import { cookies } from "next/headers";
 
 function calculateTotalPages(total: number, itemsPerPage: number) {
   return Math.ceil(total === 0 ? 1 : total / itemsPerPage);
@@ -34,10 +35,6 @@ export default async function Page({
   params: { lng: string };
   searchParams: Record<string, string>;
 }) {
-  if (searchParams.page === undefined) {
-    searchParams.page = "1";
-  }
-
   const page = searchParams.page || "1";
   const limit = searchParams.limit || "20";
   const paramSort = searchParams.sort || sortEnum.DESC;
@@ -45,8 +42,50 @@ export default async function Page({
   const keyword = searchParams.name;
   const tagId = searchParams.tag;
 
+  // 유효성 검사: sort / 서버에서 수행
+  if (
+    paramSort !== undefined &&
+    paramSort !== "" &&
+    paramSort !== sortEnum.ASC &&
+    paramSort !== sortEnum.DESC
+  ) {
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set("sort", sortEnum.DESC);
+    redirect(`?${newParams.toString()}`);
+  }
+  // 유효성 검사: page / 서버에서 수행
+  if (page !== undefined && page !== "" && parseInt(page) < 1) {
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set("page", "1");
+    redirect(`?${newParams.toString()}`);
+  }
+  // 유효성 검사: limit / 서버에서 수행
+  if (
+    limit !== undefined &&
+    limit !== "" &&
+    parseInt(limit) !== perPageEnum.SMALL &&
+    parseInt(limit) !== perPageEnum.MEDIUM &&
+    parseInt(limit) !== perPageEnum.LARGE
+  ) {
+    let limitString = "20";
+    if (parseInt(limit) < perPageEnum.MEDIUM) {
+      // limit < 40 => 20
+      limitString = perPageEnum.SMALL.toString();
+    } else if (parseInt(limit) < perPageEnum.LARGE) {
+      // limit < 60 => 40
+      limitString = perPageEnum.MEDIUM.toString();
+    } else {
+      // limit > 60 => 60
+      limitString = perPageEnum.LARGE.toString();
+    }
+
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set("limit", limitString);
+    redirect(`?${newParams.toString()}`);
+  }
+
+  // 유효성 검사 후에 쿼리 파라미터를 설정
   const queryParams = searchParams;
-  const { t } = await translate(lng, "search");
 
   const queryClient = getQueryClient();
   const data = await queryClient.fetchQuery(
@@ -56,16 +95,22 @@ export default async function Page({
     },
   );
 
+  // data fetch 후 유효성 검사: page
+  // 최대 페이지를 넘어가면 마지막 페이지로 이동
+  if (parseInt(page) > calculateTotalPages(data.totalCount, Number(limit))) {
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set(
+      "page",
+      calculateTotalPages(data.totalCount, Number(limit)).toString(),
+    );
+    redirect(`?${newParams.toString()}`);
+  }
+
+  const { t } = await translate(lng, "search");
+
   const dehydratedState = dehydrate(queryClient);
   const maxPageDesktop = 10;
   const maxPageMobile = 5;
-
-  // 유효성 검사: sort / 서버에서 수행
-  if (paramSort !== sortEnum.ASC && paramSort !== sortEnum.DESC) {
-    const newParams = new URLSearchParams(searchParams);
-    newParams.set("sort", sortEnum.DESC);
-    redirect(`?${newParams.toString()}`);
-  }
 
   const pagenation = (lng: string) => {
     switch (lng) {
