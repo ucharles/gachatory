@@ -16,9 +16,28 @@ export default function Pagination({ total, maxPages }: PaginationProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const currentPage = Number(searchParams.get("page")) || 1;
-  const itemsPerPage = Number(searchParams.get("limit")) || perPageEnum.SMALL;
-  const totalPages = Math.ceil(total === 0 ? 1 : total / itemsPerPage);
+  let tempPage = searchParams.get("page");
+  if (
+    tempPage === undefined ||
+    tempPage === "" ||
+    parseInt(tempPage || "0") < 1
+  ) {
+    tempPage = "1";
+  }
+
+  let tempLimit = searchParams.get("limit");
+  if (
+    tempLimit === undefined ||
+    tempLimit === "" ||
+    parseInt(tempLimit || "0") < perPageEnum.SMALL
+  ) {
+    tempLimit = "20";
+  }
+
+  const currentPage = Number(tempPage);
+  const itemsPerPage = Number(tempLimit);
+  const totalItems = total === 0 ? 1 : total;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
   const maxPagesToShow = maxPages || 5;
 
   const [startPage, setStartPage] = useState(currentPage);
