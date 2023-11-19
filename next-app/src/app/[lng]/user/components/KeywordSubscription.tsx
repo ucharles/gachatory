@@ -1,4 +1,7 @@
-export default function KeywordSubscription() {
+import { translate } from "@/app/i18n";
+
+export default async function KeywordSubscription({ lng }: { lng: string }) {
+  const { t } = await translate(lng, "translation");
   return (
     <div className="relative">
       <div className="absolute z-10 h-full w-full rounded-xl bg-slate-300 bg-opacity-50">

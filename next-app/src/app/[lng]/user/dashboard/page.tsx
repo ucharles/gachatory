@@ -11,7 +11,7 @@ export default async function Page({
     <main className="w-full space-y-5">
       <RecentLikeList lng={lng} searchParams={searchParams} />
       <div className="p-2"></div>
-      <KeywordSubscription />
+      {/* <KeywordSubscription lng={lng}/> */}
     </main>
   );
 }
