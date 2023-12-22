@@ -4,14 +4,13 @@
 
 import { NextResponse, NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
-import Like from "@/lib/models/like-model";
+import Like, { ILike } from "@/lib/models/like-model";
 import { convertToObjectId } from "@/lib/db/convertObjectId";
 import CapsuleToy from "@/lib/models/capsule-model";
 import Localization, { ILocalization } from "@/lib/models/localization-model";
 import CapsuleTag from "@/lib/models/capsule-tag-model";
 import { dateTranslator } from "@/lib/date-converter";
-
-const IMAGE_SERVER_URL = process.env.IMAGE_SERVER_URL;
+import { editLikes } from "./util-likes";
 
 export async function GET(request: NextRequest) {
   // 유저 확인
@@ -53,7 +52,7 @@ export async function GET(request: NextRequest) {
   }
 
   // 좋아요 객체가 있는지 확인
-  let likes;
+  let likes: ILike[] = [];
   try {
     likes = await Like.find({
       userId: convertToObjectId(userId),
@@ -81,30 +80,7 @@ export async function GET(request: NextRequest) {
   }
 
   // 캡슐 정보 편집
-  likes = likes.map((like) => {
-    const plainLike = like.toObject(); // convert Mongoose document to plain JavaScript object
-
-    if (
-      plainLike.capsuleId.img === "" &&
-      plainLike.capsuleId.detail_img.length !== 0
-    ) {
-      plainLike.capsuleId.display_img = `${IMAGE_SERVER_URL}${plainLike.capsuleId.detail_img[0]}`;
-    } else {
-      plainLike.capsuleId.display_img = `${IMAGE_SERVER_URL}${plainLike.capsuleId.img}`;
-    }
-    plainLike.capsuleId.date = plainLike.capsuleId.date?.map((date: string) => {
-      return dateTranslator(date, lng);
-    });
-    plainLike.capsuleId.localization?.forEach((language: ILocalization) => {
-      if (language.lng === lng) {
-        plainLike.capsuleId.name = language.name;
-        plainLike.capsuleId.description = language.description;
-        plainLike.capsuleId.header = language.header;
-      }
-    });
-    delete plainLike.capsuleId.localization;
-    return plainLike;
-  });
+  likes = editLikes(likes, lng);
 
   return NextResponse.json({
     status: 200,

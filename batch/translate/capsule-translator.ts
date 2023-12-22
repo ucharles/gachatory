@@ -25,14 +25,14 @@ mongoose
 
     const capsules = await CapsuleToy.find({
       name: new RegExp("^((?!箱売).)*$", "i"),
-      date: new RegExp("2023年", "i"),
+      date: new RegExp("2023年|2024年", "i"),
       $or: [{ localization: [] }, { localization: { $exists: false } }],
     })
       .sort({ _id: -1 })
       .limit(100);
     const capsuleCounts = await CapsuleToy.countDocuments({
       name: new RegExp("^((?!箱売).)*$", "i"),
-      date: new RegExp("2023年", "i"),
+      date: new RegExp("2023年|2024年", "i"),
       $or: [{ localization: [] }, { localization: { $exists: false } }],
     });
 

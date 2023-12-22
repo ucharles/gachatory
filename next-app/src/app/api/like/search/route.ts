@@ -8,8 +8,11 @@ import Like from "@/lib/models/like-model";
 import { convertToObjectId } from "@/lib/db/convertObjectId";
 import CapsuleToy from "@/lib/models/capsule-model";
 import Localization, { ILocalization } from "@/lib/models/localization-model";
+import { ILike } from "@/lib/models/like-model";
 import CapsuleTag from "@/lib/models/capsule-tag-model";
 import { dateTranslator } from "@/lib/date-converter";
+import { perPageEnum } from "@/lib/enums";
+import { editLikes } from "../util-likes";
 
 const IMAGE_SERVER_URL = process.env.IMAGE_SERVER_URL;
 
@@ -33,7 +36,6 @@ export async function GET(request: NextRequest) {
 
   const params = new URLSearchParams(new URL(request.url).search);
 
-  const limit = params.get("limit");
   const lng = params.get("lng");
   const name = params.get("name");
 
@@ -43,24 +45,20 @@ export async function GET(request: NextRequest) {
     locSearchName = escapedName;
   }
 
-  let perPage = 4;
+  let currentPage = 1;
+  const page = params.get("page");
+  page ? (currentPage = +page) : null;
 
-  if (limit) {
-    perPage = +limit || 4;
-    if (perPage >= 20) {
-      perPage = 20;
-    }
-  }
+  let perPage = perPageEnum.SMALL;
 
   // 좋아요 객체가 있는지 확인
-  let likes;
+  let likes: ILike[] = [];
   try {
     likes = await Like.find({
       userId: convertToObjectId(userId),
       state: true,
     })
       .sort({ updatedAt: -1 })
-      .limit(perPage)
       .populate({
         path: "capsuleId",
         model: CapsuleToy,
@@ -80,31 +78,70 @@ export async function GET(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // 캡슐 정보 편집
-  likes = likes.map((like) => {
-    const plainLike = like.toObject(); // convert Mongoose document to plain JavaScript object
-
-    if (
-      plainLike.capsuleId.img === "" &&
-      plainLike.capsuleId.detail_img.length !== 0
-    ) {
-      plainLike.capsuleId.display_img = `${IMAGE_SERVER_URL}${plainLike.capsuleId.detail_img[0]}`;
-    } else {
-      plainLike.capsuleId.display_img = `${IMAGE_SERVER_URL}${plainLike.capsuleId.img}`;
-    }
-    plainLike.capsuleId.date = plainLike.capsuleId.date?.map((date: string) => {
-      return dateTranslator(date, lng);
-    });
-    plainLike.capsuleId.localization?.forEach((language: ILocalization) => {
-      if (language.lng === lng) {
-        plainLike.capsuleId.name = language.name;
-        plainLike.capsuleId.description = language.description;
-        plainLike.capsuleId.header = language.header;
-      }
-    });
-    delete plainLike.capsuleId.localization;
-    return plainLike;
+  const likeCapsuleIds = likes.map((like) => {
+    return like.capsuleId;
   });
+
+  // 일본어 검색
+  let capsules;
+  try {
+    capsules = await CapsuleToy.find({
+      _id: { $in: likeCapsuleIds },
+      name: new RegExp(locSearchName as string, "i"),
+      description: new RegExp(locSearchName as string, "i"),
+    })
+      .sort({ dateISO: -1 })
+      .skip((currentPage - 1) * perPage)
+      .limit(perPage);
+  } catch (error) {
+    console.error("Error finding like:", error);
+    return NextResponse.next();
+  }
+
+  // 한국어, 영어 검색
+  let locSearchCapsules: ILocalization[] = [];
+  try {
+    locSearchCapsules = await Localization.find({
+      capsuleId: { $in: likeCapsuleIds },
+      $or: [
+        { name: new RegExp(locSearchName as string, "i") },
+        { description: new RegExp(locSearchName as string, "i") },
+      ],
+    })
+      .skip((currentPage - 1) * perPage)
+      .limit(perPage);
+  } catch (error) {
+    console.error("Error finding like:", error);
+    return NextResponse.next();
+  }
+
+  if (capsules.length === 0 && locSearchCapsules.length === 0) {
+    return NextResponse.json({
+      status: 200,
+      likes: [],
+    });
+  }
+
+  const capsuleIds = capsules.map((capsule) => {
+    return capsule._id;
+  });
+
+  const locSearchCapsuleIds = locSearchCapsules.map((capsule) => {
+    return capsule.capsuleId;
+  });
+
+  // capsuleIds, locSearchCapsuleIds 합치기
+  // 중복 제외
+  const allCapsuleIds = Array.from(
+    new Set([...capsuleIds, ...locSearchCapsuleIds]),
+  );
+
+  likes = likes.filter((like) => {
+    return allCapsuleIds.includes(like.capsuleId._id);
+  });
+
+  // 캡슐 정보 편집
+  likes = editLikes(likes, lng);
 
   return NextResponse.json({
     status: 200,
