@@ -6,8 +6,10 @@ import localFont from "next/font/local";
 import Navbar from "@/app/[lng]/components/navbar";
 import { Footer } from "@/app/[lng]/components/Footer/client";
 import TenstackProvider from "./components/Providers/TenstackProvider";
+const GTM_MEASUREMENT_ID = process.env.NEXT_PUBLIC_MEASUREMENT_ID;
 
 import "@/app/global.css";
+import GoogleTagManager from "./components/GoogleTagManager";
 
 const noto = Noto_Sans_JP({
   weight: ["400", "700"],
@@ -55,12 +57,20 @@ export default function RootLayout({
   return (
     <html lang={lng} dir={dir(lng)}>
       <head>
+        {GTM_MEASUREMENT_ID ? (
+          <GoogleTagManager gtm_id={GTM_MEASUREMENT_ID} />
+        ) : null}
         <meta
           name="viewport"
           content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"
         />
       </head>
       <body className={`${font} ${noto.variable} relative bg-background-white`}>
+        <noscript
+          dangerouslySetInnerHTML={{
+            __html: `<iframe src="https://www.googletagmanager.com/ns.html?id=${GTM_MEASUREMENT_ID}" height="0" width="0" style="display: none; visibility: hidden;"></iframe>`,
+          }}
+        />
         <TenstackProvider>
           <Navbar lng={lng} />
           <div className="container w-[1200px]">{children}</div>
