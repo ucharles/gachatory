@@ -4,8 +4,12 @@ const NAVER_ANALYTICS_ID = process.env.NEXT_PUBLIC_MEASUREMENT_ID_NAVER || "";
 
 const NaverAnalytics = () => (
   <>
-    <Script src="//wcs.naver.net/wcslog.js" strategy="afterInteractive" />
-    <Script strategy="afterInteractive">
+    <Script
+      id="naver-analytics"
+      src="//wcs.naver.net/wcslog.js"
+      strategy="afterInteractive"
+    />
+    <Script id="naver-analytics-script" strategy="afterInteractive">
       {`
         if(!wcs_add) var wcs_add = {};
         wcs_add["wa"] = "${NAVER_ANALYTICS_ID}";
