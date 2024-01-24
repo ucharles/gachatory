@@ -1,0 +1,30 @@
+name: Build Next.js
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "18" # 또는 프로젝트에 맞는 Node.js 버전
+
+      - name: Install Dependencies
+        run: npm install # 또는 yarn install
+
+      - name: Build Next.js Project
+        run: npm run build # 또는 yarn build
+
+      - name: Archive Production Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: nextjs-build
+          path: .next/ # Next.js 빌드 아티팩트 디렉토리
