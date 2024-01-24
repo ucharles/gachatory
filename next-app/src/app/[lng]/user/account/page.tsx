@@ -3,12 +3,24 @@ import { options } from "@/app/api/auth/[...nextauth]/options";
 import { redirect } from "next/navigation";
 import SignOutButton from "@/app/auth/components/SignOutButton";
 import { capitalizeFirstLetter } from "@/lib/string-utils";
+import { Session, ISODateString } from "next-auth";
+
+interface MySession extends Session {
+  user?: {
+    name?: string | null;
+    email?: string | null;
+    image?: string | null;
+    provider?: string | null;
+  };
+  expires: ISODateString;
+}
+
 export default async function Page({
   params: { lng },
 }: {
   params: { lng: string };
 }) {
-  const session = await getServerSession(options);
+  const session: MySession | null = await getServerSession(options);
 
   if (session === null) {
     redirect("/");
