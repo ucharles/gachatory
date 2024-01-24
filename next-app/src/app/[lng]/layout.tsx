@@ -7,8 +7,11 @@ import Navbar from "@/app/[lng]/components/navbar";
 import { Footer } from "@/app/[lng]/components/Footer/client";
 import TenstackProvider from "./components/Providers/TenstackProvider";
 import { AuthProvider } from "./components/Providers/AuthProvider";
+const GTM_MEASUREMENT_ID = process.env.NEXT_PUBLIC_MEASUREMENT_ID;
 
 import "@/app/global.css";
+import GoogleTagManager from "./components/GoogleTagManager";
+import NaverAnalytics from "./components/NaverAnalytics";
 
 const noto = Noto_Sans_JP({
   weight: ["400", "700"],
@@ -56,19 +59,28 @@ export default function RootLayout({
   return (
     <html lang={lng} dir={dir(lng)}>
       <head>
+        {GTM_MEASUREMENT_ID ? (
+          <GoogleTagManager gtm_id={GTM_MEASUREMENT_ID} />
+        ) : null}
         <meta
           name="viewport"
           content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"
         />
       </head>
       <body className={`${font} ${noto.variable} relative bg-background-white`}>
+        <noscript
+          dangerouslySetInnerHTML={{
+            __html: `<iframe src="https://www.googletagmanager.com/ns.html?id=${GTM_MEASUREMENT_ID}" height="0" width="0" style="display: none; visibility: hidden;"></iframe>`,
+          }}
+        />
         <AuthProvider>
           <TenstackProvider>
             <Navbar lng={lng} />
-            <div className="container mb-16 mt-5 w-[1200px]">{children}</div>
+            <div className="container w-[1200px]">{children}</div>
             <Footer lng={lng} />
           </TenstackProvider>
         </AuthProvider>
+        <NaverAnalytics />
       </body>
     </html>
   );
