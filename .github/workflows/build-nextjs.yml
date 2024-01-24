@@ -7,6 +7,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      DB_URI_TEST: ${{ secrets.DB_URI_TEST }}
 
     steps:
       - name: Checkout Repository
