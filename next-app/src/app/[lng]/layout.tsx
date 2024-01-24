@@ -10,6 +10,7 @@ const GTM_MEASUREMENT_ID = process.env.NEXT_PUBLIC_MEASUREMENT_ID;
 
 import "@/app/global.css";
 import GoogleTagManager from "./components/GoogleTagManager";
+import NaverAnalytics from "./components/NaverAnalytics";
 
 const noto = Noto_Sans_JP({
   weight: ["400", "700"],
@@ -76,6 +77,7 @@ export default function RootLayout({
           <div className="container w-[1200px]">{children}</div>
           <Footer lng={lng} />
         </TenstackProvider>
+        <NaverAnalytics />
       </body>
     </html>
   );
