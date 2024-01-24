@@ -7,7 +7,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    env:
+      DB_URI_TEST: ${{ secrets.DB_URI_TEST }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -24,8 +25,6 @@ jobs:
       - name: Build Next.js Project
         run: npm run build # 또는 yarn build
         working-directory: ./next-app
-        env:
-          DB_URI_TEST: ${{ secrets.DB_URI_TEST }}
 
       - name: Archive Production Artifacts
         uses: actions/upload-artifact@v2
