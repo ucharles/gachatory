@@ -19,12 +19,14 @@ jobs:
 
       - name: Install Dependencies
         run: npm install # 또는 yarn install
+        working-directory: ./next-app
 
       - name: Build Next.js Project
         run: npm run build # 또는 yarn build
+        working-directory: ./next-app
 
       - name: Archive Production Artifacts
         uses: actions/upload-artifact@v2
         with:
           name: nextjs-build
-          path: .next/ # Next.js 빌드 아티팩트 디렉토리
+          path: next-app/.next/ # Next.js 빌드 아티팩트 디렉토리
