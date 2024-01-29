@@ -6,17 +6,17 @@ import google_icon from "../../../../public/images/google-icon.png";
 import github_icon from "../../../../public/images/github-icon.png";
 import discord_icon from "../../../../public/images/discord-icon.png";
 
+const buttonStyle =
+  "flex w-full items-center space-x-6 py-2 pl-1 pr-10 font-semibold text-black hover:bg-gray-100 rounded-lg";
+
 export function GoogleSignInButton() {
   const handleClick = () => {
     signIn("google", { callbackUrl: "/" });
   };
 
   return (
-    <button
-      className="hover:bg-gray-100 text-black font-semibold py-2 px-4 rounded flex items-center space-x-2 border w-full shadow"
-      onClick={handleClick}
-    >
-      <Image src={google_icon} alt="Google" width={32} height={32} />
+    <button className={buttonStyle} onClick={handleClick}>
+      <Image src={google_icon} alt="Google" width={48} height={48} />
       <span>Sign in with Google</span>
     </button>
   );
@@ -28,11 +28,8 @@ export function GithubSignInButton() {
   };
 
   return (
-    <button
-      className="hover:bg-gray-100 text-black font-semibold py-2 px-4 rounded flex items-center space-x-2 border w-full shadow"
-      onClick={handleClick}
-    >
-      <Image src={github_icon} alt="GitHub" width={32} height={32} />
+    <button className={buttonStyle} onClick={handleClick}>
+      <Image src={github_icon} alt="GitHub" width={48} height={48} />
       <span>Sign in with GitHub</span>
     </button>
   );
@@ -44,11 +41,8 @@ export function DiscordSignInButton() {
   };
 
   return (
-    <button
-      className="hover:bg-gray-100 text-black font-semibold py-2 px-4 rounded flex items-center space-x-2 border w-full shadow"
-      onClick={handleClick}
-    >
-      <Image src={discord_icon} alt="Discord" width={32} height={32} />
+    <button className={buttonStyle} onClick={handleClick}>
+      <Image src={discord_icon} alt="Discord" width={48} height={48} />
       <span>Sign in with Discord</span>
     </button>
   );

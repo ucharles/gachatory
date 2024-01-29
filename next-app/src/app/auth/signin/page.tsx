@@ -27,24 +27,24 @@ export default async function Page({
   }
 
   return (
-    <div className="mt-20 flex h-screen flex-col items-center justify-start">
-      {OAuthAccountNotLinked ? (
-        <div className="mb-5 w-60 rounded-lg bg-yellow-100 p-3">
-          To confirm your identity, sign in with the same account you used
-          originally.
-        </div>
-      ) : (
-        null
-      )}
-      <div className="">
-        <div className="flex justify-center pb-10">
+    <div className="m-auto flex w-96 flex-col items-center justify-center rounded-3xl bg-white">
+      <div className="py-12">
+        <div className="mb-10 flex justify-center">
           <Link href="/">
-            <Image priority src={logo} alt="Gachatory" width={220} />
+            <Image priority src={logo} alt="Gachatory" width={175} />
           </Link>
         </div>
-        <div className="space-y-5">
+        {OAuthAccountNotLinked ? (
+          <div className="my-5 w-60 rounded-lg bg-yellow-100 p-3 text-sm">
+            To confirm your identity, sign in with the same account you used
+            originally.
+          </div>
+        ) : null}
+        <div className="my-7 space-y-4">
           <GoogleSignInButton />
+          <hr className="border-gray-200" />
           <GithubSignInButton />
+          <hr className="border-gray-200" />
           <DiscordSignInButton />
         </div>
       </div>
