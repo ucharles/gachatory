@@ -143,9 +143,7 @@ const LikeButton = ({ lng, like, capsuleId, queryKey }: ILikeButtonProps) => {
             width="24"
             height="24"
             viewBox="0 0 16 16"
-            className={`transition-transform duration-300 ${
-              isLiked ? "animate-heartBounce" : ""
-            }`}
+            className={`active:animate-heartBounce transition-transform duration-300`}
             fill={isLiked ? "#5141ae" : "#9f9f9f"}
           >
             <path

@@ -136,6 +136,19 @@ export default async function Page({
     }
   };
 
+  const totalResultCount = (lng: string, data: string) => {
+    switch (lng) {
+      case "ko":
+        return `${data}건`;
+      case "ja":
+        return `${data}件`;
+      case "en":
+        return `Total ${data}`;
+      default:
+        return `Total ${data}`;
+    }
+  };
+
   return (
     <div>
       <Hydrate state={dehydratedState}>
@@ -151,8 +164,10 @@ export default async function Page({
                 </h1>
               </div>
               <div className="flex w-full items-end justify-between">
-                <h2 className="text-heading4-medium">{data.totalCount}건</h2>
-                <div className="flex items-center justify-center space-x-6 text-small-medium">
+                <h2 className="text-heading4-medium">
+                  {totalResultCount(lng, data.totalCount)}
+                </h2>
+                <div className="hidden items-center justify-center space-x-6 text-small-medium xs:flex">
                   <SearchLimit lng={lng} />
                   <SortCapsuleList lng={lng} searchParams={searchParams} />
                 </div>
@@ -160,13 +175,13 @@ export default async function Page({
             </div>
             {data?.totalCount > 0 ? (
               <>
-                <div className="flex justify-end sm:hidden md:hidden lg:hidden xl:hidden">
+                <div className="flex justify-end sm:hidden">
                   <Pagination
                     total={data.totalCount}
                     maxPages={maxPageMobile}
                   />
                 </div>
-                <div className="flex justify-end fold:hidden 3xs:hidden 2xs:hidden xs:hidden">
+                <div className="hidden justify-end sm:flex">
                   <Pagination
                     total={data.totalCount}
                     maxPages={maxPageDesktop}
@@ -185,13 +200,13 @@ export default async function Page({
             />
             {data?.totalCount > 0 ? (
               <div className="pt-10">
-                <div className="flex justify-end sm:hidden md:hidden lg:hidden xl:hidden">
+                <div className="flex justify-end sm:hidden">
                   <Pagination
                     total={data.totalCount}
                     maxPages={maxPageMobile}
                   />
                 </div>
-                <div className="flex justify-end fold:hidden 3xs:hidden 2xs:hidden xs:hidden">
+                <div className="hidden justify-end sm:flex">
                   <Pagination
                     total={data.totalCount}
                     maxPages={maxPageDesktop}

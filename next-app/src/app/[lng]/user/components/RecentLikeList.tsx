@@ -38,7 +38,7 @@ export default function RecentLikeList({
           <p>{t("no-liked-message-2")}</p>
         </div>
       ) : (
-        <ul className="grid gap-x-6 gap-y-6 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4 fold:grid-cols-2 3xs:grid-cols-2 2xs:grid-cols-2 xs:grid-cols-2">
+        <ul className="grid grid-cols-2 gap-x-6 gap-y-6 xs:grid-cols-3 md:grid-cols-4">
           {data?.likes ? (
             data?.likes?.map((like: any) => (
               <LikedCapsuleCard

@@ -88,9 +88,9 @@ export default function Navbar({ lng }: { lng: string }) {
 
   // flex와 w-full을 동시에 사용하면, 부모의 width만큼 너비가 늘어나지 않으니 주의
   return (
-    <nav className="sticky top-0 z-40 bg-background-white/95 pt-2 sm:pt-6 md:pt-6 lg:pt-6 xl:pt-6 fold:pt-6">
-      <div className="container relative flex w-[1200px] flex-row items-center justify-items-center space-x-4">
-        <div className="flex basis-2/12 sm:justify-center fold:justify-center 3xs:justify-center 2xs:justify-center xs:justify-center">
+    <nav className="sticky top-0 z-40 bg-background-white/95 pt-6">
+      <div className="container relative flex max-w-[1200px] flex-row items-center justify-items-center space-x-4 px-6 xl:px-0">
+        <div className="flex basis-2/12 justify-center">
           <Link href={`/${lng}`}>
             <Image
               priority
@@ -98,7 +98,7 @@ export default function Navbar({ lng }: { lng: string }) {
               alt="logo"
               width={200}
               height={32}
-              className="h-auto w-44 pb-2 sm:hidden fold:hidden 3xs:hidden 2xs:hidden xs:hidden"
+              className="hidden h-auto w-44 pb-2 md:block"
             />
             <Image
               priority
@@ -106,7 +106,7 @@ export default function Navbar({ lng }: { lng: string }) {
               alt="logo"
               width={50}
               height={40}
-              className="mb-1 h-auto w-10 md:hidden lg:hidden xl:hidden"
+              className="mb-1 h-auto w-10 md:hidden"
             />
           </Link>
         </div>
@@ -139,7 +139,7 @@ export default function Navbar({ lng }: { lng: string }) {
         ) : null}
       </div>
 
-      <div className="mt-2 h-[1px] border border-gray-100 sm:mt-6 md:mt-6 lg:mt-6 xl:mt-6 fold:mt-6"></div>
+      <div className="mt-6 h-[1px] border border-gray-100"></div>
     </nav>
   );
 }

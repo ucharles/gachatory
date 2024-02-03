@@ -76,7 +76,9 @@ export default function RootLayout({
         <AuthProvider>
           <TenstackProvider>
             <Navbar lng={lng} />
-            <div className="container w-[1200px]">{children}</div>
+            <div className="container max-w-[1200px] px-6 pb-20 pt-4 xl:px-0">
+              {children}
+            </div>
             <Footer lng={lng} />
           </TenstackProvider>
         </AuthProvider>

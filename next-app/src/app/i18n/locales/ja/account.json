@@ -1,0 +1,10 @@
+{
+  "account-info": "アカウント情報",
+  "email": "メールアドレス",
+  "join-date": "登録日時",
+  "email-noti": "メール通知",
+  "email-noti-desc-1": "新しいメッセージが届いた時にメールで通知します。",
+  "sign-out": "ログアウト",
+  "delete-account": "アカウント削除",
+  "delete-account-message": "本当にアカウントを削除しますか？戻り作業はできません。"
+}

@@ -9,8 +9,10 @@ export default async function UserAside({
   const { t } = await translate(lng, "translation");
 
   return (
-    <aside className="mr-6 basis-1/4 3xs:hidden 2xs:hidden xs:hidden">
-      <h1 className="font-YgJalnan text-3xl text-gigas-700">{t("mypage")}</h1>
+    <aside className="mr-6 hidden basis-1/4 sm:block">
+      <h1 className="font-YgJalnan text-2xl text-gigas-700 lg:text-3xl">
+        {t("mypage")}
+      </h1>
       <div className="mb-5 mt-3 h-[1px] bg-gray-200"></div>
       <div className="space-y-3 text-small-medium">
         <p>

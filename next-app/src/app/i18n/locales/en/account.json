@@ -1,0 +1,10 @@
+{
+  "account-info": "Account Info",
+  "email": "Email",
+  "join-date": "Join Date",
+  "email-noti": "Email Notifications",
+  "email-noti-desc-1": "Receive email notifications when someone comments on your post.",
+  "sign-out": "Sign out",
+  "delete-account": "Delete Account",
+  "delete-account-message": "Are you sure you want to delete your account? This action cannot be undone."
+}

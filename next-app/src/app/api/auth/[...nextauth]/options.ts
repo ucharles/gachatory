@@ -76,6 +76,7 @@ export const options: NextAuthOptions = {
       }
       if (user) {
         token.provider = user.provider;
+        token.createdAt = user.createdAt;
       }
       return token;
     },
@@ -85,6 +86,7 @@ export const options: NextAuthOptions = {
       if (token) {
         session.user.id = token.sub;
         session.user.provider = token.provider;
+        session.user.createdAt = token.createdAt;
       }
       return session;
     },

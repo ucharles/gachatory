@@ -57,9 +57,9 @@ export function convertToLocalTime(isoDateString: string): string {
     hour: "2-digit",
     minute: "2-digit",
     second: "2-digit",
-    hour12: false, // 24시간 형식을 사용하려면 이 옵션을 설정
+    hourCycle: "h23", // 24시간 형식을 사용하려면 이 옵션을 설정
   };
 
   // 로컬 시간대로 변환된 날짜와 시간 문자열 반환
-  return new Intl.DateTimeFormat("default", dateTimeFormatOptions).format(date);
+  return Intl.DateTimeFormat("default", dateTimeFormatOptions).format(date);
 }

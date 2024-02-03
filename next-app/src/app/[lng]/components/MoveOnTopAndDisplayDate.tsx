@@ -43,7 +43,7 @@ function MoveOnTopAndDisplayDate({
 
   return (
     <div
-      className={`fixed bottom-32 right-0 z-50 rounded-l-lg border bg-background-white fold:bottom-16 3xs:bottom-16 ${
+      className={`fixed bottom-16 right-0 z-50 rounded-l-lg border bg-background-white xs:bottom-32 ${
         isVisible ? "opacity-85" : "opacity-0"
       } transition-opacity duration-300`}
     >

@@ -18,7 +18,7 @@ interface RootLayoutProps {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
-      <body className={`${inter.className} container w-[1280px] bg-[#F0EFF3]`}>
+      <body className={`${inter.className} container max-w-5xl bg-[#F0EFF3]`}>
         <div className="flex h-screen">{children}</div>
       </body>
     </html>

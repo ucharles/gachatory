@@ -8,7 +8,7 @@ import { translate } from "@/app/i18n/client";
 export default function LikeSearchBar({ lng }: { lng: string }) {
   const { t } = translate(lng, "like");
   return (
-    <div className="w-80 fold:w-full 3xs:w-full 2xs:w-full">
+    <div className="w-full xs:w-80">
       <div className="w-auto rounded-3xl bg-bg-footer px-6 py-3 text-small-medium">
         {t("search-in-like-list")}
       </div>

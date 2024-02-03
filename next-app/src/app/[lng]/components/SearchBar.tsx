@@ -20,7 +20,7 @@ function SearchBar({ lng }: { lng: string }) {
         <input
           type="search"
           id="name"
-          className="h-12 w-full rounded-[32px] bg-[#F0EFF3] p-2 pl-12 text-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-gigas-500 focus:ring-offset-2 fold:text-sm 3xs:text-sm"
+          className="h-12 w-full rounded-[32px] bg-[#F0EFF3] p-2 pl-12 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-gigas-500 focus:ring-offset-2 sm:text-lg xs:text-base"
           placeholder={t("search")}
           onChange={(e) => setSearch(e.target.value)}
         />

@@ -135,7 +135,7 @@ export default function LikedCapsulesListItem({
           <p className="text-heading2-bold">Error</p>
         </div>
       ) : null}
-      <ul className="grid grid-cols-2 gap-x-10 gap-y-10 fold:grid-cols-1 3xs:grid-cols-1 2xs:grid-cols-1">
+      <ul className="grid grid-cols-1 gap-x-10 gap-y-10 sm:grid-cols-2">
         {data?.likes.length > 0 ? (
           data.likes.map((like: any) => (
             <li key={like._id}>

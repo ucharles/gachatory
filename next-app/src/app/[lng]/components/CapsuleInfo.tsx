@@ -187,7 +187,7 @@ function CapsuleInfo({
       {data ? (
         <>
           <div>
-            <div className="pb-4 sm:hidden md:hidden lg:hidden xl:hidden">
+            <div className="pb-4 sm:hidden">
               <div className="flex items-center justify-between">
                 <p className="text-gray-400">{t("product-info")}</p>
                 <button onClick={handleLinkCopy}>
@@ -224,7 +224,7 @@ function CapsuleInfo({
             <ImageGallery detail_img={data.detail_img} />
           </div>
           <div>
-            <div className="fold:hidden 3xs:hidden 2xs:hidden xs:hidden">
+            <div className="hidden sm:block">
               <div className="flex items-center justify-between pb-2">
                 <p className="text-gray-400">{t("product-info")}</p>
                 <div className="">
@@ -254,14 +254,14 @@ function CapsuleInfo({
               <div className="mb-4 mt-6 h-[1px] bg-gray-200"></div>
             </div>
             <p className="pb-6 text-body-medium">{data.description}</p>
-            <div className="fold:hidden 3xs:hidden 2xs:hidden xs:hidden">
+            <div className="hidden sm:block">
               {data.tagId?.length > 0 ? (
                 <div className="pb-6">
                   <DisplayCapsuleTags tags={data.tagId} lng={lng} />
                 </div>
               ) : null}
             </div>
-            <div className="space-y-4 pb-10 text-small-medium text-gray-800 fold:hidden 3xs:hidden 2xs:hidden xs:hidden">
+            <div className="hidden space-y-4 pb-10 text-small-medium text-gray-800 sm:block">
               <div className="flex flex-row">
                 <div className="basis-1/6">{t("release-date")}</div>
                 <div className="flex basis-5/6">
@@ -326,15 +326,17 @@ function CapsuleInfo({
                 </div>
               </button>
               <button className="basis-1/3" onClick={handleLikeList}>
-                <div className="flex h-full items-center justify-center rounded-md border border-gray-400 hover:shadow-md fold:hidden 3xs:hidden 2xs:hidden xs:hidden">
-                  <p className="text-gray-400">{t("go-to-like-list")}</p>
-                </div>
-                <div className="flex h-full items-center justify-center rounded-md border border-gray-400 hover:shadow-md sm:hidden md:hidden lg:hidden xl:hidden">
-                  <p className="text-gray-400">{t("go-to-like")}</p>
-                </div>
+                <Link href={`/${lng}/like-list`}>
+                  <div className="hidden h-full items-center justify-center rounded-md border border-gray-400 hover:shadow-md sm:flex">
+                    <p className="text-gray-400">{t("go-to-like-list")}</p>
+                  </div>
+                  <div className="flex h-full items-center justify-center rounded-md border border-gray-400 hover:shadow-md sm:hidden">
+                    <p className="text-gray-400">{t("go-to-like")}</p>
+                  </div>
+                </Link>
               </button>
             </div>
-            <div className="space-y-4 pt-6 text-small-medium text-gray-800 sm:hidden md:hidden lg:hidden xl:hidden">
+            <div className="space-y-4 pt-6 text-small-medium text-gray-800 sm:hidden">
               <div className="flex justify-between">
                 <div className="basis-1/2">{t("release-date")}</div>
                 <div className="text-end">
@@ -356,7 +358,7 @@ function CapsuleInfo({
                 </p>
               </div>
             </div>
-            <div className="flex items-center justify-end space-x-2 pt-6 sm:pt-32 md:pt-32 lg:pt-32 xl:pt-32">
+            <div className="flex items-center justify-end space-x-2 pt-6 sm:pt-32">
               <p className="text-small-medium text-gray-400 underline">
                 <Link
                   href={data.detail_url}

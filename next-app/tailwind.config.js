@@ -212,6 +212,25 @@ module.exports = {
         },
       ],
     },
+    screens: {
+      xs: "320px",
+      // => @media (min-width: 320px) { ... }
+
+      sm: "640px",
+      // => @media (min-width: 640px) { ... }
+
+      md: "768px",
+      // => @media (min-width: 768px) { ... }
+
+      lg: "1024px",
+      // => @media (min-width: 1024px) { ... }
+
+      xl: "1280px",
+      // => @media (min-width: 1280px) { ... }
+
+      "2xl": "1536px",
+      // => @media (min-width: 1536px) { ... }
+    },
     extend: {
       colors: {
         "background-white": "#FEFEFE",
@@ -248,16 +267,6 @@ module.exports = {
         "count-badge": "0px 0px 6px 2px rgba(219, 188, 159, 0.30)",
         "groups-sidebar": "-30px 0px 60px 0px rgba(28, 28, 31, 0.50)",
       },
-      screens: {
-        fold: { min: "250px", max: "339px" },
-        "3xs": { min: "340px", max: "414px" },
-        "2xs": { min: "415px", max: "499px" },
-        xs: { min: "500px", max: "719px" }, // Mobile (iPhone 3 - iPhone XS Max).
-        sm: { min: "720px", max: "912px" }, // Mobile (matches max: iPhone 11 Pro Max landscape @ 896px).
-        md: { min: "913px", max: "1099px" }, // Tablet (matches max: iPad Pro @ 1112px).
-        lg: { min: "1100px", max: "1279px" }, // Desktop smallest.
-        xl: { min: "1280px" }, // Desktop wide.
-      },
       keyframes: {
         "accordion-down": {
           from: { height: 0 },
@@ -272,6 +281,11 @@ module.exports = {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
+    },
+  },
+  variants: {
+    extend: {
+      animation: ["active"],
     },
   },
   plugins: [require("tailwindcss-animate")],

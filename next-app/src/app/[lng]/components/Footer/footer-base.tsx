@@ -22,8 +22,8 @@ export function FooterBase({ t, lng }: FooterBaseProps) {
   const otherPath = pathname.split("/").slice(2).join("/");
 
   return (
-    <footer className="bg-bg-footer flex justify-center pb-16 pt-10">
-      <div className="w-[1200px] space-y-5 sm:px-12 md:px-12 lg:px-12 fold:px-12 3xs:px-12 2xs:px-12 xs:px-12">
+    <footer className="bg-bg-footer pb-16 pt-10">
+      <div className="container max-w-5xl space-y-5 px-6 lg:px-0">
         <article>
           <Link href={`/${lng}`}>
             <Image

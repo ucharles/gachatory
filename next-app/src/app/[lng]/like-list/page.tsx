@@ -22,7 +22,7 @@ export default async function Page({
   const cookie = cookies();
 
   const queryClient = new QueryClient();
-  const data = await queryClient.prefetchQuery(["likedData", lng], () => {
+  const data = await queryClient.prefetchQuery(["likedCapsules", lng], () => {
     return fetchLikedData(lng, "20", cookie);
   });
   const dehydratedState = dehydrate(queryClient);
@@ -31,9 +31,9 @@ export default async function Page({
     <Hydrate state={dehydratedState}>
       <main className="space-y-5">
         <article className="space-y-4">
-          <div className="flex flex-row justify-between fold:flex-col fold:space-y-2 3xs:flex-col 3xs:space-y-2 2xs:flex-col 2xs:space-y-2">
+          <div className="flex flex-col justify-between space-y-2 xs:flex-row">
             <h1 className="text-heading2.5-bold">{t("like-list")}</h1>
-            <div className="w-80 fold:w-full 3xs:w-full 2xs:w-full">
+            <div className="w-full xs:w-80">
               <div className="w-auto rounded-3xl bg-bg-footer px-6 py-3 text-small-medium">
                 {t("search-in-like-list")}
               </div>
@@ -56,7 +56,7 @@ export default async function Page({
         <article>
           <LikedCapsulesListItem
             lng={lng}
-            queryKey={["likedData", lng]}
+            queryKey={["likedCapsules", lng]}
             searchParams={searchParams}
           />
         </article>

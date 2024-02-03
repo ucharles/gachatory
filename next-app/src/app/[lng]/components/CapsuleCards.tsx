@@ -39,7 +39,7 @@ function CapsuleCards({
   // 좋아요 기능 추가 시 useMutation을 사용하여 캐시 업데이트
 
   return (
-    <ul className="grid gap-x-6 gap-y-10 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4 fold:grid-cols-2 3xs:grid-cols-2 2xs:grid-cols-2 xs:grid-cols-2">
+    <ul className="grid grid-cols-1 gap-x-6 gap-y-10 md:grid-cols-4 xs:grid-cols-2">
       {isLoading ? <p>Loading...</p> : null}
       {data?.capsules?.map((capsule: ICapsuleToy) => {
         return capsule.display_img ? (
@@ -62,13 +62,13 @@ function CapsuleCards({
                     <p className="inline-block text-small-regular text-gray-600">
                       {capsule.date[0]}
                     </p>
-                    <h1 className="max-lines-3 break-words text-body-bold text-gray-800 3xs:text-base-semibold">
+                    <h1 className="max-lines-3 break-words text-base-semibold text-gray-800 xs:text-body-bold">
                       {capsule.name}
                     </h1>
                   </Link>
                 </div>
                 <div className="flex flex-row justify-between">
-                  <div className="truncate-70 fold:invisible">
+                  <div className="truncate-70 invisible xs:visible">
                     <DisplayCapsuleOneTag tags={capsule.tagId} lng={lng} />
                   </div>
                   <div className="flex space-x-2 text-subtle-medium text-gray-500">

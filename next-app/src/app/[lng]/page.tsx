@@ -83,7 +83,7 @@ export default async function Page({
       <div className="z-30 bg-background-white/95 pb-6">
         <ReleaseDateList lng={lng} searchParams={searchParams} />
         <div className="flex justify-between text-small-medium">
-          <div className="fold:hidden">
+          <div className="hidden xs:block">
             {paramDate === getCurrentMonthYYYYMM()
               ? t("release_discription")
               : t("past-release-discription")}
