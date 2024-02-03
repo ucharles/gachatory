@@ -1,3 +1,5 @@
+import { Metadata } from "next";
+
 import getQueryClient from "../../components/Providers/getQueryClient";
 import { dehydrate } from "@tanstack/query-core";
 import Hydrate from "../../components/Providers/HydrateClient";
@@ -6,6 +8,24 @@ import { capsuleFetchData } from "@/lib/fetch-data";
 import { cookies } from "next/headers";
 
 const API_URI = process.env.APP_SERVER_URL || "";
+
+export async function generateMetadata({
+  params: { lng, id },
+}: {
+  params: { lng: string; id: string };
+}): Promise<Metadata> {
+  const data = await capsuleFetchData(id, lng);
+  return {
+    title: data.name,
+    description: data.description,
+    openGraph: {
+      title: data.name,
+      description: data.description,
+      images: [{ url: data.img, width: 560, height: 560 }],
+      type: "website",
+    },
+  };
+}
 
 export default async function Page({
   params: { lng, id },

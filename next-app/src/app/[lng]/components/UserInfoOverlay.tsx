@@ -17,7 +17,7 @@ export default function UserInfoOverlay({ lng }: IUserInfoOverlayProps) {
       <p>
         <Link href={`/${lng}/user/account`}>{t("account-info")}</Link>
       </p>
-      <SignOutButton />
+      <SignOutButton lng={lng} />
     </div>
   );
 }
