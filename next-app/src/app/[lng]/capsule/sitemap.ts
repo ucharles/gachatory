@@ -5,11 +5,6 @@ import dbConnect from "@/lib/db/db-connect";
 const BASE_URL = process.env.APP_SERVER_URL || "";
 const SUPPORTED_LANGUAGES = ["en", "ko", "ja"]; // 지원하는 언어 코드
 
-type params = {
-  lng: string;
-  id: number;
-};
-
 export async function generateSitemaps(): Promise<Array<{ id: string }>> {
   await dbConnect();
   const count = await CapsuleToy.countDocuments();

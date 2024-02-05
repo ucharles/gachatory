@@ -8,6 +8,8 @@ import { convertToLocalTime } from "@/lib/date-converter";
 import DeleteAccountButton from "@/app/auth/components/DeleteAccountButton";
 import ProviderIcon from "@/app/[lng]/user/components/ProviderIcon";
 
+import EmailNotification from "../components/EmailNotification";
+
 import { translate } from "@/app/i18n";
 
 interface MySession extends Session {
@@ -44,7 +46,7 @@ export default async function Page({
         <div className="space-y-8 font-bold">
           <p>{t("email")}</p>
           <p>{t("join-date")}</p>
-          <p>{t("email-noti")}</p>
+          {/* <p>{t("email-noti")}</p> */}
         </div>
         <div className="space-y-8">
           <p className="flex space-x-3">
@@ -58,7 +60,7 @@ export default async function Page({
               ? convertToLocalTime(session.user?.createdAt)
               : "unknown"}
           </p>
-          <p>{t("email-noti-desc-1")}</p>
+          {/* <EmailNotification /> */}
         </div>
       </article>
       <hr className="w-full py-4"></hr>

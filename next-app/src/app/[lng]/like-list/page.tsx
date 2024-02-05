@@ -33,11 +33,11 @@ export default async function Page({
         <article className="space-y-4">
           <div className="flex flex-col justify-between space-y-2 xs:flex-row">
             <h1 className="text-heading2.5-bold">{t("like-list")}</h1>
-            <div className="w-full xs:w-80">
+            {/* <div className="w-full xs:w-80">
               <div className="w-auto rounded-3xl bg-bg-footer px-6 py-3 text-small-medium">
                 {t("search-in-like-list")}
               </div>
-            </div>
+            </div> */}
           </div>
           <div className="flex justify-end space-x-6 text-end text-small-medium">
             <p>{t("sort-by")}</p>

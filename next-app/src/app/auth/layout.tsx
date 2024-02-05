@@ -5,11 +5,6 @@ import "@/app/global.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const metadata: Metadata = {
-  title: "Gachatory",
-  description: "Gachatory",
-};
-
 interface RootLayoutProps {
   children: React.ReactNode;
   params: { lng: string };
