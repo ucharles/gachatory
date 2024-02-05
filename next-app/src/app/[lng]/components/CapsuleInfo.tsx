@@ -1,7 +1,5 @@
 import Link from "next/link";
 import Image from "next/image";
-import { cookies } from "next/headers";
-import { Metadata, ResolvingMetadata } from "next";
 
 import { translate } from "@/app/i18n";
 import ImageGallery from "./image-gallery";
@@ -22,11 +20,10 @@ export default async function CapsuleInfo({
   id: string;
 }) {
   const { t } = await translate(lng, "translation");
-  const cookie = cookies();
 
   const queryClient = getQueryClient();
   const data = await queryClient.fetchQuery(["capsule", id, lng], () => {
-    return capsuleFetchData(id, lng, cookie);
+    return capsuleFetchData(id, lng);
   });
 
   return (

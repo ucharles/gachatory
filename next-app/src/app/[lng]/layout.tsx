@@ -30,12 +30,31 @@ const pretendard = localFont({
   style: "normal",
 });
 
-export const metadata: Metadata = {
-  title: "Gachatory",
-  openGraph: {
-    title: "Gachatory",
-  },
-};
+export async function generateMetadata({
+  params: { lng },
+}: {
+  params: { lng: string; id: string };
+}): Promise<Metadata> {
+  const gachatoryLoc: { [key: string]: string } = {
+    ja: "ガチャトリー - Gachatory",
+    en: "Gachatory",
+    ko: "가챠토리 - Gachatory",
+  };
+  const gachatoryDesc: { [key: string]: string } = {
+    ja: "お気に入りのカプセルトイを探してみよう！",
+    en: "Find your favorite capsule toy!",
+    ko: "좋아하는 캡슐 토이를 찾아보세요!",
+  };
+  return {
+    title: gachatoryLoc[lng],
+    description: gachatoryDesc[lng],
+    openGraph: {
+      title: gachatoryLoc[lng],
+      description: gachatoryDesc[lng],
+      type: "website",
+    },
+  };
+}
 
 interface RootLayoutProps {
   children: React.ReactNode;

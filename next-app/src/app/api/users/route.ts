@@ -13,14 +13,7 @@ export async function DELETE(request: NextRequest) {
   });
 
   // 로그인이 되어있지 않으면 401 에러를 반환한다.
-  if (!token) {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-  }
-
-  // 로그인이 되어있으면 삭제를 진행한다.
-
-  // 요청 바디에서 id를 가져온다.
-  const { id } = request.body;
+  const { id } = await request.json();
 
   if (!id) {
     return NextResponse.json({ message: "Invalid request" }, { status: 400 });

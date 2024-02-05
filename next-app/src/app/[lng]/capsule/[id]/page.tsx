@@ -5,9 +5,6 @@ import { dehydrate } from "@tanstack/query-core";
 import Hydrate from "../../components/Providers/HydrateClient";
 import CapsuleInfo from "../../components/CapsuleInfo";
 import { capsuleFetchData } from "@/lib/fetch-data";
-import { cookies } from "next/headers";
-
-const API_URI = process.env.APP_SERVER_URL || "";
 
 export async function generateMetadata({
   params: { lng, id },
@@ -15,13 +12,18 @@ export async function generateMetadata({
   params: { lng: string; id: string };
 }): Promise<Metadata> {
   const data = await capsuleFetchData(id, lng);
+  const gachatoryLoc: { [key: string]: string } = {
+    ja: "ガチャトリー",
+    en: "Gachatory",
+    ko: "가챠토리",
+  };
   return {
-    title: data.name,
+    title: `${data.name} - ${gachatoryLoc[lng]}`,
     description: data.description,
     openGraph: {
       title: data.name,
       description: data.description,
-      images: [{ url: data.img, width: 560, height: 560 }],
+      images: [{ url: data.img, width: 300, height: 300 }], // Must be an absolute URL
       type: "website",
     },
   };
@@ -32,10 +34,9 @@ export default async function Page({
 }: {
   params: { lng: string; id: string };
 }) {
-  const cookie = cookies();
   const queryClient = getQueryClient();
   await queryClient.prefetchQuery(["capsule", id, lng], () => {
-    return capsuleFetchData(id, lng, cookie);
+    return capsuleFetchData(id, lng);
   });
   const dehydratedState = dehydrate(queryClient);
 

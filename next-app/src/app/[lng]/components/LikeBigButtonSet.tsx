@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { cookies } from "next/headers";
 
 import { useState } from "react";
 import { useSession } from "next-auth/react";

@@ -13,7 +13,7 @@ acceptLanguage.languages(languages);
 export const config = {
   // matcher: '/:lng*'
   matcher: [
-    "/((?!api|auth|_next/static|_next/image|assets|favicon.ico|sw.js).*)",
+    "/((?!api|auth|_next/static|_next/image|assets|favicon.ico|sw.js|sitemap.xml).*)",
   ],
 };
 
@@ -38,13 +38,13 @@ export function middleware(req: NextRequest) {
 
   if (languages.includes(lng)) {
     return NextResponse.redirect(
-      new URL(`/${lng}${req.nextUrl.pathname}`, req.url)
+      new URL(`/${lng}${req.nextUrl.pathname}`, req.url),
     );
   }
 
   // Redirect if lng in path is not supported
   return NextResponse.redirect(
-    new URL(`/${lng}${req.nextUrl.pathname}`, req.url)
+    new URL(`/${lng}${req.nextUrl.pathname}`, req.url),
   );
 
   // if (req.headers.has("referer")) {
