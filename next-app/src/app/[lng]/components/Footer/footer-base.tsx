@@ -23,7 +23,7 @@ export function FooterBase({ t, lng }: FooterBaseProps) {
 
   return (
     <footer className="bg-bg-footer pb-16 pt-10">
-      <div className="container max-w-5xl space-y-5 px-6 lg:px-0">
+      <div className="container max-w-[1200px] space-y-5 px-6 xl:px-0">
         <article>
           <Link href={`/${lng}`}>
             <Image
@@ -36,31 +36,36 @@ export function FooterBase({ t, lng }: FooterBaseProps) {
             />
           </Link>
         </article>
-        <article className="flex space-x-4">
-          <div>
-            <Trans i18nKey="languageSwitcher" t={t} values={{ lng }}>
-              LNG:
-            </Trans>
+        <article className="flex flex-col space-y-2 sm:flex-row sm:space-x-4 sm:space-y-0">
+          <div className="flex space-x-2">
+            <div>
+              <Trans i18nKey="languageSwitcher" t={t} values={{ lng }}>
+                LNG:
+              </Trans>
+            </div>
+            <div>
+              <select
+                id="languageSwitcher"
+                value={lng}
+                onChange={(e) => {
+                  const selectedLng = e.target.value;
+                  const href = `/${selectedLng}/${otherPath}${
+                    searchParams ? "?" + searchParams.toString() : ""
+                  }`;
+                  window.location.href = href; // 페이지 리디렉션
+                }}
+                className="border-none bg-transparent"
+              >
+                {languages.map((l) => (
+                  <option key={l} value={l}>
+                    {l.toUpperCase()}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
           <div>
-            <select
-              id="languageSwitcher"
-              value={lng}
-              onChange={(e) => {
-                const selectedLng = e.target.value;
-                const href = `/${selectedLng}/${otherPath}${
-                  searchParams ? "?" + searchParams.toString() : ""
-                }`;
-                window.location.href = href; // 페이지 리디렉션
-              }}
-              className="border-none bg-transparent"
-            >
-              {languages.map((l) => (
-                <option key={l} value={l}>
-                  {l.toUpperCase()}
-                </option>
-              ))}
-            </select>
+            <Link href={`/${lng}/privacy-policy`}>{t("privacy-policy")}</Link>
           </div>
         </article>
       </div>
