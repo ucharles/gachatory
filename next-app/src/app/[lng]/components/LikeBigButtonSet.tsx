@@ -203,16 +203,28 @@ export default function LikeBigButtonSet({
             </p>
           </div>
         </button>
-        <button className="basis-1/3" onClick={handleLikeList}>
-          <Link href={`/${lng}/like-list`}>
+        {session && (
+          <button className="basis-1/3" onClick={handleLikeList}>
+            <Link href={`/${lng}/like-list`}>
+              <div className="hidden h-full items-center justify-center rounded-md border border-gray-400 hover:shadow-md sm:flex">
+                <p className="text-gray-400">{t("go-to-like-list")}</p>
+              </div>
+              <div className="flex h-full items-center justify-center rounded-md border border-gray-400 hover:shadow-md sm:hidden">
+                <p className="text-gray-400">{t("go-to-like")}</p>
+              </div>
+            </Link>
+          </button>
+        )}
+        {!session && (
+          <button className="basis-1/3" onClick={handleLikeList}>
             <div className="hidden h-full items-center justify-center rounded-md border border-gray-400 hover:shadow-md sm:flex">
               <p className="text-gray-400">{t("go-to-like-list")}</p>
             </div>
             <div className="flex h-full items-center justify-center rounded-md border border-gray-400 hover:shadow-md sm:hidden">
               <p className="text-gray-400">{t("go-to-like")}</p>
             </div>
-          </Link>
-        </button>
+          </button>
+        )}
       </div>
     </>
   );
