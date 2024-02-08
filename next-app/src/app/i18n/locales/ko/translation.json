@@ -9,10 +9,18 @@
   "past-release-discription": "지난달에 발매된 캡슐 토이",
   "sort-by": "정렬 | 등록순",
   "like": "찜하기",
+  "liked": "좋아요",
   "go-to-like-list": "찜 목록 바로가기",
   "go-to-like": "찜 목록",
   "date-explain": "*제조사의 사정에 따라 발매일이 변동될 수 있습니다",
   "brand": "제조사",
   "product-info": "Product Info | 제품 정보",
-  "link-copied": "링크 복사 완료"
+  "link-copied": "링크 복사 완료",
+  "login-required": "로그인이 필요합니다",
+  "recent-order": "발매순",
+  "like-order": "좋아요순",
+  "like-list": "좋아요 목록",
+  "keyword-sub": "키워드 알림 설정",
+  "account-info": "계정 정보",
+  "mypage": "MY PAGE"
 }

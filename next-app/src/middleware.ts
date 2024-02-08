@@ -12,7 +12,9 @@ acceptLanguage.languages(languages);
 // a negative lookahead to exclude the api routes, the static folder, the image folder, the assets folder, the favicon and the service worker
 export const config = {
   // matcher: '/:lng*'
-  matcher: ["/((?!api|_next/static|_next/image|assets|favicon.ico|sw.js).*)"],
+  matcher: [
+    "/((?!api|auth|_next/static|_next/image|assets|favicon.ico|sw.js|sitemap.xml).*)",
+  ],
 };
 
 const cookieName = "i18next";
@@ -36,13 +38,13 @@ export function middleware(req: NextRequest) {
 
   if (languages.includes(lng)) {
     return NextResponse.redirect(
-      new URL(`/${lng}${req.nextUrl.pathname}`, req.url)
+      new URL(`/${lng}${req.nextUrl.pathname}`, req.url),
     );
   }
 
   // Redirect if lng in path is not supported
   return NextResponse.redirect(
-    new URL(`/${lng}${req.nextUrl.pathname}`, req.url)
+    new URL(`/${lng}${req.nextUrl.pathname}`, req.url),
   );
 
   // if (req.headers.has("referer")) {

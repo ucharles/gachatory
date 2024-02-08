@@ -9,10 +9,18 @@
   "past-release-discription": "先月発売のカプセルトイ",
   "sort-by": "登録順",
   "like": "いいね",
+  "liked": "いいね",
   "go-to-like-list": "いいね一覧へ",
   "go-to-like": "いいね一覧",
   "date-explain": "*メーカーの事情により発売日が変更される可能性があります",
   "brand": "メーカー",
   "product-info": "Product Info | 製品情報",
-  "link-copied": "リンクがコピーされました"
+  "link-copied": "リンクがコピーされました",
+  "login-required": "ログインが必要です",
+  "recent-order": "発売順",
+  "like-order": "いいね順",
+  "like-list": "いいね一覧",
+  "keyword-noti": "キーワード通知",
+  "account-info": "アカウント情報",
+  "mypage": "MY PAGE"
 }

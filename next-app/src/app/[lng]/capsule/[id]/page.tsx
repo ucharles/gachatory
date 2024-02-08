@@ -1,12 +1,33 @@
+import { Metadata } from "next";
+
 import getQueryClient from "../../components/Providers/getQueryClient";
 import { dehydrate } from "@tanstack/query-core";
 import Hydrate from "../../components/Providers/HydrateClient";
-import { ICapsuleToy } from "@/lib/models/capsule-model";
-import { cacheTimeEnum } from "@/lib/enums";
 import CapsuleInfo from "../../components/CapsuleInfo";
 import { capsuleFetchData } from "@/lib/fetch-data";
 
-const API_URI = process.env.APP_SERVER_URL || "";
+export async function generateMetadata({
+  params: { lng, id },
+}: {
+  params: { lng: string; id: string };
+}): Promise<Metadata> {
+  const data = await capsuleFetchData(id, lng);
+  const gachatoryLoc: { [key: string]: string } = {
+    ja: "ガチャトリー",
+    en: "Gachatory",
+    ko: "가챠토리",
+  };
+  return {
+    title: `${data.name} - ${gachatoryLoc[lng]}`,
+    description: data.description,
+    openGraph: {
+      title: data.name,
+      description: data.description,
+      images: [{ url: data.img, width: 300, height: 300 }], // Must be an absolute URL
+      type: "website",
+    },
+  };
+}
 
 export default async function Page({
   params: { lng, id },
@@ -20,10 +41,10 @@ export default async function Page({
   const dehydratedState = dehydrate(queryClient);
 
   return (
-    <div className="grid grid-cols-2 gap-8 pt-10 fold:grid-cols-1 fold:pt-4 3xs:grid-cols-1 3xs:pt-4 2xs:grid-cols-1 2xs:pt-4 xs:grid-cols-1 xs:pt-4">
-      <Hydrate state={dehydratedState}>
+    <Hydrate state={dehydratedState}>
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:pt-5">
         <CapsuleInfo lng={lng} queryKey={["capsule", id, lng]} id={id} />
-      </Hydrate>
-    </div>
+      </div>
+    </Hydrate>
   );
 }

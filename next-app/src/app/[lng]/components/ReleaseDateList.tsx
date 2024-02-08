@@ -75,7 +75,7 @@ function ReleaseDateList({
           onClick={handleButtonClick}
           ref={listRef}
         >
-          <h1 className="font-YgJalnan text-4xl text-gigas-700 fold:text-3xl 3xs:text-2xl 2xs:text-3xl">
+          <h1 className="font-YgJalnan text-2xl text-gigas-700 sm:text-4xl xs:text-3xl">
             {addDotToYYYYMM(selectedDate)}
           </h1>
           <svg

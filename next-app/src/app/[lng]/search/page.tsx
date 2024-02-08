@@ -86,12 +86,16 @@ export default async function Page({
 
   // 유효성 검사 후에 쿼리 파라미터를 설정
   const queryParams = searchParams;
+  const cacheParams = { ...queryParams, lng: lng };
+  const { t } = await translate(lng, "search");
+
+  const cookie = cookies();
 
   const queryClient = getQueryClient();
   const data = await queryClient.fetchQuery(
-    ["searchCapsules", queryParams, lng],
+    ["searchCapsules", cacheParams],
     () => {
-      return searchFetchData(lng, queryParams);
+      return searchFetchData(lng, queryParams, cookie);
     },
   );
 
@@ -105,8 +109,6 @@ export default async function Page({
     );
     redirect(`?${newParams.toString()}`);
   }
-
-  const { t } = await translate(lng, "search");
 
   const dehydratedState = dehydrate(queryClient);
   const maxPageDesktop = 10;
@@ -134,8 +136,21 @@ export default async function Page({
     }
   };
 
+  const totalResultCount = (lng: string, data: string) => {
+    switch (lng) {
+      case "ko":
+        return `${data}건`;
+      case "ja":
+        return `${data}件`;
+      case "en":
+        return `Total ${data}`;
+      default:
+        return `Total ${data}`;
+    }
+  };
+
   return (
-    <div className="pt-5">
+    <div>
       <Hydrate state={dehydratedState}>
         {data ? (
           <div>
@@ -149,8 +164,10 @@ export default async function Page({
                 </h1>
               </div>
               <div className="flex w-full items-end justify-between">
-                <h2 className="text-heading4-medium">{data.totalCount}건</h2>
-                <div className="flex items-center justify-center space-x-6 text-small-medium">
+                <h2 className="text-heading4-medium">
+                  {totalResultCount(lng, data.totalCount)}
+                </h2>
+                <div className="hidden items-center justify-center space-x-6 text-small-medium xs:flex">
                   <SearchLimit lng={lng} />
                   <SortCapsuleList lng={lng} searchParams={searchParams} />
                 </div>
@@ -158,13 +175,13 @@ export default async function Page({
             </div>
             {data?.totalCount > 0 ? (
               <>
-                <div className="flex justify-end sm:hidden md:hidden lg:hidden xl:hidden">
+                <div className="flex justify-end sm:hidden">
                   <Pagination
                     total={data.totalCount}
                     maxPages={maxPageMobile}
                   />
                 </div>
-                <div className="flex justify-end fold:hidden 3xs:hidden 2xs:hidden xs:hidden">
+                <div className="hidden justify-end sm:flex">
                   <Pagination
                     total={data.totalCount}
                     maxPages={maxPageDesktop}
@@ -177,19 +194,19 @@ export default async function Page({
             ) : null}
             <CapsuleCards
               lng={lng}
-              queryKey={["searchCapsules", queryParams, lng]}
+              queryKey={["searchCapsules", cacheParams]}
               pageName="search"
               queryParams={queryParams}
             />
             {data?.totalCount > 0 ? (
               <div className="pt-10">
-                <div className="flex justify-end sm:hidden md:hidden lg:hidden xl:hidden">
+                <div className="flex justify-end sm:hidden">
                   <Pagination
                     total={data.totalCount}
                     maxPages={maxPageMobile}
                   />
                 </div>
-                <div className="flex justify-end fold:hidden 3xs:hidden 2xs:hidden xs:hidden">
+                <div className="hidden justify-end sm:flex">
                   <Pagination
                     total={data.totalCount}
                     maxPages={maxPageDesktop}

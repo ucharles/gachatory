@@ -9,10 +9,18 @@
   "past-release-discription": "Capsule toys released in the past",
   "sort-by": "Sort By",
   "like": "Like",
+  "liked": "Liked",
   "go-to-like-list": "Go to Like List",
   "go-to-like": "Like List",
   "date-explain": "*Depending on the manufacturer, release dates are subject to change.",
   "brand": "Manufacturer",
   "product-info": "Product Info",
-  "link-copied": "Link Copied"
+  "link-copied": "Link Copied",
+  "login-required": "Login Required",
+  "recent-order": "Release Date",
+  "like-order": "Liked",
+  "like-list": "Like List",
+  "keyword-sub": "Keyword Subscribtion",
+  "account-info": "Account Info",
+  "mypage": "Dashboard"
 }

@@ -1,6 +1,6 @@
 import { dateConveter } from "@/lib/date-converter";
 import { perPageEnum } from "@/lib/enums";
-import { ObjectId } from "mongodb";
+import mongoose from "mongoose";
 
 export function searchParams(url: string) {
   const params = new URLSearchParams(new URL(url).search);
@@ -70,7 +70,9 @@ export function searchParams(url: string) {
 
   const tagIds = params.get("tag")?.match(regex);
   const filteredTagIds = tagIds?.filter((tagId) => tagId.length === 24);
-  const objectIdTagIds = filteredTagIds?.map((tagId) => new ObjectId(tagId));
+  const objectIdTagIds = filteredTagIds?.map(
+    (tagId) => new mongoose.Types.ObjectId(tagId)
+  );
 
   if (objectIdTagIds && objectIdTagIds.length > 0) {
     // 모든 tagId가 ObjectId로 변환되도록 수정

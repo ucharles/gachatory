@@ -1,0 +1,19 @@
+.provision_title {
+  font-weight: bold;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+}
+
+.contents {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.contents ol {
+  list-style-type: decimal;
+  margin-left: 2em;
+}
+
+.contents span {
+  font-weight: bold;
+}

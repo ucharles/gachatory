@@ -6,6 +6,7 @@ import localFont from "next/font/local";
 import Navbar from "@/app/[lng]/components/navbar";
 import { Footer } from "@/app/[lng]/components/Footer/client";
 import TenstackProvider from "./components/Providers/TenstackProvider";
+import { AuthProvider } from "./components/Providers/AuthProvider";
 const GTM_MEASUREMENT_ID = process.env.NEXT_PUBLIC_MEASUREMENT_ID;
 
 import "@/app/global.css";
@@ -29,12 +30,31 @@ const pretendard = localFont({
   style: "normal",
 });
 
-export const metadata: Metadata = {
-  title: "Gachatory",
-  openGraph: {
-    title: "Gachatory",
-  },
-};
+export async function generateMetadata({
+  params: { lng },
+}: {
+  params: { lng: string; id: string };
+}): Promise<Metadata> {
+  const gachatoryLoc: { [key: string]: string } = {
+    ja: "ガチャトリー - Gachatory",
+    en: "Gachatory",
+    ko: "가챠토리 - Gachatory",
+  };
+  const gachatoryDesc: { [key: string]: string } = {
+    ja: "お気に入りのカプセルトイを探してみよう！",
+    en: "Find your favorite capsule toy!",
+    ko: "좋아하는 캡슐 토이를 찾아보세요!",
+  };
+  return {
+    title: gachatoryLoc[lng],
+    description: gachatoryDesc[lng],
+    openGraph: {
+      title: gachatoryLoc[lng],
+      description: gachatoryDesc[lng],
+      type: "website",
+    },
+  };
+}
 
 interface RootLayoutProps {
   children: React.ReactNode;
@@ -72,11 +92,15 @@ export default function RootLayout({
             __html: `<iframe src="https://www.googletagmanager.com/ns.html?id=${GTM_MEASUREMENT_ID}" height="0" width="0" style="display: none; visibility: hidden;"></iframe>`,
           }}
         />
-        <TenstackProvider>
-          <Navbar lng={lng} />
-          <div className="container w-[1200px]">{children}</div>
-          <Footer lng={lng} />
-        </TenstackProvider>
+        <AuthProvider>
+          <TenstackProvider>
+            <Navbar lng={lng} />
+            <div className="container max-w-[1200px] px-6 pb-20 pt-4 xl:px-0">
+              {children}
+            </div>
+            <Footer lng={lng} />
+          </TenstackProvider>
+        </AuthProvider>
         <NaverAnalytics />
       </body>
     </html>

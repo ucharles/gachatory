@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/db/db-connect";
 import CapsuleTag from "@/lib/models/capsule-tag-model";
-import { ObjectId } from "mongodb";
+import mongoose from "mongoose";
 
 export async function GET(request: Request) {
   try {
@@ -28,7 +28,9 @@ export async function GET(request: Request) {
 
     const tagIds = params.get("id")?.match(regex);
     const filteredTagIds = tagIds?.filter((tagId) => tagId.length === 24);
-    const objectIdTagIds = filteredTagIds?.map((tagId) => new ObjectId(tagId));
+    const objectIdTagIds = filteredTagIds?.map(
+      (tagId) => new mongoose.Types.ObjectId(tagId)
+    );
 
     // DB 검색하기
     let resultCapsuleTags = [];

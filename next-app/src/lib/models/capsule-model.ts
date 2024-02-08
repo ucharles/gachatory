@@ -20,6 +20,7 @@ export interface ICapsuleToy extends Document {
   localization?: ILocalization[];
   originalName?: string;
   dateISO?: Date[];
+  like?: boolean;
 }
 
 export const capsuleToySchema = new Schema<ICapsuleToy>(

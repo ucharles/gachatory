@@ -7,13 +7,15 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    env:
+      DB_URI_TEST: ${{ secrets.DB_URI_TEST }}
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
+
         with:
           node-version: "18" # 또는 프로젝트에 맞는 Node.js 버전
 
@@ -24,11 +26,9 @@ jobs:
       - name: Build Next.js Project
         run: npm run build # 또는 yarn build
         working-directory: ./next-app
-        env:
-          DB_URI_TEST: ${{ secrets.DB_URI_TEST }}
 
       - name: Archive Production Artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: nextjs-build
           path: next-app/.next/ # Next.js 빌드 아티팩트 디렉토리

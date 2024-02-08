@@ -33,7 +33,7 @@ function ImageGallery({ detail_img }: ImageGalleryProps) {
   }, []);
 
   return (
-    <div className="grid grid-cols-6 gap-2 pt-6">
+    <div className="grid grid-cols-4 gap-2 pt-6 xs:grid-cols-5 sm:grid-cols-6">
       {detail_img.map((image, index) => (
         <div
           key={index}
@@ -48,7 +48,6 @@ function ImageGallery({ detail_img }: ImageGalleryProps) {
             className="transform cursor-pointer transition ease-in-out hover:scale-105"
             width={200}
             height={200}
-            unoptimized={true}
           />
         </div>
       ))}
@@ -63,7 +62,6 @@ function ImageGallery({ detail_img }: ImageGalleryProps) {
             className="max-h-full max-w-full"
             width={500}
             height={500}
-            unoptimized={true}
           />
         </div>
       )}

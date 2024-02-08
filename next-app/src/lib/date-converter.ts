@@ -44,3 +44,22 @@ export function dateConverterSixDigitAndDot(date: string) {
 
   return year + "." + month;
 }
+
+export function convertToLocalTime(isoDateString: string): string {
+  // ISO 형식의 문자열을 Date 객체로 변환
+  const date = new Date(isoDateString);
+
+  // Intl.DateTimeFormat을 사용하여 사용자의 로컬 시간대에 맞는 날짜와 시간을 포맷
+  const dateTimeFormatOptions: Intl.DateTimeFormatOptions = {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hourCycle: "h23", // 24시간 형식을 사용하려면 이 옵션을 설정
+  };
+
+  // 로컬 시간대로 변환된 날짜와 시간 문자열 반환
+  return Intl.DateTimeFormat("default", dateTimeFormatOptions).format(date);
+}

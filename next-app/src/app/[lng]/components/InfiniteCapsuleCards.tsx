@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
 import { ICapsuleToy } from "@/lib/models/capsule-model";
 import { arrivalFetchData } from "@/lib/fetch-data";
 import { perPageEnum } from "@/lib/enums";
@@ -62,7 +63,7 @@ function InfiniteCapsuleCards({
 
   return (
     <>
-      <ul className="grid gap-x-6 gap-y-10 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4 fold:grid-cols-2 3xs:grid-cols-2 2xs:grid-cols-2 xs:grid-cols-2">
+      <ul className="grid grid-cols-1 gap-x-6 gap-y-10 md:grid-cols-4 xs:grid-cols-2">
         {data?.pages?.map((page: any) => {
           return page.capsules?.map((capsule: ICapsuleToy) => {
             return capsule.display_img ? (
@@ -82,17 +83,22 @@ function InfiniteCapsuleCards({
                   <div>
                     <div className="pb-2 pt-4">
                       <Link href={`/${lng}/capsule/${capsule._id}`}>
-                        <h1 className="max-lines-3 break-words text-body-bold text-gray-800 3xs:text-base-semibold">
+                        <h1 className="max-lines-3 break-words text-base-semibold text-gray-800 xs:text-body-bold">
                           {capsule.name}
                         </h1>
                       </Link>
                     </div>
                     <div className="flex h-8 flex-row justify-between">
-                      <div className="flex text-subtle-medium text-gray-500">
-                        <LikeButton like={false} />
-                      </div>
-                      <div className="truncate-70 fold:invisible">
+                      <div className="truncate-70 invisible xs:visible">
                         <DisplayCapsuleOneTag tags={capsule.tagId} lng={lng} />
+                      </div>
+                      <div className="flex text-subtle-medium text-gray-500">
+                        <LikeButton
+                          lng={lng}
+                          like={capsule.like ?? false}
+                          capsuleId={capsule._id}
+                          queryKey={queryKey}
+                        />
                       </div>
                     </div>
                   </div>

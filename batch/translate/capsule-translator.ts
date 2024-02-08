@@ -7,9 +7,10 @@ import mongoose from "mongoose";
 import CapsuleToy from "../models/capsule-model";
 import Localization from "../models/localization-model";
 import * as deepl from "deepl-node";
-import { brandTranslator } from "../utils/brand-translator";
+import { brandTranslator } from "../utils/translate_utils";
 import { arrayOrganizer } from "../utils/array-organizer";
 import * as logger from "../utils/logger";
+import { bracketMatcher } from "../utils/translate_utils";
 
 const uri: string = process.env.DATABASE_URL ?? "";
 console.log("DB URL:", uri);
@@ -24,14 +25,14 @@ mongoose
 
     const capsules = await CapsuleToy.find({
       name: new RegExp("^((?!箱売).)*$", "i"),
-      date: new RegExp("2023年", "i"),
+      date: new RegExp("2023年|2024年", "i"),
       $or: [{ localization: [] }, { localization: { $exists: false } }],
     })
       .sort({ _id: -1 })
       .limit(100);
     const capsuleCounts = await CapsuleToy.countDocuments({
       name: new RegExp("^((?!箱売).)*$", "i"),
-      date: new RegExp("2023年", "i"),
+      date: new RegExp("2023年|2024年", "i"),
       $or: [{ localization: [] }, { localization: { $exists: false } }],
     });
 
@@ -95,7 +96,7 @@ mongoose
       locKo.lng = "ko";
       locKo.capsuleId = capsuleId;
       locKo.brand = brandTranslator(brand, "ko");
-      locKo.name = resultJaToKo[0].text;
+      locKo.name = bracketMatcher(resultJaToKo[0].text);
       locKo.header = headesKo.headerResult;
       locKo.description = headesKo.descriptionResult;
 
@@ -116,7 +117,7 @@ mongoose
       locEn.lng = "en";
       locEn.capsuleId = capsuleId;
       locEn.brand = brandTranslator(brand, "en");
-      locEn.name = resultJaToEn[0].text;
+      locEn.name = bracketMatcher(resultJaToEn[0].text);
       locEn.header = headesEn.headerResult;
       locEn.description = headesEn.descriptionResult;
 
