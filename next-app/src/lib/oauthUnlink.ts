@@ -32,31 +32,31 @@ export async function revokeGitHubAppPermission(
       "X-GitHub-Api-Version": "2022-11-28",
     };
 
-    // const response = await fetch(url, {
-    //   method: "DELETE",
-    //   headers: headers,
-    //   body: JSON.stringify({
-    //     access_token: userToken,
-    //   }),
-    // }).then(async (res) => {
-    //   const { status, ok } = res;
-    //   // 헤더 추출
-    //   const headers: { [key: string]: string } = {};
-    //   res.headers.forEach((value, key) => {
-    //     headers[key] = value;
-    //   });
-    //   // 바디 데이터 추출
-    //   const data = await res.json();
-    //   // 모든 정보 반환
-    //   return { status, ok, headers, data };
-    // });
-
-    const response = await axios.delete(url, {
-      headers,
-      data: {
+    const response = await fetch(url, {
+      method: "DELETE",
+      headers: headers,
+      body: JSON.stringify({
         access_token: userToken,
-      },
+      }),
+    }).then(async (res) => {
+      const { status, ok } = res;
+      // 헤더 추출
+      const headers: { [key: string]: string } = {};
+      res.headers.forEach((value, key) => {
+        headers[key] = value;
+      });
+      // 바디 데이터 추출
+      const data = await res.json();
+      // 모든 정보 반환
+      return { status, ok, headers, data };
     });
+
+    // const response = await axios.delete(url, {
+    //   headers,
+    //   data: {
+    //     access_token: userToken,
+    //   },
+    // });
 
     // const octokit = new Octokit({
     //   authStrategy: createAppAuth,
