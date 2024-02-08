@@ -1,8 +1,3 @@
-import axios from "axios";
-import { Octokit } from "@octokit/core";
-import { createAppAuth } from "@octokit/auth-app";
-import { OAuthApp } from "@octokit/oauth-app";
-
 const GITHUB_PERSONAL_ACCESS_TOKEN = process.env.GITHUB_PERSONAL_ACCESS_TOKEN;
 
 /**
