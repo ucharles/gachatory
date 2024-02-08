@@ -6,5 +6,6 @@
   "email-noti-desc-1": "Receive email notifications when someone comments on your post.",
   "sign-out": "Sign out",
   "delete-account": "Delete Account",
-  "delete-account-message": "Are you sure you want to delete your account? This action cannot be undone."
+  "delete-account-message": "Are you sure you want to delete your account? This action cannot be undone.",
+  "social-unlink-google": "Google does not support unlinking. Please contact support for assistance."
 }

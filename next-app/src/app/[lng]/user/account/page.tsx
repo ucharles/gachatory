@@ -12,7 +12,7 @@ import EmailNotification from "../components/EmailNotification";
 
 import { translate } from "@/app/i18n";
 
-interface MySession extends Session {
+export interface MySession extends Session {
   user?: {
     id?: string | null;
     name?: string | null;
@@ -66,7 +66,7 @@ export default async function Page({
       <hr className="w-full py-4"></hr>
       <article className="flex justify-between">
         <SignOutButton lng={lng} />
-        {/* <DeleteAccountButton lng={lng} id={session.user?.id} /> */}
+        <DeleteAccountButton lng={lng} user={session.user} />
       </article>
     </main>
   );
