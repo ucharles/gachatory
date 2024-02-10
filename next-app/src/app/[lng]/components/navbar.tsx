@@ -88,8 +88,8 @@ export default function Navbar({ lng }: { lng: string }) {
 
   // flex와 w-full을 동시에 사용하면, 부모의 width만큼 너비가 늘어나지 않으니 주의
   return (
-    <nav className="sticky top-0 z-40 bg-background-white/95 pt-6">
-      <div className="container relative flex max-w-[1200px] flex-row items-center justify-items-center space-x-4 px-6 xl:px-0">
+    <nav className="sticky top-0 z-40 bg-background-white/95">
+      <div className="container relative flex max-w-[1200px] flex-row items-center justify-items-center space-x-4 px-6 py-3 md:py-6 xl:px-0">
         <div className="flex basis-2/12 justify-center">
           <Link href={`/${lng}`}>
             <Image
@@ -132,14 +132,14 @@ export default function Navbar({ lng }: { lng: string }) {
           <div
             className={`${
               isOverlayOpen ? "block" : "hidden"
-            } absolute right-0 top-full mt-4`}
+            } absolute right-3 top-full mt-4`}
           >
             <UserInfoOverlay lng={lng} />
           </div>
         ) : null}
       </div>
 
-      <div className="mt-6 h-[1px] border border-gray-100"></div>
+      <div className="h-[1px] border border-gray-100"></div>
     </nav>
   );
 }

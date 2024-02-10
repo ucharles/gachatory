@@ -2,7 +2,7 @@ function CapsuleCardSkeleton({ isFirst }: { isFirst?: boolean }) {
   const items = Array.from({ length: 20 });
   return (
     <ul
-      className={`grid grid-cols-1 gap-x-6 gap-y-10 md:grid-cols-4 xs:grid-cols-2 ${
+      className={`grid grid-cols-1 gap-x-6 gap-y-10 xs:grid-cols-2 md:grid-cols-4 ${
         isFirst ? null : "pt-10"
       }`}
     >

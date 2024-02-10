@@ -56,7 +56,7 @@ export function convertToLocalTime(isoDateString: string): string {
     day: "2-digit",
     hour: "2-digit",
     minute: "2-digit",
-    second: "2-digit",
+    // second: "2-digit",
     hourCycle: "h23", // 24시간 형식을 사용하려면 이 옵션을 설정
   };
 

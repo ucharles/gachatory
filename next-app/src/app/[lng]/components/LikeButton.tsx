@@ -5,6 +5,8 @@ import { useSession } from "next-auth/react";
 import { useQueryClient } from "@tanstack/react-query";
 import LoginAlert from "./LoginAlert";
 
+import { updateLikes } from "@/lib/updateLikes";
+
 interface ILikeButtonProps {
   lng: string;
   like: boolean;
@@ -28,17 +30,6 @@ const LikeButton = ({ lng, like, capsuleId, queryKey }: ILikeButtonProps) => {
     setIsLiked(!isLiked);
   };
 
-  const getMostRecentData = () => {
-    const matchingQueries = queryClient.getQueriesData(["capsule", capsuleId]);
-
-    if (matchingQueries.length > 0) {
-      const mostRecentQuery = matchingQueries[0];
-      return mostRecentQuery;
-    }
-
-    return null;
-  };
-
   const handleLike = () => {
     if (session) {
       if (isLikeLoading) return;
@@ -48,58 +39,7 @@ const LikeButton = ({ lng, like, capsuleId, queryKey }: ILikeButtonProps) => {
       }, 1000);
 
       toggleLike();
-
-      const mostRecentData = getMostRecentData();
-      if (mostRecentData) {
-        const mostRecentDataQueryKey = mostRecentData[0];
-
-        queryClient.setQueryData(mostRecentDataQueryKey, (oldData: any) => {
-          return {
-            ...oldData,
-            like: !oldData.like,
-          };
-        });
-      }
-
-      // data update in infinite query
-      // data = { pages: [{ 0: [ totalCount: number, capsules:[] ], ... }], pageParams: [] }
-      if (queryKey[0] === "arrivalCapsules") {
-        queryClient.setQueryData(queryKey, (oldData: any) => {
-          const newPages = oldData.pages.map((page: any) => {
-            return {
-              ...page,
-              capsules: page.capsules.map((capsule: any) => {
-                if (capsule._id === capsuleId) {
-                  return {
-                    ...capsule,
-                    like: !capsule.like,
-                  };
-                }
-                return capsule;
-              }),
-            };
-          });
-          return {
-            ...oldData,
-            pages: newPages,
-          };
-        });
-      } else if (queryKey[0] === "searchCapsules") {
-        queryClient.setQueryData(queryKey, (oldData: any) => {
-          return {
-            ...oldData,
-            capsules: oldData.capsules.map((capsule: any) => {
-              if (capsule._id === capsuleId) {
-                return {
-                  ...capsule,
-                  like: !capsule.like,
-                };
-              }
-              return capsule;
-            }),
-          };
-        });
-      }
+      updateLikes(queryClient, queryKey[0], capsuleId);
 
       fetchLike();
     } else {

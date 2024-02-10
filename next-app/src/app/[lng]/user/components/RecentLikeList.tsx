@@ -1,11 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+
 import Link from "next/link";
 import LikedCapsuleCard from "./LikedCapsuleCard";
 import { fetchLikedData } from "@/lib/fetch-data";
 import LikedCapsuleCardSkeleton from "./LikedCapsuleCardSkeleton";
 import { translate } from "@/app/i18n/client";
+import { cacheTimeEnum } from "@/lib/enums";
 
 export default function RecentLikeList({
   lng,
@@ -14,15 +17,22 @@ export default function RecentLikeList({
   lng: string;
   searchParams: Record<string, string>;
 }) {
-  const [data, setData] = useState<any>(null);
   const limit = searchParams.limit || "4";
   const { t } = translate(lng, "like");
 
-  useEffect(() => {
-    fetchLikedData(lng, limit).then((res) => {
-      setData(res);
-    });
-  }, [lng, limit]);
+  const queryClient = useQueryClient();
+
+  const { data, isLoading, isError } = useQuery(
+    ["recentLikes", lng],
+    async () => {
+      return fetchLikedData(lng, limit, "like", "desc", "", "1");
+    },
+    {
+      cacheTime: cacheTimeEnum.FIVE_MINUTES * 1000,
+      staleTime: cacheTimeEnum.ONE_MINUTE * 1000,
+      refetchOnMount: false,
+    },
+  );
 
   return (
     <article className="space-y-4">
@@ -38,7 +48,9 @@ export default function RecentLikeList({
           <p>{t("no-liked-message-2")}</p>
         </div>
       ) : (
-        <ul className="grid grid-cols-2 gap-x-6 gap-y-6 xs:grid-cols-3 md:grid-cols-4">
+        <ul
+          className={`moving_grid grid grid-cols-2 gap-x-6 gap-y-6 xs:grid-cols-3 md:grid-cols-4`}
+        >
           {data?.likes ? (
             data?.likes?.map((like: any) => (
               <LikedCapsuleCard

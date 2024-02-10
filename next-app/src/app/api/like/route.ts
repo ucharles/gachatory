@@ -5,12 +5,13 @@
 import { NextResponse, NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 import Like, { ILike } from "@/lib/models/like-model";
+import { ICapsuleToy } from "@/lib/models/capsule-model";
 import { convertToObjectId } from "@/lib/db/convertObjectId";
 import CapsuleToy from "@/lib/models/capsule-model";
 import Localization, { ILocalization } from "@/lib/models/localization-model";
 import CapsuleTag from "@/lib/models/capsule-tag-model";
 import { dateTranslator } from "@/lib/date-converter";
-import { editLikes } from "./util-likes";
+import { editLikes, sortLikes } from "./util-likes";
 
 export async function GET(request: NextRequest) {
   // 유저 확인
@@ -35,6 +36,11 @@ export async function GET(request: NextRequest) {
   const limit = params.get("limit");
   const lng = params.get("lng");
   const name = params.get("name");
+  const page = params.get("page");
+  const paramSortBy = params.get("sortBy") || "like";
+  const paramSortOrder = params.get("sortOrder") || "desc";
+
+  // 유효성 검사
 
   let locSearchName = "";
   if (name) {
@@ -51,14 +57,55 @@ export async function GET(request: NextRequest) {
     }
   }
 
+  let currentPage = 1;
+
+  if (page) {
+    currentPage = +page || 1;
+  }
+
+  let sortBy = "like";
+  let sortOrder = "desc";
+
+  if (paramSortBy === "like" || paramSortBy === "release") {
+    sortBy = paramSortBy;
+  }
+
+  if (paramSortOrder === "desc" || paramSortOrder === "asc") {
+    sortOrder = paramSortOrder;
+  }
+
+  let totalLikes = 0;
+
+  try {
+    totalLikes = await Like.countDocuments({
+      userId: convertToObjectId(userId),
+      state: true,
+    });
+  } catch (error) {
+    console.error("Error counting like:", error);
+    return NextResponse.next();
+  }
+
+  // 최대 페이지 계산 후 현재 페이지가 최대 페이지보다 크다면 최대 페이지로 설정
+
+  const maxPage = Math.ceil(totalLikes / perPage);
+
+  if (currentPage > maxPage) {
+    currentPage = maxPage;
+  }
+
   // 좋아요 객체가 있는지 확인
   let likes: ILike[] = [];
+
   try {
     likes = await Like.find({
       userId: convertToObjectId(userId),
       state: true,
     })
-      .sort({ updatedAt: -1 })
+      .skip((currentPage - 1) * perPage)
+      .sort({
+        updatedAt: sortBy === "like" ? (sortOrder === "asc" ? 1 : -1) : -1,
+      })
       .limit(perPage)
       .populate({
         path: "capsuleId",
@@ -79,12 +126,94 @@ export async function GET(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // 검색어가 없다면 전체 좋아요 캡슐 반환
+
+  if (locSearchName.length === 0) {
+    console.log("locSearchName.length === 0", locSearchName);
+    // 캡슐 정보 편집
+    likes = editLikes(likes, lng);
+
+    return NextResponse.json({
+      totalCount: totalLikes,
+      likes,
+      page: +currentPage,
+    });
+  }
+
+  // 이후 검색어가 있다면 검색어에 따라 좋아요 캡슐 반환
+  console.log("locSearchName.length !== 0", locSearchName);
+
+  const likeCapsuleIds = likes.map((like) => {
+    return like.capsuleId;
+  });
+
+  // 일본어 검색
+  let capsules;
+  try {
+    capsules = await CapsuleToy.find({
+      _id: { $in: likeCapsuleIds },
+      name: new RegExp(locSearchName as string, "i"),
+      description: new RegExp(locSearchName as string, "i"),
+    })
+      .sort({
+        dateISO: sortBy === "release" ? (sortOrder === "asc" ? 1 : -1) : -1,
+      })
+      .skip((currentPage - 1) * perPage)
+      .limit(perPage);
+  } catch (error) {
+    console.error("Error finding like:", error);
+    return NextResponse.next();
+  }
+
+  // 한국어, 영어 검색
+  let locSearchCapsules: ILocalization[] = [];
+  try {
+    locSearchCapsules = await Localization.find({
+      capsuleId: { $in: likeCapsuleIds },
+      $or: [
+        { name: new RegExp(locSearchName as string, "i") },
+        { description: new RegExp(locSearchName as string, "i") },
+      ],
+    })
+      .skip((currentPage - 1) * perPage)
+      .limit(perPage);
+  } catch (error) {
+    console.error("Error finding like:", error);
+    return NextResponse.next();
+  }
+
+  if (capsules.length === 0 && locSearchCapsules.length === 0) {
+    return NextResponse.json({
+      status: 200,
+      likes: [],
+    });
+  }
+
+  const capsuleIds = capsules.map((capsule) => {
+    return capsule._id;
+  });
+
+  const locSearchCapsuleIds = locSearchCapsules.map((capsule) => {
+    return capsule.capsuleId;
+  });
+
+  // capsuleIds, locSearchCapsuleIds 합치기
+  // 중복 제외
+  const allCapsuleIds = Array.from(
+    new Set([...capsuleIds, ...locSearchCapsuleIds]),
+  );
+
+  likes = likes.filter((like) => {
+    return allCapsuleIds.includes(like.capsuleId._id);
+  });
+
   // 캡슐 정보 편집
   likes = editLikes(likes, lng);
 
   return NextResponse.json({
-    status: 200,
+    totalCount: totalLikes,
     likes,
+    page: +currentPage,
   });
 }
 
