@@ -69,3 +69,28 @@ body {
 .animate-heartBounce {
   animation: heartBounce 0.6s;
 }
+
+@media (min-width: 768px) {
+  .moving_grid > :nth-child(n + 5) {
+    /* xl에서는 4개 아이템만 보이게 하고 나머지는 숨김 */
+    display: none;
+  }
+  .moving_grid > :nth-child(-n + 4) {
+    /* 처음 4개 아이템은 보이게 함 */
+    display: block;
+  }
+}
+
+@media (max-width: 767px) {
+  .moving_grid > :nth-child(n + 4):nth-child(-n + 6) {
+    /* xs에서는 3개 아이템만 보이게 하고 나머지는 숨김 */
+    display: none;
+  }
+}
+
+@media (max-width: 320px) {
+  .moving_grid > :nth-child(n + 3) {
+    /* 기본 상태에서 2개 아이템만 보이게 하고 나머지는 숨김 */
+    display: none;
+  }
+}

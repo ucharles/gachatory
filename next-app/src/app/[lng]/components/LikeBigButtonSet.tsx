@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { cookies } from "next/headers";
 
 import { useState } from "react";
 import { useSession } from "next-auth/react";
@@ -11,6 +10,8 @@ import { translate } from "@/app/i18n/client";
 import { ICapsuleToy } from "@/lib/models/capsule-model";
 import { capsuleFetchData } from "@/lib/fetch-data";
 import { cacheTimeEnum } from "@/lib/enums";
+
+import { updateLikes } from "@/lib/updateLikes";
 
 import LoginAlert from "./LoginAlert";
 
@@ -45,7 +46,7 @@ export default function LikeBigButtonSet({
     {
       cacheTime: cacheTimeEnum.FIVE_MINUTES * 1000,
       staleTime: cacheTimeEnum.ONE_MINUTE * 1000,
-      refetchOnMount: false,
+      refetchOnMount: true,
     },
   );
 
@@ -71,17 +72,6 @@ export default function LikeBigButtonSet({
     }, 500);
   };
 
-  const getMostRecentData = () => {
-    const matchingQueries = queryClient.getQueriesData(["arrivalCapsules"]);
-
-    if (matchingQueries.length > 0) {
-      const mostRecentQuery = matchingQueries[0];
-      return mostRecentQuery;
-    }
-
-    return null;
-  };
-
   function handleLike() {
     // 버튼을 누르면 로그인이 되어있는지 확인하고
     // 로그인이 되어있으면 좋아요를 누른다.
@@ -96,40 +86,8 @@ export default function LikeBigButtonSet({
 
       setIsLiked(!isLiked);
 
-      queryClient.setQueryData(queryKey, (oldData: any) => {
-        return {
-          ...oldData,
-          like: !oldData.like,
-        };
-      });
-
       fetchLike();
-
-      const mostRecentData = getMostRecentData();
-      if (mostRecentData) {
-        const mostRecentDataQueryKey = mostRecentData[0];
-
-        queryClient.setQueryData(mostRecentDataQueryKey, (oldData: any) => {
-          const newPages = oldData.pages.map((page: any) => {
-            return {
-              ...page,
-              capsules: page.capsules.map((capsule: any) => {
-                if (capsule._id === id) {
-                  return {
-                    ...capsule,
-                    like: !capsule.like,
-                  };
-                }
-                return capsule;
-              }),
-            };
-          });
-          return {
-            ...oldData,
-            pages: newPages,
-          };
-        });
-      }
+      updateLikes(queryClient, "capsule", id);
     } else {
       // 로그인이 되어있지 않으면 로그인을 하라는 알림을 띄운다.
       // 2초 동안 입력을 받지 않는다.

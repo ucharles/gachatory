@@ -57,13 +57,13 @@ function InfiniteCapsuleCards({
     if (inView && hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
     }
-  }, [inView && hasNextPage]);
+  }, [inView, hasNextPage, isFetchingNextPage]);
 
   // 좋아요 기능 추가 시 useMutation을 사용하여 캐시 업데이트
 
   return (
     <>
-      <ul className="grid grid-cols-1 gap-x-6 gap-y-10 md:grid-cols-4 xs:grid-cols-2">
+      <ul className="grid grid-cols-1 gap-x-6 gap-y-10 xs:grid-cols-2 md:grid-cols-4">
         {data?.pages?.map((page: any) => {
           return page.capsules?.map((capsule: ICapsuleToy) => {
             return capsule.display_img ? (

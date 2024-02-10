@@ -61,10 +61,15 @@ export async function capsuleFetchData(id: string, lng: string, cookies?: any) {
 export async function fetchLikedData(
   lng: string,
   limit: string,
+  sortOrder?: string,
+  sortBy?: string,
+  name?: string,
+  page?: string,
   cookies?: any,
 ) {
   const response = await fetch(
-    API_URI + `/api/like?lng=${lng}&limit=${limit}`,
+    API_URI +
+      `/api/like?lng=${lng}&limit=${limit}&sortOrder=${sortOrder}&sortBy=${sortBy}&name=${name}&page=${page}`,
     {
       method: "GET",
       next: { revalidate: cacheTimeEnum.FIVE_MINUTES },

@@ -22,5 +22,7 @@
   "like-list": "Like List",
   "keyword-sub": "Keyword Subscribtion",
   "account-info": "Account Info",
-  "mypage": "Dashboard"
+  "mypage": "Dashboard",
+  "asc": "ASC",
+  "desc": "DESC"
 }

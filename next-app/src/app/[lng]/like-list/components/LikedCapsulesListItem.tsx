@@ -3,19 +3,28 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import {
+  useQueryClient,
+  useMutation,
+  useInfiniteQuery,
+} from "@tanstack/react-query";
+
+import { useInView } from "react-intersection-observer";
+
 import { fetchLikedData } from "@/lib/fetch-data";
-import { cacheTimeEnum, sortEnum } from "@/lib/enums";
+import { sortEnum } from "@/lib/enums";
 import { useEffect } from "react";
 import { translate } from "@/app/i18n/client";
 import { convertToLocalTime } from "@/lib/date-converter";
+import { updateLikes } from "@/lib/updateLikes";
+
+import LikedCapsuleSkeleton from "./LikedCapsuleSkeleton";
 
 interface LikedCapsulesListItemProps {
   lng: string;
-  queryKey: string[];
+  queryKey: any[];
   searchParams?: Record<string, string>;
 }
-
 export default function LikedCapsulesListItem({
   lng,
   queryKey,
@@ -29,62 +38,16 @@ export default function LikedCapsulesListItem({
   const queryClient = useQueryClient();
   const { t } = translate(lng, "like");
 
-  const sortRecent = searchParams?.["recent-order"] || sortEnum.DESC;
-  const sortLike = searchParams?.["like-order"] || sortEnum.DESC;
+  const { ref, inView } = useInView();
 
-  function updateSortRecentData() {
-    queryClient.setQueryData(queryKey, (oldData: any) => {
-      const newData = oldData.likes.sort((a: any, b: any) => {
-        if (sortRecent === sortEnum.DESC) {
-          return (
-            new Date(b.capsuleId.dateISO[0]).getTime() -
-            new Date(a.capsuleId.dateISO[0]).getTime()
-          );
-        } else {
-          return (
-            new Date(a.capsuleId.dateISO[0]).getTime() -
-            new Date(b.capsuleId.dateISO[0]).getTime()
-          );
-        }
-      });
-      return { likes: newData };
-    });
-  }
-
-  function updateSortLikedData() {
-    queryClient.setQueryData(queryKey, (oldData: any) => {
-      const newData = oldData.likes.sort((a: any, b: any) => {
-        if (sortLike === sortEnum.DESC) {
-          return (
-            new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-          );
-        } else {
-          return (
-            new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime()
-          );
-        }
-      });
-      return { likes: newData };
-    });
-  }
-
-  useEffect(() => {
-    updateSortRecentData();
-  }, [sortRecent]);
-
-  useEffect(() => {
-    updateSortLikedData();
-  }, [sortLike]);
+  const sortOrder = searchParams?.["sortOrder"] || sortEnum.DESC;
+  const sortBy = searchParams?.["sortBy"] || "like";
+  const name = searchParams?.["name"] || "";
 
   function updateLikedData(capsuleId: string) {
     if (!session) return;
 
-    queryClient.setQueryData(queryKey, (oldData: any) => {
-      const newData = oldData.likes.filter(
-        (like: any) => like.capsuleId._id !== capsuleId,
-      );
-      return { likes: newData };
-    });
+    updateLikes(queryClient, "likedCapsules", capsuleId);
 
     setTimeout(async () => {
       const response = await fetch(`/api/like`, {
@@ -101,19 +64,37 @@ export default function LikedCapsulesListItem({
     }, 500);
   }
 
-  const { data, isLoading, isError } = useQuery(
+  const {
+    status,
+    data,
+    error,
+    isFetching,
+    isFetchingNextPage,
+    isFetchingPreviousPage,
+    fetchNextPage,
+    fetchPreviousPage,
+    hasNextPage,
+    hasPreviousPage,
+  } = useInfiniteQuery(
     queryKey,
-    async () => {
-      const data = await queryClient.fetchQuery(queryKey, () => {
-        console.log("capsuleFetchData");
-        return fetchLikedData(lng, "20");
-      });
+    async ({ pageParam = 1 }) => {
+      const page = pageParam.toString();
+      const data = await fetchLikedData(
+        lng,
+        "10",
+        sortOrder,
+        sortBy,
+        name,
+        page,
+      );
       return data;
     },
     {
-      cacheTime: cacheTimeEnum.FIVE_MINUTES * 1000,
-      staleTime: cacheTimeEnum.ONE_MINUTE * 1000,
-      refetchOnMount: true,
+      getNextPageParam: (lastPage) => {
+        return lastPage.totalCount - 10 * lastPage.page > 0
+          ? lastPage.page + 1
+          : undefined;
+      },
     },
   );
 
@@ -123,83 +104,92 @@ export default function LikedCapsulesListItem({
     },
   });
 
+  useEffect(() => {
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, isFetchingNextPage]);
+
   return (
     <>
-      {isLoading ? (
-        <div className="flex h-96 items-center justify-center">
-          <div className="h-32 w-32 animate-spin rounded-full border-b-2 border-t-2 border-gray-900"></div>
-        </div>
-      ) : null}
-      {isError ? (
+      {error ? (
         <div className="flex h-96 items-center justify-center">
           <p className="text-heading2-bold">Error</p>
         </div>
       ) : null}
-      <ul className="grid grid-cols-1 gap-x-10 gap-y-10 sm:grid-cols-2">
-        {data?.likes.length > 0 ? (
-          data.likes.map((like: any) => (
-            <li key={like._id}>
-              <div className="flex h-28 justify-between space-x-6">
-                <div className="flex basis-1/3 items-center justify-center overflow-hidden rounded-lg bg-bg-footer">
-                  <Link href={`/${lng}/capsule/${like.capsuleId._id}`}>
-                    <Image
-                      src={`${like.capsuleId.display_img}`}
-                      alt={like.capsuleId.name}
-                      width={200}
-                      height={200}
-                      className={`scale-125 object-center transition duration-300 hover:translate-y-0 hover:scale-100 hover:opacity-90`}
-                    />
-                  </Link>
-                </div>
-                <div className="flex basis-2/3 justify-between space-x-6">
-                  <div className="space-y-4">
-                    <p className="max-lines-2 break-words text-base-semibold text-gray-800">
+      {status === "success" && (
+        <ul className="grid grid-cols-1 gap-x-10 gap-y-10 md:grid-cols-2">
+          {data?.pages?.length ?? 0 > 0 ? (
+            data?.pages?.map((page: any) => {
+              return page.likes?.map((like: any) => (
+                <li key={like._id}>
+                  <div className="flex h-28 justify-between space-x-6">
+                    <div className="flex basis-1/3 items-center justify-center overflow-hidden rounded-lg bg-bg-footer">
                       <Link href={`/${lng}/capsule/${like.capsuleId._id}`}>
-                        {like.capsuleId.name}
+                        <Image
+                          src={`${like.capsuleId.display_img}`}
+                          alt={like.capsuleId.name}
+                          width={200}
+                          height={200}
+                          className={`scale-125 object-center transition duration-300 hover:translate-y-0 hover:scale-100 hover:opacity-90`}
+                        />
                       </Link>
-                    </p>
-                    <div className="flex space-x-4 text-gray-600">
-                      <div className="space-y-1">
-                        <p className="text-small-regular">
-                          {t("release-date")}
+                    </div>
+                    <div className="flex basis-2/3 justify-between space-x-6">
+                      <div className="space-y-4">
+                        <p className="max-lines-2 break-words text-base-semibold text-gray-800">
+                          <Link href={`/${lng}/capsule/${like.capsuleId._id}`}>
+                            {like.capsuleId.name}
+                          </Link>
                         </p>
-                        <p className="text-small-regular">{t("liked")}</p>
+                        <div className="flex space-x-4 text-gray-600">
+                          <div className="space-y-1">
+                            <p className="text-small-regular">
+                              {t("release-date")}
+                            </p>
+                            <p className="text-small-regular">{t("liked")}</p>
+                          </div>
+                          <div className="space-y-1">
+                            <p className="text-small-regular">
+                              {like.capsuleId.date}
+                            </p>
+                            <p className="text-small-regular">
+                              {convertToLocalTime(like.updatedAt)}
+                            </p>
+                          </div>
+                        </div>
                       </div>
-                      <div className="space-y-1">
-                        <p className="text-small-regular">
-                          {like.capsuleId.date}
-                        </p>
-                        <p className="text-small-regular">
-                          {convertToLocalTime(like.updatedAt)}
-                        </p>
+                      <div>
+                        <button
+                          className="m-0 p-0 text-xl text-gray-600"
+                          onClick={async () => {
+                            try {
+                              await updateLikeMutation(like.capsuleId._id);
+                            } catch (error) {
+                              console.log(error);
+                            }
+                          }}
+                        >
+                          ×
+                        </button>
                       </div>
                     </div>
                   </div>
-                  <div>
-                    <button
-                      className="m-0 p-0 text-xl text-gray-600"
-                      onClick={async () => {
-                        try {
-                          await updateLikeMutation(like.capsuleId._id);
-                        } catch (error) {
-                          console.log(error);
-                        }
-                      }}
-                    >
-                      ×
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </li>
-          ))
-        ) : (
-          <div className="space-y-2">
-            <p className="text-heading4-bold">{t("no-liked-message-1")}</p>
-            <p>{t("no-liked-message-2")}</p>
-          </div>
-        )}
-      </ul>
+                </li>
+              ));
+            })
+          ) : (
+            <div className="space-y-2">
+              <p className="text-heading4-bold">{t("no-liked-message-1")}</p>
+              <p>{t("no-liked-message-2")}</p>
+            </div>
+          )}
+        </ul>
+      )}
+      {isFetching && !isFetchingNextPage && (
+        <LikedCapsuleSkeleton isFirst={true} />
+      )}
+      <div ref={ref}>{isFetchingNextPage && <LikedCapsuleSkeleton />}</div>
     </>
   );
 }

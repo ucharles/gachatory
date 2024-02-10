@@ -22,5 +22,7 @@
   "like-list": "いいね一覧",
   "keyword-noti": "キーワード通知",
   "account-info": "アカウント情報",
-  "mypage": "MY PAGE"
+  "mypage": "MY PAGE",
+  "asc": "昇順",
+  "desc": "降順"
 }

@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { cookies } from "next/headers";
 
 import getQueryClient from "../../components/Providers/getQueryClient";
 import { dehydrate } from "@tanstack/query-core";
@@ -35,8 +36,9 @@ export default async function Page({
   params: { lng: string; id: string };
 }) {
   const queryClient = getQueryClient();
+  const cookie = cookies();
   await queryClient.prefetchQuery(["capsule", id, lng], () => {
-    return capsuleFetchData(id, lng);
+    return capsuleFetchData(id, lng, cookie);
   });
   const dehydratedState = dehydrate(queryClient);
 

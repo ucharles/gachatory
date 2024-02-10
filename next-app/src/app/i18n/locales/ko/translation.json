@@ -22,5 +22,7 @@
   "like-list": "좋아요 목록",
   "keyword-sub": "키워드 알림 설정",
   "account-info": "계정 정보",
-  "mypage": "MY PAGE"
+  "mypage": "MY PAGE",
+  "asc": "오름차순",
+  "desc": "내림차순"
 }
