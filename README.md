@@ -30,36 +30,11 @@
 
 ## 구조
 
-```mermaid
-flowchart LR
-    subgraph ubuntu[Linux Ubuntu]
-    subgraph docker[Docker]
-    subgraph next[Next.js 13]
-        E[Next.js 13\nAPP]
-        A[Next.js 13\nAPI]
-    end
-        B[Image Server]
-        G[Nginx]
-    end
-        D[Scraper\nData Processing]
-        F[(Image\nContents)]
-    end
-    subgraph cloud[Mongo DB Atlas]
-        C[(Mongo DB)]
-    end
-    H[Client]
-    I[Web]
-A --> E
-B --> E
-C --> A
-D --> C
-D --> F
-F --> B
-G <--> next
-G <--> B
-G <--> H
-I --> D
-```
+### 아키텍처
+![gachatory_architecture](https://github.com/ucharles/gachatory/assets/2508024/566dc32e-2ce9-4745-822a-7a92aa547719)
+
+### ERD
+![gachatory ERD](https://github.com/ucharles/gachatory/assets/2508024/7d67706e-c830-4dce-b7d7-b71bc10ff59a)
 
 ### 설명
 
