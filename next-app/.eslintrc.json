@@ -3,5 +3,13 @@
     "next/core-web-vitals",
     "plugin:testing-library/react",
     "plugin:jest-dom/recommended"
+  ],
+  "overrides": [
+    {
+      "files": ["src/app/api/**/*"],
+      "rules": {
+        "testing-library/await-async-queries": ["off"]
+      }
+    }
   ]
 }

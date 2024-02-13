@@ -1,5 +1,6 @@
 import os
 import sys
+import re
 from bson import ObjectId
 import json
 from dotenv import load_dotenv
@@ -21,6 +22,7 @@ sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 # utils
 from utils.write_file import write_file
 from utils.log import log
+from utils.date_convert_to_ISO import date_convert_to_iso, format_month
 
 # models
 from models.capsule_toy import CapsuleToy, CapsuleTag
@@ -60,7 +62,7 @@ def search_new_product(file_name):
                     continue
 
                 date = [product["date"]] + capsule["date"]
-                dateISO = [product["dateISO"]] + capsule["dateISO"]
+
                 new_product_list.append(
                     {
                         "brand": product["brand"],
@@ -69,7 +71,6 @@ def search_new_product(file_name):
                         "detail_url": product["detail_url"],
                         "resale": True,
                         "date_added": True,
-                        "dateISO": dateISO,
                     }
                 )
 
@@ -112,9 +113,14 @@ def insert_new_product(file_name):
 
             # 해당 상품이 존재하면
             if capsule:
+                print(capsule["dateISO"])
+                print(product["date"][0])
+                print(date_convert_to_iso(product["date"][0]))
+
+                dateISO = capsule["dateISO"] + [date_convert_to_iso(product["date"][0])]
                 # DB에 재판 날짜 정보 추가
                 capsule.update(date=product["date"])
-                capsule.update(dateISO=product["dateISO"])
+                capsule.update(dateISO=dateISO)
                 log(product["brand"], product["name"], "", 0, "resale data update")
 
         # dict에 date_added가 없으면
@@ -128,7 +134,7 @@ def insert_new_product(file_name):
                 brand=product["brand"],
                 name=product["name"],
                 price=product["price"],
-                date=[product["date"]],
+                date=[format_month(product["date"])],
                 header=product["header"],
                 description=product["description"],
                 img=product["img"],
@@ -321,8 +327,9 @@ def search_capsule_toy_in_duplicate_tag():
 
 
 if __name__ == "__main__":
-    # insert_new_product("new_product.json")
+    insert_new_product(
+        "/home/local-optimum/git/gachatory/batch/scraping/bandai/new-product/detail-20231202.json"
+    )
     # insert_updated_image("updated_image.json")
     # insert_new_tag("E:/Git/gachatory/batch/tagging/tag-list-translated-edited-20230915.json")
     # search_capsule_toy_and_update_tag()
-    search_capsule_toy_in_duplicate_tag()
