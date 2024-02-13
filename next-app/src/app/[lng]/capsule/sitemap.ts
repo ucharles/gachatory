@@ -18,6 +18,8 @@ export async function generateSitemaps(): Promise<Array<{ id: string }>> {
     }
   });
 
+  console.log("Generate Capsule Toy Sitemaps...", sitemaps);
+
   return sitemaps;
 }
 
@@ -28,10 +30,13 @@ export default async function sitemap({
 }): Promise<MetadataRoute.Sitemap> {
   await dbConnect();
 
+  console.log("id", id);
+
   // 'path'에서 lng와 id를 추출, 0~1번째 인덱스: lng, 2번째 인덱스부터: id
 
   const lng = id.slice(0, 2);
   const ids = Number(id.slice(2));
+
   const limit = 50000;
   const skip = ids * limit;
   const products = await CapsuleToy.find({})
