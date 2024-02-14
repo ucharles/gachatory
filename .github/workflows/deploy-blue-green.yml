@@ -3,6 +3,10 @@ on:
   push:
     branches:
       - main
+    paths:
+      - "deploy.sh"
+      - "next-app/**"
+      - "image-server/**"
 
 jobs:
   deploy:

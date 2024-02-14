@@ -3,6 +3,8 @@ name: Build Next.js
 on:
   pull_request:
     branches: [main]
+    paths:
+      - "next-app/**"
 
 jobs:
   build:
