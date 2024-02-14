@@ -1,3 +1,4 @@
+import re
 from typing import List
 from datetime import datetime, timedelta
 
@@ -22,6 +23,15 @@ def convert_to_numeric_month(month: str) -> int:
         "7月": 7,
         "8月": 8,
         "9月": 9,
+        "01": 1,
+        "02": 2,
+        "03": 3,
+        "04": 4,
+        "05": 5,
+        "06": 6,
+        "07": 7,
+        "08": 8,
+        "09": 9,
         "10": 10,
         "11": 11,
         "12": 12,
@@ -75,6 +85,16 @@ def date_convert_to_iso(dates: str):
             parsed_date = datetime(year, month, calculate_last_day(year, month))
 
         return parsed_date.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
-    except:
+    except Exception as e:
         print('"' + date_str + '"', e)
         return "Invalid date string"
+
+
+def format_month(text):
+    # 1자리 월을 찾기 위한 정규식 패턴 (캡쳐 그룹 사용)
+    pattern = r"(\d{4}年)(\d{1})月"
+
+    # 1자리 월을 2자리로 변경
+    result = re.sub(pattern, lambda m: f"{m.group(1)}0{m.group(2)}月", text)
+
+    return result

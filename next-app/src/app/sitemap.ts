@@ -23,5 +23,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     sitemaps.push(...temp);
   });
 
+  console.log("Generate Sitemaps...", sitemaps);
+
   return sitemaps;
 }
