@@ -31,7 +31,7 @@
 ## 구조
 
 ### 아키텍처
-![gachatory_architecture](https://github.com/ucharles/gachatory/assets/2508024/566dc32e-2ce9-4745-822a-7a92aa547719)
+![gachatory_architecture](https://github.com/ucharles/gachatory/assets/2508024/d9b242da-fcc0-4ca0-836f-c9216bb803f4)
 
 ### ERD
 ![gachatory ERD](https://github.com/ucharles/gachatory/assets/2508024/7d67706e-c830-4dce-b7d7-b71bc10ff59a)
