@@ -5,18 +5,16 @@ import dbConnect from "@/lib/db/db-connect";
 const BASE_URL = process.env.APP_SERVER_URL || "";
 const SUPPORTED_LANGUAGES = ["en", "ko", "ja"]; // 지원하는 언어 코드
 
-export async function generateSitemaps(): Promise<Array<{ id: string }>> {
+export async function generateSitemaps(): Promise<Array<{ id: number }>> {
   await dbConnect();
-  const count = await CapsuleToy.countDocuments();
-  const sitemapsPerLanguage = Math.ceil(count / 50000);
+  // const count = await CapsuleToy.countDocuments();
+  // const sitemapsPerLanguage = Math.ceil(count / 50000);
 
-  let sitemaps: Array<{ id: string }> = [];
+  let sitemaps: Array<{ id: number }> = [];
   // 언어 수 *
-  SUPPORTED_LANGUAGES.forEach((lng) => {
-    for (let i = 0; i < sitemapsPerLanguage; i++) {
-      sitemaps.push({ id: `${lng}${i}` }); // 'path'에 lng와 id를 결합하여 저장
-    }
-  });
+  for (let i = 0; i < SUPPORTED_LANGUAGES.length; i++) {
+    sitemaps.push({ id: i }); // 'path'에 lng와 id를 결합하여 저장
+  }
 
   console.log("Generate Capsule Toy Sitemaps...", sitemaps);
 
@@ -26,26 +24,25 @@ export async function generateSitemaps(): Promise<Array<{ id: string }>> {
 export default async function sitemap({
   id,
 }: {
-  id: string;
+  id: number;
 }): Promise<MetadataRoute.Sitemap> {
   await dbConnect();
 
   console.log("id", id);
 
-  // 'path'에서 lng와 id를 추출, 0~1번째 인덱스: lng, 2번째 인덱스부터: id
-
-  const lng = id.slice(0, 2);
-  const ids = Number(id.slice(2));
+  // id는 캡슐 토이의 문서 수 / 50000 * 언어 수
 
   const limit = 50000;
-  const skip = ids * limit;
-  const products = await CapsuleToy.find({})
-    .skip(skip)
+
+  // 제목에 특정 단어가 들어가는 캡슐 토이는 제외해야 함
+  const products = await CapsuleToy.find({
+    name: new RegExp("^((?!箱売).)*$", "i"),
+  })
     .limit(limit)
     .sort({ _id: 1 });
 
   return products.map((capsule) => ({
-    url: `${BASE_URL}/${lng}/capsule/${capsule._id}`,
+    url: `${BASE_URL}/${SUPPORTED_LANGUAGES[id]}/capsule/${capsule._id}`,
     lastModified: capsule.updatedAt,
   }));
 }

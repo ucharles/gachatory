@@ -119,7 +119,12 @@ export default function LikedCapsulesListItem({
       ) : null}
       {status === "success" && (
         <ul className="grid grid-cols-1 gap-x-10 gap-y-10 md:grid-cols-2">
-          {data?.pages?.length ?? 0 > 0 ? (
+          {data?.pages[0].likes?.length === 0 ? (
+            <div className="missing-like space-y-2">
+              <p className="text-heading4-bold">{t("no-liked-message-1")}</p>
+              <p>{t("no-liked-message-2")}</p>
+            </div>
+          ) : (
             data?.pages?.map((page: any) => {
               return page.likes?.map((like: any) => (
                 <li key={like._id}>
@@ -178,11 +183,6 @@ export default function LikedCapsulesListItem({
                 </li>
               ));
             })
-          ) : (
-            <div className="space-y-2">
-              <p className="text-heading4-bold">{t("no-liked-message-1")}</p>
-              <p>{t("no-liked-message-2")}</p>
-            </div>
           )}
         </ul>
       )}
