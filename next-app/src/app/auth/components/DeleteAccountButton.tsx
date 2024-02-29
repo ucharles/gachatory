@@ -22,9 +22,8 @@ export default function DeleteAccountButton({
         if (!confirm(t("delete-account-message"))) {
           return;
         }
-        fetch(`/api/users`, {
+        fetch(`/api/users/${id}`, {
           method: "DELETE",
-          body: JSON.stringify({ id }),
         })
           .then((response) => {
             if (response.ok) {
