@@ -87,7 +87,10 @@ export async function GET(request: NextRequest) {
   }
 
   if (totalLikes === 0) {
-    return NextResponse.json({});
+    return NextResponse.json({
+      status: 200,
+      likes: [],
+    });
   }
 
   // 최대 페이지 계산 후 현재 페이지가 최대 페이지보다 크다면 최대 페이지로 설정

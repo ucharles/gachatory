@@ -119,74 +119,71 @@ export default function LikedCapsulesListItem({
       ) : null}
       {status === "success" && (
         <ul className="grid grid-cols-1 gap-x-10 gap-y-10 md:grid-cols-2">
-          {data?.pages?.map((page: any) => {
-            if (!page.likes) {
-              return (
-                <div className="space-y-2">
-                  <p className="text-heading4-bold">
-                    {t("no-liked-message-1")}
-                  </p>
-                  <p>{t("no-liked-message-2")}</p>
-                </div>
-              );
-            }
-            return page.likes?.map((like: any) => (
-              <li key={like._id}>
-                <div className="flex h-28 justify-between space-x-6">
-                  <div className="flex basis-1/3 items-center justify-center overflow-hidden rounded-lg bg-bg-footer">
-                    <Link href={`/${lng}/capsule/${like.capsuleId._id}`}>
-                      <Image
-                        src={`${like.capsuleId.display_img}`}
-                        alt={like.capsuleId.name}
-                        width={200}
-                        height={200}
-                        className={`scale-125 object-center transition duration-300 hover:translate-y-0 hover:scale-100 hover:opacity-90`}
-                      />
-                    </Link>
-                  </div>
-                  <div className="flex basis-2/3 justify-between space-x-6">
-                    <div className="space-y-4">
-                      <p className="max-lines-2 break-words text-base-semibold text-gray-800">
-                        <Link href={`/${lng}/capsule/${like.capsuleId._id}`}>
-                          {like.capsuleId.name}
-                        </Link>
-                      </p>
-                      <div className="flex space-x-4 text-gray-600">
-                        <div className="space-y-1">
-                          <p className="text-small-regular">
-                            {t("release-date")}
-                          </p>
-                          <p className="text-small-regular">{t("liked")}</p>
-                        </div>
-                        <div className="space-y-1">
-                          <p className="text-small-regular">
-                            {like.capsuleId.date}
-                          </p>
-                          <p className="text-small-regular">
-                            {convertToLocalTime(like.updatedAt)}
-                          </p>
+          {data?.pages[0].likes?.length === 0 ? (
+            <div className="missing-like space-y-2">
+              <p className="text-heading4-bold">{t("no-liked-message-1")}</p>
+              <p>{t("no-liked-message-2")}</p>
+            </div>
+          ) : (
+            data?.pages?.map((page: any) => {
+              return page.likes?.map((like: any) => (
+                <li key={like._id}>
+                  <div className="flex h-28 justify-between space-x-6">
+                    <div className="flex basis-1/3 items-center justify-center overflow-hidden rounded-lg bg-bg-footer">
+                      <Link href={`/${lng}/capsule/${like.capsuleId._id}`}>
+                        <Image
+                          src={`${like.capsuleId.display_img}`}
+                          alt={like.capsuleId.name}
+                          width={200}
+                          height={200}
+                          className={`scale-125 object-center transition duration-300 hover:translate-y-0 hover:scale-100 hover:opacity-90`}
+                        />
+                      </Link>
+                    </div>
+                    <div className="flex basis-2/3 justify-between space-x-6">
+                      <div className="space-y-4">
+                        <p className="max-lines-2 break-words text-base-semibold text-gray-800">
+                          <Link href={`/${lng}/capsule/${like.capsuleId._id}`}>
+                            {like.capsuleId.name}
+                          </Link>
+                        </p>
+                        <div className="flex space-x-4 text-gray-600">
+                          <div className="space-y-1">
+                            <p className="text-small-regular">
+                              {t("release-date")}
+                            </p>
+                            <p className="text-small-regular">{t("liked")}</p>
+                          </div>
+                          <div className="space-y-1">
+                            <p className="text-small-regular">
+                              {like.capsuleId.date}
+                            </p>
+                            <p className="text-small-regular">
+                              {convertToLocalTime(like.updatedAt)}
+                            </p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div>
-                      <button
-                        className="m-0 p-0 text-xl text-gray-600"
-                        onClick={async () => {
-                          try {
-                            await updateLikeMutation(like.capsuleId._id);
-                          } catch (error) {
-                            console.log(error);
-                          }
-                        }}
-                      >
-                        ×
-                      </button>
+                      <div>
+                        <button
+                          className="m-0 p-0 text-xl text-gray-600"
+                          onClick={async () => {
+                            try {
+                              await updateLikeMutation(like.capsuleId._id);
+                            } catch (error) {
+                              console.log(error);
+                            }
+                          }}
+                        >
+                          ×
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </li>
-            ));
-          })}
+                </li>
+              ));
+            })
+          )}
         </ul>
       )}
       {isFetching && !isFetchingNextPage && (
