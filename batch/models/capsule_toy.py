@@ -7,6 +7,7 @@ from mongoengine import (
     DateTimeField,
     ObjectIdField,
     ReferenceField,
+    BooleanField,
 )
 
 
@@ -25,8 +26,12 @@ class CapsuleToy(DynamicDocument):
     localization = ListField(StringField())
     tagId = ListField(ReferenceField("CapsuleTag"))
     dateISO = ListField(DateTimeField())
+    gpt_tagged = BooleanField()
     createdAt = DateTimeField()
     updatedAt = DateTimeField()
+    releaseUpdateDate = (
+        DateTimeField()
+    )  # 새로운 발매일이 추가될 때마다 업데이트, 생성시에는 createdAt과 같음, date가 업데이트 될 때마다 업데이트
 
     meta = {"collection": "capsule-toy"}
 

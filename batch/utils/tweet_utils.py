@@ -4,21 +4,33 @@
 # 일본어 자체는 유니코드로 출력되지만, 파일 자체는 utf-8로 저장되어 데이터 후처리가 용이해진다.
 import json
 import subprocess
+from dotenv import load_dotenv
+
+load_dotenv()
+account1_username = os.getenv("ACCOUNT1_USERNAME")
+account1_username_pw = os.getenv("ACCOUNT1_USERNAME_PASSWORD")
+account1_email = os.getenv("ACCOUNT1_EMAIL")
+account1_email_pw = os.getenv("ACCOUNT1_EMAIL_PASSWORD")
+account2_username = os.getenv("ACCOUNT2_USERNAME")
+account2_username_pw = os.getenv("ACCOUNT2_USERNAME_PASSWORD")
+account2_email = os.getenv("ACCOUNT2_EMAIL")
+account2_email_pw = os.getenv("ACCOUNT2_EMAIL_PASSWORD")
+
 
 # input example
 
-# commands = [
-#     (
-#         [
-#             "twscrape",
-#             "search",
-#             "(from:SOTA170317) until:2023-12-31 since:2023-01-01 -filter:replies",
-#             "--limit=3000",
-#         ],
-#         "data-2023.txt",
-#     ),
-#     # ... add more commands and output file pairs as needed
-# ]
+commands = [
+    (
+        [
+            "twscrape",
+            "search",
+            "(from:SOTA170317) until:2024-12-31 since:2024-01-01 -filter:replies",
+            "--limit=3000",
+        ],
+        "data-2024.txt",
+    ),
+    # ... add more commands and output file pairs as needed
+]
 
 # # Reading the file
 # file_list = [
@@ -110,3 +122,131 @@ def convert_unicode(file_list):
             "updated_" + file.replace(".txt", "") + ".json", "w", encoding="utf-8"
         ) as f:
             json.dump(decoded_data, f, ensure_ascii=False, indent=2)
+
+
+import asyncio
+from twscrape import API, gather
+from twscrape.logger import set_log_level
+
+
+from dataclasses import asdict, is_dataclass
+from datetime import datetime
+from typing import Any
+
+print_date_format = datetime.today().strftime("%Y%m%d")
+
+
+def custom_encoder(obj):
+    """JSON 변환을 위한 사용자 정의 인코더 함수"""
+    if isinstance(obj, datetime):
+        return obj.isoformat()
+    elif is_dataclass(obj):
+        return asdict(obj)
+    elif hasattr(obj, "__dict__"):
+        return obj.__dict__
+    raise TypeError(f"Object of type {obj.__class__.__name__} is not JSON serializable")
+
+
+def tweet_content_filter(json_file, text=[], username=None):
+    """
+    트윗을 필터링하는 함수. kwargs에 따라 필터링된 결과를 반환한다.
+    :param json: 트윗 데이터
+    :param kwargs: 필터링 조건
+    :return: 필터링된 트윗 데이터 json
+    """
+    # 필터링 조건에 따라 트윗을 필터링
+    with open(json_file, "r", encoding="utf-8") as file:
+        data = json.load(file)
+
+    filtered_data = []
+
+    # text가 빈 배열인 경우 return
+    if not text:
+        return data
+
+    if username is None:
+        return data
+
+    for doc in data:
+        # text 배열의 모든 요소가 문장에 포함되어 있는지 확인
+        if (
+            all(word in doc["rawContent"] for word in text)
+            and doc["user"]["username"] == username
+        ):
+            filtered_data.append(doc)
+
+    return filtered_data
+
+
+async def get_tweets(user_id, since, until, limit):
+
+    api = API()
+
+    # ADD ACCOUNTS (for CLI usage see BELOW)
+    await api.pool.add_account(
+        account1_username, account1_username_pw, account1_email, account1_email_pw
+    )
+    await api.pool.add_account(
+        account2_username, account2_username_pw, account2_email, account2_email_pw
+    )
+    await api.pool.login_all()
+
+    tweets = await gather(
+        api.search(
+            f"(from:{user_id}) until:{until} since:{since} -filter:replies",
+            limit=limit,
+        )
+    )
+
+    with open(
+        f"{user_id}_{print_date_format}_{since}_{until}.json", "w", encoding="utf-8"
+    ) as file:
+        json.dump(tweets, file, default=custom_encoder, ensure_ascii=False, indent=2)
+
+    pass
+
+
+def extract_info_from_tweet(file_name):
+    try:
+        with open(file_name, "r", encoding="utf-8") as file:
+            data = json.load(file)
+    except Exception as e:
+        print(e)
+
+    result = []
+
+    for doc in data:
+        result.append(
+            {
+                "id": doc["id"],
+                "username": doc["user"]["username"],
+                "date": doc["date"],
+                "url": doc["url"],
+                "rawContent": doc["rawContent"],
+                "photos": [element["url"] for element in doc["media"]["photos"]],
+                "hashtags": doc["hashtags"],
+            }
+        )
+
+    if result:
+        with open(
+            f"{file_name.replace('.json', '')}_filtered.json", "w", encoding="utf-8"
+        ) as file:
+            json.dump(result, file, ensure_ascii=False, indent=2)
+
+
+if __name__ == "__main__":
+    # asyncio.run(get_tweets("Jdream_k", "2024-01-01", "2024-12-31", 3000))
+    # result = tweet_content_filter(
+    #     "E:/Git/gachatory/yell_kaihatsu_20240314_2023-01-01_2023-12-31.json",
+    #     text=["━━"],
+    #     username="yell_kaihatsu",
+    # )
+
+    # with open(
+    #     "yell_kaihatsu_20240314_filtered_2023.json", "w", encoding="utf-8"
+    # ) as file:
+    #     json.dump(result, file, ensure_ascii=False, indent=2)
+
+    extract_info_from_tweet("Jdream_k_20240314_2024-01-01_2024-12-31.json")
+    pass

@@ -13,3 +13,4 @@ images/
 *.db
 /node_modules
 *.log
+takaratomyVenv/

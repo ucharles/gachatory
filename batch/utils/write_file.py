@@ -4,6 +4,8 @@ from datetime import datetime
 
 
 def write_file(list, file_name=""):
+    print_date_format = datetime.today().strftime("%Y%m%d")
+
     # file_name에 경로가 포함된 경우 폴더 생성
     if "/" in file_name:
         folder_name = file_name[: file_name.rfind("/")]
@@ -11,18 +13,18 @@ def write_file(list, file_name=""):
             os.makedirs(folder_name)
 
     if file_name == "":
-        file_name = datetime.today().strftime("%Y%m%d")
+        file_name = print_date_format
     elif file_name.endswith("/"):
-        file_name = file_name + datetime.today().strftime("%Y%m%d")
+        file_name = file_name + print_date_format
     else:
-        file_name = file_name + "-" + datetime.today().strftime("%Y%m%d")
+        file_name = file_name + "-" + print_date_format
 
     fo = open(
         file_name + ".json",
         "w",
         encoding="utf-8",
     )
-    fo.write(json.dumps(list, ensure_ascii=False))
+    fo.write(json.dumps(list, ensure_ascii=False, indent=2))
     fo.close()
 
 
