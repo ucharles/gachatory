@@ -45,9 +45,9 @@ export function bracketMatcher(translated: string, original?: string) {
   const rightBracketRegex = /\)|\]|】/g;
   const translatedLeftBracket = translated.match(leftBracketRegex);
   const translatedRightBracket = translated.match(rightBracketRegex);
-  const translatedFirstCharInRegex = translated[0].match(leftBracketRegex);
+  const translatedFirstCharInRegex = translated[0]?.match(leftBracketRegex);
   const translatedLastCharInRegex =
-    translated[translated.length - 1].match(rightBracketRegex);
+    translated[translated.length - 1]?.match(rightBracketRegex);
 
   // DeepL API 사용 시
   // 문자열 처음과 끝에 괄호가 있으면 제거되는 문제가 있어

@@ -5,3 +5,4 @@ dockerfile
 .dockerignore
 /nginx
 *.log
+*.db

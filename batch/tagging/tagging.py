@@ -9,7 +9,6 @@ sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 
 from utils.write_file import write_file
 
-
 # dotenv
 load_dotenv()
 

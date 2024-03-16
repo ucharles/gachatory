@@ -15,6 +15,7 @@ from mongoengine import (
     DateTimeField,
 )
 from mongoengine.queryset.visitor import Q
+from pymongo import UpdateOne
 
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 
@@ -27,11 +28,23 @@ from utils.date_convert_to_ISO import date_convert_to_iso, format_month
 # models
 from models.capsule_toy import CapsuleToy, CapsuleTag
 
+# tagging
+from tagging.tagging_with_chatgpt import flag_capsule_toy
+
 # dotenv
 load_dotenv()
 
 database_url = os.getenv("DATABASE_URL")
 database_name = os.getenv("DATABASE_NAME")
+
+import logging
+
+# 로깅 기본 설정: 로그 레벨, 로그 포맷 및 날짜 포맷 지정
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
 
 
 def search_new_product(file_name):
@@ -134,19 +147,78 @@ def insert_new_product(file_name):
                 brand=product["brand"],
                 name=product["name"],
                 price=product["price"],
-                date=[format_month(product["date"])],
+                date=[product["date"]],
                 header=product["header"],
                 description=product["description"],
                 img=product["img"],
                 detail_img=product["detail_img"],
                 detail_url=product["detail_url"],
                 lng=product["lng"],
-                createdAt=product["createdAt"],
+                createdAt=datetime.utcnow().isoformat(),
                 dateISO=[product["dateISO"]],
             )
             # DB에 저장
             capsule.save()
             log(product["brand"], product["name"], "", 0, "new data insert")
+            logging.info(f"New product inserted: {product['name']}")
+
+
+def insert_new_product_as_bulk(file_name):
+    try:
+        connect(
+            db=database_name,
+            host=database_url,
+            alias="default",
+        )
+    except Exception as e:
+        logging.error(f"DB Connection Error: {e}")
+        return
+    try:
+        # json 파일 열기
+        with open(file_name, "r", encoding="utf-8") as f:
+            product_list = json.load(f)
+    except Exception as e:
+        logging.error(f"File Error: {e}")
+        return
+
+    product_list.reverse()
+    new_product_list = []
+
+    try:
+        for product in product_list:
+            insert_date = (
+                product["date"] if type(product["date"]) == list else [product["date"]]
+            )
+            insert_dateISO = (
+                product["dateISO"]
+                if type(product["dateISO"]) == list
+                else [product["dateISO"]]
+            )
+            new_product = CapsuleToy(
+                brand=product["brand"],
+                name=product["name"],
+                price=product["price"],
+                date=insert_date,
+                header=product["header"],
+                description=product["description"],
+                img=product["img"],
+                detail_img=product["detail_img"],
+                detail_url=product["detail_url"],
+                lng=product["lng"],
+                createdAt=datetime.utcnow().isoformat(),
+                updatedAt=datetime.utcnow().isoformat(),
+                releaseUpdateDate=datetime.utcnow().isoformat(),
+                dateISO=insert_dateISO,
+            )
+
+            logging.info(f"New product inserted: {product['name']}")
+            new_product_list.append(new_product)
+
+        CapsuleToy.objects.insert(new_product_list)
+        logging.info(f"New products inserted: {len(new_product_list)}")
+    except Exception as e:
+        logging.error(f"Error inserting new product: {e}")
+        return
 
 
 def search_blank_image(brand):
@@ -238,46 +310,71 @@ def insert_updated_image(file_name):
 
 
 def insert_new_tag(file_name):
-    # Connect to MongoDB
-    connect(
-        db=database_name,
-        host=database_url,
-        alias="default",
-    )
 
     try:
         # json 파일 열기
         with open(file_name, "r", encoding="utf-8") as f:
-            tag_list = json.load(f)
+            capsule_list = json.load(f)
     except Exception as e:
         print(e)
         return
 
-    for tag in tag_list:
-        # dict에 date_added가 있으면
-        capsule_tag = CapsuleTag.objects(ja=tag["ja"]).first()
+    # MongoDB에 연결
+    try:
+        connect(
+            db=database_name,
+            host=database_url,
+            alias="default",
+        )
+        print("DB Connection Success")
+    except Exception as e:
+        print(f"DB Connection Error: {e}")
+        return
 
-        if capsule_tag:
-            print("capsule_tag", capsule_tag.to_mongo().to_dict())
+    for capsule in capsule_list:
+        # 태그 정보에 id가 있으면
+        if capsule["id"] is not None:
+            flag = flag_capsule_toy(capsule["id"])
 
         # 해당 태그가 존재하지 않으면
-        if capsule_tag is None:
-            CapsuleTag(
-                ja=tag["ja"],
-                ko=tag["ko"],
-                en=tag["en"],
-                property=tag["property"],
-                linkCount=0,
-                createdAt=datetime.utcnow().isoformat(),
-            ).save()
+        for tag in capsule["tags"]:
+            # dict에 date_added가 있으면
+            capsule_tag = CapsuleTag.objects(ja=tag["ja"]).first()
+
+            if capsule_tag:
+                print("already exist capsule_tag", capsule_tag.to_mongo().to_dict())
+
+            if capsule_tag is None:
+                CapsuleTag(
+                    ja=tag["ja"],
+                    ko=tag["ko"],
+                    en=tag["en"],
+                    property=tag["property"],
+                    linkCount=0,
+                    createdAt=datetime.utcnow().isoformat(),
+                ).save()
+                print("new capsule_tag", tag)
 
 
 def search_capsule_toy_and_update_tag():
-    connect(
-        db=database_name,
-        host=database_url,
-        alias="default",
-    )
+    try:
+        connect(
+            db=database_name,
+            host=database_url,
+            alias="default",
+        )
+    except Exception as e:
+        logging.error(f"DB Connection Error: {e}")
+        return
+
+    # 태그 부여 로직
+    # 1. 새로운 태그는 모든 캡슐 토이를 검사
+    # 2. 새로운 태그가 없는 경우, 태그가 없는 캡슐 토이를 검사
+
+    # 위 두 로직을 분리해야 하나?
+    # 새로운 태그 / 기존 태그 (count가 1 이상)를 분리하긴 해야할 듯.
+    # 쿼리를 2번 쓰는게 이득인가
+    # 반복문을 사용하여 캡슐 토이를 하나씩 검사하는 것이 더 이득인가
 
     capsule_tags = CapsuleTag.objects()
     for capsule_tag in capsule_tags:
@@ -285,28 +382,79 @@ def search_capsule_toy_and_update_tag():
         # print("capsule_tag:", capsule_tag.to_mongo().to_dict())
         tag_info = capsule_tag.to_mongo().to_dict()
         regex = "|".join(tag_info["ja"])
-        print("regex:", regex)
-        print("tag_info:", tag_info)
-
-        capsule_toys = CapsuleToy.objects(
-            Q(tagId__nin=tag_info["_id"])
-            & (Q(name__regex=regex) | Q(description__regex=regex))
+        logging.info(f"regex: {regex}")
+        logging.info(
+            f"tag_info: {tag_info['_id']}, {tag_info['ja']}, linkCount: {tag_info['linkCount']}"
         )
 
+        try:
+            # 새로운 태그인 경우. 태그가 없는 캡슐 토이를 검사
+            if tag_info.get("linkCount", 0) == 0:
+                capsule_toys = CapsuleToy.objects(
+                    (
+                        Q(tagId__nin=[tag_info["_id"]])
+                        | Q(tagId__exists=False)
+                        | Q(tagId__size=0)
+                    )
+                    & (Q(name__regex=regex) | Q(description__regex=regex))
+                )
+                logging.info(f"New Tag: {tag_info['ja']}")
+
+            # 기존 태그인 경우. 태그가 존재하는 캡슐 토이는 검사하지 않고 새로운 캡슐 토이만 검사함
+            else:
+                capsule_toys = CapsuleToy.objects(
+                    (
+                        Q(tagId__nin=[tag_info["_id"]])
+                        | Q(tagId__exists=False)
+                        | Q(tagId__size=0)
+                    )
+                    & (Q(name__regex=regex) | Q(description__regex=regex))
+                )
+                logging.info(f"Existing Tag: {tag_info['ja']}")
+        except Exception as e:
+            print(f"DB Query Error: {e}")
+            continue
+
+        bulk_operation = []
+
         for capsule_toy in capsule_toys:
+            # print("capsule_toy:", capsule_toy.to_mongo().to_dict())
             # if tag_info["_id"]가 capsule_toy["tagId"]에 이미 존재하면
-            if tag_info["_id"] in capsule_toy["tagId"]:
+            capsule_info = capsule_toy.to_mongo().to_dict()
+            if tag_info["_id"] in capsule_info["tagId"]:
+                logging.info(f"Tag already exists: {tag_info['ja']}")
                 continue
 
-            capsule_toy.update(
-                push__tagId=tag_info["_id"], updatedAt=datetime.utcnow().isoformat()
+            # capsule_toy.update(
+            #     push__tagId=tag_info["_id"], updatedAt=datetime.utcnow().isoformat()
+            # )
+            bulk_operation.append(
+                UpdateOne(
+                    {"_id": capsule_info["_id"]},
+                    {
+                        "$push": {"tagId": tag_info["_id"]},
+                        "$set": {
+                            "updatedAt": datetime.utcnow()
+                        },  # datetime.utcnow().isoformat() -> datetime.utcnow() / isoformat()을 사용할 경우 string 형식으로 저장됨
+                    },
+                )
             )
             count = count + 1
-            print("capsule_toy:", capsule_toy.to_mongo().to_dict()["name"])
+            # print("capsule_toy:", capsule_toy.to_mongo().to_dict()["name"])
+            logging.info(
+                f"Tag adding: {tag_info['ja']}, {capsule_info['_id']}, {capsule_info['name']}"
+            )
 
+        logging.info(f"Tag added: {tag_info['ja']}, {count} items")
+        if len(bulk_operation) > 0:
+            # logging.info(f"{bulk_operation}")
+            CapsuleToy._get_collection().bulk_write(bulk_operation, ordered=False)
+
+        # tagId가 추가된 경우 count 증가
         if count > 0:
-            capsule_tag.update(linkCount=count)
-            print("count:", count)
+            capsule_tag.update(inc__linkCount=count)
+            # print("count:", count)
+            logging.info(f"tag: {tag_info['ja']} count: {count}")
 
 
 def search_capsule_toy_in_duplicate_tag():
@@ -326,10 +474,91 @@ def search_capsule_toy_in_duplicate_tag():
             print("capsule_toy:", capsule_toy.to_mongo().to_dict()["name"])
 
 
+def filter_exist_db(json_array_file, brand=""):
+    # read file
+    try:
+        with open(json_array_file, "r", encoding="utf-8") as f:
+            json_array = json.load(f)
+    except Exception as e:
+        logging.error(f"File Error: {e}")
+        return
+
+    # connect to db
+    try:
+        connect(database_name, host=database_url)
+        logging.info("DB Connection Success")
+    except Exception as e:
+        logging.error(f"DB Connection Error: {e}")
+        return
+
+    # get all items
+    try:
+        items = CapsuleToy.objects(Q(brand__icontains=brand))
+    except Exception as e:
+        logging.error(f"DB Query Error: {e}")
+        return
+
+    # set
+    db_set = set()
+    for item in items:
+        db_set.add(item.detail_url)
+
+    # filter
+    result = []
+    for item in json_array:
+        if item["detail_url"] not in db_set:
+            result.append(item)
+            logging.info(f"New Item Found: {item['name']}")
+
+    return result
+
+
+def str_to_date():
+    # connect to db
+    try:
+        connect(database_name, host=database_url)
+        logging.info("DB Connection Success")
+    except Exception as e:
+        logging.error(f"DB Connection Error: {e}")
+        return
+
+    # get all items
+    try:
+        items = CapsuleToy.objects(Q(updatedAt__type="string"))
+    except Exception as e:
+        logging.error(f"DB Query Error: {e}")
+        return
+
+    bulk_operation = []
+
+    for item in items:
+        # 문자열에서 datetime 객체로 변환
+        updated_at_datetime = datetime.fromisoformat(item.updatedAt)
+
+        bulk_operation.append(
+            UpdateOne(
+                {"_id": item.id},
+                {"$set": {"updatedAt": updated_at_datetime}},
+            )
+        )
+        logging.info(f"Item: {item.name}, {item.updatedAt}")
+
+    if len(bulk_operation) > 0:
+        CapsuleToy._get_collection().bulk_write(bulk_operation, ordered=False)
+        logging.info(f"Updated: {len(bulk_operation)} items")
+
+    return
+
+
 if __name__ == "__main__":
-    insert_new_product(
-        "/home/local-optimum/git/gachatory/batch/scraping/bandai/new-product/detail-20231202.json"
-    )
+    # insert_new_product(
+    #     "/home/local-optimum/git/gachatory/batch/scraping/bandai/new-product/detail-20231202.json"
+    # )
     # insert_updated_image("updated_image.json")
     # insert_new_tag("E:/Git/gachatory/batch/tagging/tag-list-translated-edited-20230915.json")
     # search_capsule_toy_and_update_tag()
+    # insert_new_tag("E:/Git/gachatory/batch/tagging/tagging_result-033838-20240303.json")
+
+    # insert_new_product_as_bulk(
+    #     "E:/Git/gachatory/batch/scraping/tarlin/detail-img-20240308.json"
+    # )
