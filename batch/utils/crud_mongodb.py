@@ -26,7 +26,7 @@ from utils.log import log
 from utils.date_convert_to_ISO import date_convert_to_iso, format_month
 
 # models
-from models.capsule_toy import CapsuleToy, CapsuleTag
+from models.capsule_toy import CapsuleToy, CapsuleTag, Localization
 
 # tagging
 from tagging.tagging_with_chatgpt import flag_capsule_toy
@@ -400,15 +400,10 @@ def search_capsule_toy_and_update_tag():
                 )
                 logging.info(f"New Tag: {tag_info['ja']}")
 
-            # 기존 태그인 경우. 태그가 존재하는 캡슐 토이는 검사하지 않고 새로운 캡슐 토이만 검사함
+            # 기존 태그인 경우. Localization 정보가 없는 캡슐 토이를 검사
             else:
                 capsule_toys = CapsuleToy.objects(
-                    (
-                        Q(tagId__nin=[tag_info["_id"]])
-                        | Q(tagId__exists=False)
-                        | Q(tagId__size=0)
-                    )
-                    & (Q(name__regex=regex) | Q(description__regex=regex))
+                    (Q(localization=None) | Q(localization=[]))
                 )
                 logging.info(f"Existing Tag: {tag_info['ja']}")
         except Exception as e:
@@ -550,6 +545,77 @@ def str_to_date():
     return
 
 
+def line_break_remover():
+    # connect to db
+    try:
+        connect(database_name, host=database_url)
+        logging.info("DB Connection Success")
+    except Exception as e:
+        logging.error(f"DB Connection Error: {e}")
+        return
+
+    # get all items
+    try:
+        capsules = CapsuleToy.objects(
+            (Q(description__contains="\n") | Q(name__contains="\n"))
+        )
+        localizations = Localization.objects(
+            (Q(description__contains="\n") | Q(name__contains="\n"))
+        )
+    except Exception as e:
+        logging.error(f"DB Query Error: {e}")
+        return
+
+    capsule_bulk_operation = []
+    localization_bulk_operation = []
+
+    for capsule in capsules:
+        logging.info(f"Item: {capsule.name}, {capsule.description}")
+        capsule_bulk_operation.append(
+            UpdateOne(
+                {"_id": capsule.id},
+                {
+                    "$set": {
+                        "description": capsule.description.replace("\n", "").replace(
+                            r"\s+", " "
+                        ),
+                        "name": capsule.name.replace("\n", "").replace(r"\s+", " "),
+                    }
+                },
+            )
+        )
+
+    for localization in localizations:
+        logging.info(f"Item: {localization.name}, {localization.description}")
+        localization_bulk_operation.append(
+            UpdateOne(
+                {"_id": localization.id},
+                {
+                    "$set": {
+                        "description": localization.description.replace(
+                            "\n", " "
+                        ).replace(r"\s+", " "),
+                        "name": localization.name.replace("\n", " ").replace(
+                            r"\s+", " "
+                        ),
+                    }
+                },
+            )
+        )
+
+    if len(capsule_bulk_operation) > 0:
+        CapsuleToy._get_collection().bulk_write(capsule_bulk_operation, ordered=False)
+        logging.info(f"Capsule Updated: {len(capsule_bulk_operation)} items")
+
+    if len(localization_bulk_operation) > 0:
+        Localization._get_collection().bulk_write(
+            localization_bulk_operation, ordered=False
+        )
+        logging.info(f"Localization Updated: {len(localization_bulk_operation)} items")
+
+    return
+
+
 if __name__ == "__main__":
     # insert_new_product(
     #     "/home/local-optimum/git/gachatory/batch/scraping/bandai/new-product/detail-20231202.json"
@@ -562,3 +628,4 @@ if __name__ == "__main__":
     # insert_new_product_as_bulk(
     #     "E:/Git/gachatory/batch/scraping/tarlin/detail-img-20240308.json"
     # )
+    pass
