@@ -46,3 +46,16 @@ class CapsuleTag(DynamicDocument):
     updatedAt = DateTimeField()
 
     meta = {"collection": "capsule-tag"}
+
+
+class Localization(DynamicDocument):
+    lng: StringField(required=True)
+    capsuleId: ObjectIdField(required=True)
+    brand: StringField(required=True)
+    name: StringField(required=True)
+    header: StringField()
+    description: StringField()
+    createdAt = DateTimeField(default=datetime.now)
+    updatedAt = DateTimeField()
+
+    meta = {"collection": "localization"}
