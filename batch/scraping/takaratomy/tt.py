@@ -340,14 +340,14 @@ def get_detail_info_takaratomy(json_array_file):
     pass
 
 
-import tt_selenium
+import tt_playwright
 
 if __name__ == "__main__":
     # # 이전 데이터 수집
     # result = get_takaratomy_old_items()
     # write_file(result, CURRENT_DIR + "/takaratomy_old_items_final")
 
-    tt_selenium
+    tt_playwright
 
     # 신상 데이터 수집
     daily_result = get_takaratomy_new_items()
