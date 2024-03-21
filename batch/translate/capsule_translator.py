@@ -94,7 +94,7 @@ def translate_capsule_toy():
     # 1. capsule-toy 컬렉션을 조회, localization 필드가 없거나 비어있는 데이터를 조회
     capsule_toys = CapsuleToy.objects(
         (Q(localization=None) | Q(localization=[]))
-        & (Q(date__contains="2020") & Q(name__not__icontains="【箱売】"))
+        & (Q(date__contains=str(year)) & Q(name__not__icontains="【箱売】"))
     )
 
     if not capsule_toys:

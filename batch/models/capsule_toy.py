@@ -8,6 +8,7 @@ from mongoengine import (
     ObjectIdField,
     ReferenceField,
     BooleanField,
+    DictField,
 )
 
 
@@ -23,7 +24,7 @@ class CapsuleToy(DynamicDocument):
     header = StringField()
     lng = StringField()
     description = StringField()
-    localization = ListField(StringField())
+    localization = ListField(ObjectIdField())
     tagId = ListField(ReferenceField("CapsuleTag"))
     dateISO = ListField(DateTimeField())
     gpt_tagged = BooleanField()
@@ -55,7 +56,36 @@ class Localization(DynamicDocument):
     name: StringField(required=True)
     header: StringField()
     description: StringField()
-    createdAt = DateTimeField(default=datetime.now)
+    createdAt = DateTimeField(default=datetime.utcnow().isoformat())
     updatedAt = DateTimeField()
 
     meta = {"collection": "localization"}
+
+
+class SubscriptionTag(DynamicDocument):
+    userId = ObjectIdField(required=True)
+    tagId = ReferenceField("CapsuleTag", required=True)
+    state = BooleanField(required=True)
+    createdAt = DateTimeField(default=datetime.utcnow().isoformat())
+    updatedAt = DateTimeField()
+
+    meta = {"collection": "subscription-tag"}
+
+
+class Notification(DynamicDocument):
+    userId = ObjectIdField(required=True)
+    capsuleId = ObjectIdField(required=True)
+    tagId = ObjectIdField(required=True)
+    notificationId = ObjectIdField(required=True)
+    capsule_name = DictField(required=True)
+    tag_name = DictField(required=True)
+    brand_name = DictField(required=True)
+    release_date = StringField(required=True)
+    detail_url = StringField(required=True)
+    img = StringField(required=True)
+    confirmed = BooleanField(default=False)
+    confirmedAt = DateTimeField()
+    createdAt = DateTimeField(default=datetime.utcnow().isoformat())
+    updatedAt = DateTimeField()
+
+    meta = {"collection": "notification"}

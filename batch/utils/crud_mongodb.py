@@ -4,7 +4,7 @@ import re
 from bson import ObjectId
 import json
 from dotenv import load_dotenv
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from mongoengine import (
     connect,
@@ -376,6 +376,13 @@ def search_capsule_toy_and_update_tag():
     # 쿼리를 2번 쓰는게 이득인가
     # 반복문을 사용하여 캡슐 토이를 하나씩 검사하는 것이 더 이득인가
 
+    # 오늘 날짜를 구하고, 하루를 빼서 '하루 전' 날짜를 계산합니다.
+    today = datetime.utcnow().isoformat() - timedelta(days=1)
+
+    # 하루 전 날짜만을 기준으로 하려면, 날짜 범위의 시작과 끝을 정확히 하루로 설정합니다.
+    # 'one_day_ago'의 날짜 부분만 사용하고, 시간은 00:00:00으로 설정합니다.
+    start_of_today = today.replace(hour=15, minute=0, second=0, microsecond=0)
+
     capsule_tags = CapsuleTag.objects()
     for capsule_tag in capsule_tags:
         count = 0
@@ -402,8 +409,13 @@ def search_capsule_toy_and_update_tag():
 
             # 기존 태그인 경우. Localization 정보가 없는 캡슐 토이를 검사
             else:
+
                 capsule_toys = CapsuleToy.objects(
                     (Q(localization=None) | Q(localization=[]))
+                    & (Q(name__regex=regex) | Q(description__regex=regex))
+                    & Q(
+                        createdAt__gte=start_of_today,
+                    )
                 )
                 logging.info(f"Existing Tag: {tag_info['ja']}")
         except Exception as e:
@@ -616,16 +628,54 @@ def line_break_remover():
     return
 
 
+def tag_cutter():
+    # connect to db
+    try:
+        connect(database_name, host=database_url)
+        logging.info("DB Connection Success")
+    except Exception as e:
+        logging.error(f"DB Connection Error: {e}")
+        return
+
+    # get capsules with condition
+
+    try:
+        capsules = CapsuleToy.objects(
+            (Q(tagId__12__exists=True)) & (Q(localization=None) | Q(localization=[]))
+        )
+    except Exception as e:
+        logging.error(f"DB Query Error: {e}")
+        return
+
+    bulk_operation = []
+
+    for capsule in capsules:
+
+        # 태그가 10개 이상인 경우, 모든 태그 삭제
+        logging.info(f"Item: {capsule.name}, {capsule.tagId}")
+
+        bulk_operation.append(
+            UpdateOne(
+                {"_id": capsule.id},
+                {"$set": {"tagId": []}},
+            )
+        )
+    if len(bulk_operation) > 0:
+        CapsuleToy._get_collection().bulk_write(bulk_operation, ordered=False)
+        logging.info(f"Updated: {len(bulk_operation)} items")
+
+
 if __name__ == "__main__":
     # insert_new_product(
     #     "/home/local-optimum/git/gachatory/batch/scraping/bandai/new-product/detail-20231202.json"
     # )
     # insert_updated_image("updated_image.json")
     # insert_new_tag("E:/Git/gachatory/batch/tagging/tag-list-translated-edited-20230915.json")
-    # search_capsule_toy_and_update_tag()
+    search_capsule_toy_and_update_tag()
     # insert_new_tag("E:/Git/gachatory/batch/tagging/tagging_result-033838-20240303.json")
 
     # insert_new_product_as_bulk(
     #     "E:/Git/gachatory/batch/scraping/tarlin/detail-img-20240308.json"
     # )
+    # tag_cutter()
     pass
