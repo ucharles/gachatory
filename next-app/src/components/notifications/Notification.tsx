@@ -66,6 +66,7 @@ export default function NotificationsPage({ lng }: { lng: Language }) {
         return data;
       }),
   });
+  console.log("data", data);
 
   const { mutate } = useMutation({
     mutationFn: (notificationId: string) => setNotification(notificationId),
@@ -77,83 +78,85 @@ export default function NotificationsPage({ lng }: { lng: Language }) {
 
   return (
     <>
-      {data?.length === 0 && <p>{t("no-notification-message")}</p>}
+      {!Array.isArray(data) && <p>{t("no-notification-message")}</p>}
       <Accordion type="multiple" className="w-full text-gray-800">
-        {data?.map((notification, idx) => {
-          return (
-            <AccordionItem
-              key={notification.notificationId}
-              value={notification.notificationId}
-            >
-              <AccordionTrigger
-                onClick={() => {
-                  notification.confirmed
-                    ? null
-                    : mutate(notification.notificationId);
-                }}
-              >
-                <div className="flex items-center justify-center space-x-2">
-                  {notification.confirmed ? (
-                    <div className="h-2 w-2 rounded-full bg-gray-400"></div>
-                  ) : (
-                    <div className="h-2 w-2 rounded-full bg-gigas-700"></div>
-                  )}
-                  <DisplayDate date={notification.createdAt} />
-                </div>
-              </AccordionTrigger>
-              <AccordionContent>
-                <ul className="px-2 sm:px-4">
-                  {Object.values(notification.tags).map((tag) => {
-                    return (
-                      <li key={tag.tagId} className="space-y-3">
-                        <Link href={`/${lng}/search?tag=${tag.tagId}`}>
-                          <h3 className="text-xl font-bold">
-                            {tag.tagName[lng][0]}
-                          </h3>
-                        </Link>
-                        <ul className="grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-3 md:grid-cols-4">
-                          {tag.capsules.map((capsule) => {
-                            return (
-                              <li key={capsule.capsuleId}>
-                                <Link
-                                  href={`/${lng}/capsule/${capsule.capsuleId}`}
-                                >
-                                  <div className="flex aspect-square items-center justify-center overflow-hidden rounded-md bg-gray-100">
-                                    <Image
-                                      priority
-                                      src={capsule.img}
-                                      alt={capsule.capsuleName[lng]}
-                                      width={200}
-                                      height={0}
-                                      style={{
-                                        width: "100%",
-                                        height: "auto",
-                                      }}
-                                      className="scale-125 object-center transition duration-300 hover:translate-y-0 hover:scale-100 hover:opacity-90"
-                                    />
-                                  </div>
-                                </Link>
-                                <div className="_text-info mt-3 space-y-1">
-                                  <p className="text-subtle-medium text-gray-600">
-                                    {capsule.releaseDate}
-                                  </p>
-                                  <h4 className="max-lines-3 3xs:text-base-semibold break-words text-body-bold ">
-                                    {capsule.capsuleName[lng]}
-                                  </h4>
-                                </div>
-                              </li>
-                            );
-                          })}
-                        </ul>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </AccordionContent>
-              {idx < data.length - 1 && <hr />}
-            </AccordionItem>
-          );
-        })}
+        {Array.isArray(data)
+          ? data?.map((notification, idx) => {
+              return (
+                <AccordionItem
+                  key={notification.notificationId}
+                  value={notification.notificationId}
+                >
+                  <AccordionTrigger
+                    onClick={() => {
+                      notification.confirmed
+                        ? null
+                        : mutate(notification.notificationId);
+                    }}
+                  >
+                    <div className="flex items-center justify-center space-x-2">
+                      {notification.confirmed ? (
+                        <div className="h-2 w-2 rounded-full bg-gray-400"></div>
+                      ) : (
+                        <div className="h-2 w-2 rounded-full bg-gigas-700"></div>
+                      )}
+                      <DisplayDate date={notification.createdAt} />
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <ul className="px-2 sm:px-4">
+                      {Object.values(notification.tags).map((tag) => {
+                        return (
+                          <li key={tag.tagId} className="space-y-3">
+                            <Link href={`/${lng}/search?tag=${tag.tagId}`}>
+                              <h3 className="text-xl font-bold">
+                                {tag.tagName[lng][0]}
+                              </h3>
+                            </Link>
+                            <ul className="grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-3 md:grid-cols-4">
+                              {tag.capsules.map((capsule) => {
+                                return (
+                                  <li key={capsule.capsuleId}>
+                                    <Link
+                                      href={`/${lng}/capsule/${capsule.capsuleId}`}
+                                    >
+                                      <div className="flex aspect-square items-center justify-center overflow-hidden rounded-md bg-gray-100">
+                                        <Image
+                                          priority
+                                          src={capsule.img}
+                                          alt={capsule.capsuleName[lng]}
+                                          width={200}
+                                          height={0}
+                                          style={{
+                                            width: "100%",
+                                            height: "auto",
+                                          }}
+                                          className="scale-125 object-center transition duration-300 hover:translate-y-0 hover:scale-100 hover:opacity-90"
+                                        />
+                                      </div>
+                                    </Link>
+                                    <div className="_text-info mt-3 space-y-1">
+                                      <p className="text-subtle-medium text-gray-600">
+                                        {capsule.releaseDate}
+                                      </p>
+                                      <h4 className="max-lines-3 3xs:text-base-semibold break-words text-body-bold ">
+                                        {capsule.capsuleName[lng]}
+                                      </h4>
+                                    </div>
+                                  </li>
+                                );
+                              })}
+                            </ul>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </AccordionContent>
+                  {idx < data.length - 1 && <hr />}
+                </AccordionItem>
+              );
+            })
+          : null}
       </Accordion>
     </>
   );

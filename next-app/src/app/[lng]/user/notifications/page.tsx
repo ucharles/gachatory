@@ -29,7 +29,7 @@ export default async function NotificationsPage({
 
   return (
     <section>
-      <div className="flex items-center justify-between">
+      <div className="mb-4 flex items-center justify-between">
         <h2 className="text-3xl font-bold">{t("notification")}</h2>
         <NotificationConfirmButton lng={lng} />
       </div>
