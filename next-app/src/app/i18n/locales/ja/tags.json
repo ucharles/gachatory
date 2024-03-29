@@ -5,5 +5,19 @@
   "series": "シリーズ名",
   "author": "作家名",
   "category": "分類",
-  "element": "要素"
+  "element": "要素",
+  "subscribe": "タグを追加",
+  "unsubscribe": "タグを削除",
+  "login": "ログイン",
+  "loginRequired": "ログインが必要です",
+  "loginRequiredMessage": "タグを登録して通知を受けよう！",
+  "subscriptionSuccess": "タグを登録しました",
+  "unsubscriptionSuccess": "タグを削除しました",
+  "subscriptionError": "エラーが発生しました",
+  "subscriptionErrorMessage": "タグの登録に失敗しました。タグは10個まで登録できます。",
+  "confirm-all": "すべて既読",
+  "subscribed-tags": "登録したタグ一覧",
+  "subscribed-tags-description": "タグは最大10個まで登録できます。",
+  "tag-notification-set": "タグ通知設定",
+  "tag-notification-set-description": "タグを登録して新しいカプセルトイの通知を受けよう！"
 }

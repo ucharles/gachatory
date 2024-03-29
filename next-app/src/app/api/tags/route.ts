@@ -5,9 +5,6 @@ import mongoose from "mongoose";
 
 export async function GET(request: Request) {
   try {
-    // DB 연결하기
-    dbConnect();
-
     // URL 파라미터 가져오기
     // tag 파라미터는 v: 검색 문자열
     const params = new URLSearchParams(new URL(request.url).search);
@@ -16,7 +13,7 @@ export async function GET(request: Request) {
     if (params.get("v")) {
       params.set(
         "v",
-        params.get("v")?.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&") as string
+        params.get("v")?.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&") as string,
       );
     }
 
@@ -29,8 +26,11 @@ export async function GET(request: Request) {
     const tagIds = params.get("id")?.match(regex);
     const filteredTagIds = tagIds?.filter((tagId) => tagId.length === 24);
     const objectIdTagIds = filteredTagIds?.map(
-      (tagId) => new mongoose.Types.ObjectId(tagId)
+      (tagId) => new mongoose.Types.ObjectId(tagId),
     );
+
+    // DB 연결하기
+    dbConnect();
 
     // DB 검색하기
     let resultCapsuleTags = [];
@@ -63,7 +63,7 @@ export async function GET(request: Request) {
     console.error(error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

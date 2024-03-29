@@ -81,3 +81,45 @@ export async function fetchLikedData(
   const data = await response.json();
   return data;
 }
+
+export async function getSubscribedTags(cookies?: any) {
+  const res = await fetch(API_URI + "/api/subscriptions/tags", {
+    method: "GET",
+    next: { revalidate: cacheTimeEnum.FIVE_MINUTES },
+    headers: {
+      cookie: cookies, // Convert the cookie value to a string
+    },
+  });
+  const data = await res.json();
+  return data;
+}
+
+export async function getNotifications(lng: string, cookies?: any) {
+  const res = await fetch(API_URI + `/api/notifications?lng=${lng}`, {
+    method: "GET",
+    next: { revalidate: cacheTimeEnum.FIVE_MINUTES },
+    headers: {
+      cookie: cookies, // Convert the cookie value to a string
+    },
+  });
+  const data = await res.json();
+  return data;
+}
+
+export async function getTags(v: string) {
+  const res = await fetch(API_URI + "/api/tags?v=" + v);
+  const data = await res.json();
+  return data;
+}
+
+export async function getNotificationCount(cookies?: any) {
+  const res = await fetch(API_URI + "/api/notifications/counts", {
+    method: "GET",
+    next: { revalidate: cacheTimeEnum.FIVE_MINUTES },
+    headers: {
+      cookie: cookies, // Convert the cookie value to a string
+    },
+  });
+  const data = await res.json();
+  return data;
+}

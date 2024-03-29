@@ -1,9 +1,9 @@
 import { Metadata } from "next";
 import { cookies } from "next/headers";
 
-import getQueryClient from "../../components/Providers/getQueryClient";
+import getQueryClient from "../../../../components/Providers/getQueryClient";
 import { dehydrate } from "@tanstack/query-core";
-import Hydrate from "../../components/Providers/HydrateClient";
+import Hydrate from "../../../../components/Providers/HydrateClient";
 import CapsuleInfo from "../../components/CapsuleInfo";
 import { capsuleFetchData } from "@/lib/fetch-data";
 

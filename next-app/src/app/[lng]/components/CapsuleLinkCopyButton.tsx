@@ -1,28 +1,22 @@
 "use client";
 
-import { useState } from "react";
-
-import SuccessNoti from "./SuccessNoti";
+import { useToast } from "@/components/ui/use-toast";
+import { translate } from "@/app/i18n/client";
 
 export default function CapsuleLinkCopyButton({ lng }: { lng: string }) {
-  const [isCopied, setIsCopied] = useState(false);
+  const { t } = translate(lng, "translation");
+  const { toast } = useToast();
 
   async function handleLinkCopy() {
     await navigator.clipboard.writeText(window.location.href);
     // 현재 주소 링크를 복사
-    // 복사가 성공하면 isCopied 상태를 true로 업데이트합니다.
-    if (!isCopied) {
-      setIsCopied(true);
-      // 2초 후에 isCopied를 false로 다시 설정하여 풍선이 사라지게 합니다.
-      setTimeout(() => {
-        setIsCopied(false);
-      }, 2000);
-    }
+    toast({
+      description: t("link-copied"),
+    });
   }
 
   return (
     <>
-      <SuccessNoti lng={lng} isDisplay={isCopied} msg={"link-copied"} />
       <button onClick={handleLinkCopy}>
         <svg
           xmlns="http://www.w3.org/2000/svg"

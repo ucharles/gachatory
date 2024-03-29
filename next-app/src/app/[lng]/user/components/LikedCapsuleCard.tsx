@@ -26,9 +26,10 @@ export default function LikedCapsuleCard({
           <Image
             src={img}
             alt={name}
-            width={400}
-            height={400}
+            width={250}
+            height={250}
             className="scale-125 object-center transition duration-300 hover:translate-y-0 hover:scale-100 hover:opacity-90"
+            priority
           />
         </Link>
       </div>
@@ -38,7 +39,7 @@ export default function LikedCapsuleCard({
             <p className="inline-block text-subtle-medium text-gray-600">
               {date[0]}
             </p>
-            <h1 className="max-lines-3 break-words text-body-bold text-gray-800 3xs:text-base-semibold">
+            <h1 className="max-lines-3 3xs:text-base-semibold break-words text-body-bold text-gray-800">
               {name}
             </h1>
           </Link>

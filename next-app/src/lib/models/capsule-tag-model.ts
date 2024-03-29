@@ -6,6 +6,12 @@ export interface ICapsuleTag extends Document {
   en: string[];
   property: string;
   linkCount: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface ICapsuleTagSubscription extends ICapsuleTag {
+  subscription: boolean;
 }
 
 export const tagSchema = new Schema<ICapsuleTag>(
@@ -16,7 +22,7 @@ export const tagSchema = new Schema<ICapsuleTag>(
     property: String,
     linkCount: Number,
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const CapsuleTag =

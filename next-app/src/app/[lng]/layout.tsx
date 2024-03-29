@@ -3,15 +3,17 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Noto_Sans_JP } from "next/font/google";
 import localFont from "next/font/local";
-import Navbar from "@/app/[lng]/components/navbar";
+import Navbar from "@/components/navbar/Navbar";
 import { Footer } from "@/app/[lng]/components/Footer/client";
-import TenstackProvider from "./components/Providers/TenstackProvider";
-import { AuthProvider } from "./components/Providers/AuthProvider";
+import TenstackProvider from "../../components/Providers/TenstackProvider";
+import { AuthProvider } from "../../components/Providers/AuthProvider";
 const GTM_MEASUREMENT_ID = process.env.NEXT_PUBLIC_MEASUREMENT_ID;
 
 import "@/app/global.css";
 import GoogleTagManager from "./components/GoogleTagManager";
 import NaverAnalytics from "./components/NaverAnalytics";
+
+import { Toaster } from "@/components/ui/toaster";
 
 const noto = Noto_Sans_JP({
   weight: ["400", "700"],
@@ -102,6 +104,7 @@ export default function RootLayout({
           </TenstackProvider>
         </AuthProvider>
         <NaverAnalytics />
+        <Toaster />
       </body>
     </html>
   );

@@ -5,7 +5,7 @@ import {
 } from "@/app/[lng]/components/authButtons";
 import Image from "next/image";
 import Link from "next/link";
-import logo from "../../../../public/images/pnglogo.png";
+import logo from "public/images/pnglogo.png";
 import { getServerSession } from "next-auth/next";
 import { options } from "../../api/auth/[...nextauth]/options";
 import { redirect } from "next/navigation";

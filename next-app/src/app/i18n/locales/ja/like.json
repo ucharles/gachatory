@@ -5,5 +5,8 @@
   "recent-like": "最近のいいね",
   "view-all": "一覧へ >",
   "no-liked-message-1": "いいねがありません",
-  "no-liked-message-2": "お気に入りのカプセルトイを探して、いいねしてみよう！"
+  "no-liked-message-2": "お気に入りのカプセルトイを探して、いいねしてみよう！",
+  "login": "ログイン",
+  "loginRequired": "ログインが必要です",
+  "loginRequiredMessage": "ログインしていいねをしてみよう！"
 }

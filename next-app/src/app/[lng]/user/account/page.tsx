@@ -9,6 +9,7 @@ import DeleteAccountButton from "@/app/auth/components/DeleteAccountButton";
 import ProviderIcon from "@/app/[lng]/user/components/ProviderIcon";
 
 import EmailNotification from "../components/EmailNotification";
+import DisplayDate from "@/components/DisplayDate";
 
 import { translate } from "@/app/i18n";
 
@@ -55,11 +56,13 @@ export default async function Page({
               <ProviderIcon provider={session.user?.provider} />
             </span>
           </p>
-          <p>
-            {session.user?.createdAt
-              ? convertToLocalTime(session.user?.createdAt)
-              : "unknown"}
-          </p>
+          <div>
+            {session.user?.createdAt ? (
+              <DisplayDate date={session.user?.createdAt} />
+            ) : (
+              "unknown"
+            )}
+          </div>
           {/* <EmailNotification /> */}
         </div>
       </article>
