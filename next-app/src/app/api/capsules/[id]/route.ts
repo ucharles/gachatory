@@ -9,11 +9,22 @@ import dbConnect from "@/lib/db/db-connect";
 import mongoose from "mongoose";
 import CapsuleToy from "@/lib/models/capsule-model";
 import Localization, { ILocalization } from "@/lib/models/localization-model";
-import CapsuleTag, { ICapsuleTag } from "@/lib/models/capsule-tag-model";
+import CapsuleTag, {
+  ICapsuleTag,
+  ICapsuleTagSubscription,
+} from "@/lib/models/capsule-tag-model";
 import { dateTranslator } from "@/lib/date-converter";
 import { getToken } from "next-auth/jwt";
 import { convertToObjectId } from "@/lib/db/convertObjectId";
 import Like, { ILike } from "@/lib/models/like-model";
+import SubscriptionTag, {
+  ISubscriptionTag,
+} from "@/lib/models/subscription-tag-model";
+
+import { getUserIdWithCheckToken } from "@/lib/auth/checkUser";
+import { ObjectId } from "bson";
+
+import { validateLng } from "@/lib/validation";
 
 const IMAGE_URI = process.env.IMAGE_SERVER_URL;
 
@@ -26,7 +37,16 @@ export async function GET(
     dbConnect();
 
     const queryParams = new URLSearchParams(new URL(request.url).search);
-    const lng = queryParams.get("lng");
+    const lng = validateLng(queryParams.get("lng"));
+
+    if (ObjectId.isValid(params.id) === false) {
+      return NextResponse.json(
+        {
+          message: "Invalid capsuleId",
+        },
+        { status: 400 },
+      );
+    }
 
     // DB 검색하기
     const resultCapsules = await CapsuleToy.findById(
@@ -65,47 +85,79 @@ export async function GET(
       });
     }
 
-    // JWT 토큰에서 유저 정보 가져오기
-    let token;
+    // 세션 정보 확인
+    const sessionResult = await getUserIdWithCheckToken(request);
+
+    // 결과가 NextResponse 객체인지 확인합니다.
+    if (sessionResult instanceof NextResponse) {
+      // NextResponse 객체를 반환하면 라우트 핸들러의 실행을 종료합니다.
+      return NextResponse.json(capsule, { status: 200 });
+    }
+
+    // 이 시점에서, result는 userId의 문자열입니다.
+    const userId: string = sessionResult;
+
+    if (ObjectId.isValid(userId) === false) {
+      return NextResponse.json(
+        {
+          message: "Invalid userId",
+        },
+        { status: 400 },
+      );
+    }
+
+    const userIdObj = convertToObjectId(userId);
+    const capsuleIdObj = convertToObjectId(params.id);
+
+    // 이미 좋아요를 눌렀는지 확인하기
+    let like;
     try {
-      token = await getToken({ req: request });
-    } catch (error) {
-      console.error("JWT Token Error: ", error);
-      return NextResponse.json({
-        status: 500,
-        message: "Internal Server Error",
+      like = await Like.findOne({
+        userId: userIdObj,
+        capsuleId: capsuleIdObj,
+        state: true,
       });
+    } catch (error) {
+      console.error("Error finding like:", error);
+      return NextResponse.next();
     }
 
-    if (token) {
-      const userId = token?.sub; // add null check for token
+    if (like) {
+      capsule.like = true;
+    } else {
+      capsule.like = false;
+    }
 
-      if (!userId) {
-        return NextResponse.next();
-      }
+    // 캡슐에서 사용된 태그 목록 가져오기
+    const tags = capsule.tagId.map((tag: ICapsuleTag) => {
+      return tag._id;
+    });
 
-      const userIdObj = convertToObjectId(userId);
-      const capsuleIdObj = convertToObjectId(params.id);
+    // 구독한 태그 목록 가져오기
+    const subscriptionTags: ISubscriptionTag[] | null =
+      await SubscriptionTag.find({
+        userId: userIdObj,
+        tagId: { $in: tags },
+        state: true,
+      });
 
-      // 이미 좋아요를 눌렀는지 확인하기
-      let like;
-      try {
-        like = await Like.findOne({
-          userId: userIdObj,
-          capsuleId: capsuleIdObj,
-          state: true,
-        });
-      } catch (error) {
-        console.error("Error finding like:", error);
-        return NextResponse.next();
-      }
+    if (subscriptionTags.length === 0) {
+      return NextResponse.json(capsule, { status: 200 });
+    }
 
-      if (like) {
-        capsule.like = true;
+    capsule.tagId.map((tag: ICapsuleTagSubscription) => {
+      const tagId = tag._id;
+      const subscriptionTag = subscriptionTags.find(
+        (subscriptionTag) =>
+          subscriptionTag.tagId.toString() === tagId.toString(),
+      );
+
+      if (subscriptionTag) {
+        tag.subscription = true;
       } else {
-        capsule.like = false;
+        tag.subscription = false;
       }
-    }
+    });
 
     // 결과 반환하기
     return NextResponse.json(capsule, { status: 200 });

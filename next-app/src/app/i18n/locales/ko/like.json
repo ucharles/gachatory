@@ -5,5 +5,8 @@
   "recent-like": "최근 좋아요",
   "view-all": "목록으로 >",
   "no-liked-message-1": "좋아요가 없습니다.",
-  "no-liked-message-2": "맘에 드는 캡슐 토이를 찾아 좋아요를 눌러보세요!"
+  "no-liked-message-2": "맘에 드는 캡슐 토이를 찾아 좋아요를 눌러보세요!",
+  "login": "로그인",
+  "loginRequired": "로그인이 필요합니다",
+  "loginRequiredMessage": "로그인 후 캡슐 토이에 좋아요를 눌러보세요!"
 }

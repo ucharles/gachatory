@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import CommentIcon from "../../../../public/images/icons8-comment-48.png";
+import CommentIcon from "public/images/icons8-comment-48.png";
 
 const CommentButton = ({ count }: { count: number }) => {
   const [commentCount, setCommentCount] = useState(count);
@@ -10,7 +10,7 @@ const CommentButton = ({ count }: { count: number }) => {
   return (
     <button
       className={
-        "absolute right-2 bottom-2 rounded-full bg-gray-200 px-3 py-2 opacity-90"
+        "absolute bottom-2 right-2 rounded-full bg-gray-200 px-3 py-2 opacity-90"
       }
     >
       <div className="flex space-x-2">

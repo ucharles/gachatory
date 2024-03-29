@@ -1,8 +1,8 @@
 import { translate } from "../i18n";
 import { redirect } from "next/navigation";
-import getQueryClient from "./components/Providers/getQueryClient";
+import getQueryClient from "../../components/Providers/getQueryClient";
 import { dehydrate } from "@tanstack/query-core";
-import Hydrate from "./components/Providers/HydrateClient";
+import Hydrate from "../../components/Providers/HydrateClient";
 import InfiniteCapsuleCards from "./components/InfiniteCapsuleCards";
 import { arrivalFetchData } from "@/lib/fetch-data";
 import {

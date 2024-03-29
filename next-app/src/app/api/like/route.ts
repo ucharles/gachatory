@@ -3,6 +3,7 @@
 // 이 방법은 서버 측에서만 사용할 수 있습니다.
 
 import { NextResponse, NextRequest } from "next/server";
+import dbConnect from "@/lib/db/db-connect";
 import { getToken } from "next-auth/jwt";
 import Like, { ILike } from "@/lib/models/like-model";
 import { ICapsuleToy } from "@/lib/models/capsule-model";
@@ -75,6 +76,8 @@ export async function GET(request: NextRequest) {
   }
 
   let totalLikes = 0;
+
+  await dbConnect();
 
   try {
     totalLikes = await Like.countDocuments({
@@ -250,6 +253,8 @@ export async function POST(request: NextRequest) {
 
   const userIdObj = convertToObjectId(userId);
   const capsuleIdObj = convertToObjectId(capsuleId);
+
+  await dbConnect();
 
   // 좋아요 객체가 있는지 확인
   let like;

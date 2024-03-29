@@ -21,8 +21,10 @@ export default async function UserLayout({
 
   return (
     <div className="flex">
-      <UserAside params={{ lng }} />
-      {children}
+      <aside className="mr-6 hidden sm:block sm:basis-1/4 md:basis-1/5">
+        <UserAside params={{ lng }} />
+      </aside>
+      <main className="basis-full sm:basis-3/4 md:basis-4/5">{children}</main>
     </div>
   );
 }

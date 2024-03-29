@@ -72,10 +72,11 @@ function InfiniteCapsuleCards({
                   <div className="flex aspect-square items-center justify-center overflow-hidden rounded-md bg-gray-100">
                     <Link href={`/${lng}/capsule/${capsule._id}`}>
                       <Image
+                        priority
                         src={capsule.display_img}
                         alt={capsule.name}
-                        width={400}
-                        height={400}
+                        width={300}
+                        height={300}
                         className="scale-125 object-center transition duration-300 hover:translate-y-0 hover:scale-100 hover:opacity-90"
                       />
                     </Link>

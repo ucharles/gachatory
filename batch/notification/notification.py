@@ -92,11 +92,8 @@ def generate_notification(batch_days=1):
     # 2. 새로 등록된 상품 불러오기
     # populate는 어떻게 하나
     capsule_toy = CapsuleToy.objects(
-        Q(
-            releaseUpdateDate__gte=datetime.utcnow().isoformat()
-            - timedelta(days=batch_days)
-        )
-        | Q(createdAt__gte=datetime.utcnow().isoformat() - timedelta(days=batch_days))
+        Q(releaseUpdateDate__gte=datetime.utcnow() - timedelta(days=batch_days))
+        | Q(createdAt__gte=datetime.utcnow() - timedelta(days=batch_days))
     )
 
     logging.info(f"capsule_toy: {len(capsule_toy)}")
@@ -211,4 +208,4 @@ def generate_notification(batch_days=1):
 
 
 if __name__ == "__main__":
-    generate_notification(batch_days=5)
+    generate_notification(batch_days=1)

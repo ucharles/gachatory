@@ -15,7 +15,7 @@
   "date-explain": "*제조사의 사정에 따라 발매일이 변동될 수 있습니다",
   "brand": "제조사",
   "product-info": "Product Info | 제품 정보",
-  "link-copied": "링크 복사 완료",
+  "link-copied": "링크가 복사되었습니다",
   "login-required": "로그인이 필요합니다",
   "recent-order": "발매순",
   "like-order": "좋아요순",
@@ -24,5 +24,8 @@
   "account-info": "계정 정보",
   "mypage": "MY PAGE",
   "asc": "오름차순",
-  "desc": "내림차순"
+  "desc": "내림차순",
+  "notification": "알림",
+  "keyword-notification": "알림 목록",
+  "no-notification-message": "알림이 없습니다"
 }

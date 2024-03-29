@@ -5,5 +5,19 @@
   "series": "Series",
   "author": "Author",
   "category": "Category",
-  "element": "Element"
+  "element": "Element",
+  "subscribe": "Subscribe",
+  "unsubscribe": "Unsubscribe",
+  "login": "Login",
+  "loginRequired": "Login required",
+  "loginRequiredMessage": "You must be logged in to subscribe to this tag.",
+  "subscriptionSuccess": "Subscription successful",
+  "unsubscriptionSuccess": "Unsubscription successful",
+  "subscriptionError": "Subscription error",
+  "subscriptionErrorMessage": "An error occurred or you exceeded the number of tags you can subscribe to.",
+  "confirm-all": "Read All",
+  "subscribed-tags": "Subscribed Tags",
+  "subscribed-tags-description": "You can subscribe to up to 10 tags.",
+  "tag-notification-set": "Tag notification set",
+  "tag-notification-set-description": "You will receive a notification when a new capsule toy is published with this tag."
 }

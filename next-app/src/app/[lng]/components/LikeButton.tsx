@@ -3,9 +3,12 @@
 import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useQueryClient } from "@tanstack/react-query";
-import LoginAlert from "./LoginAlert";
+import Link from "next/link";
 
+import { useToast } from "@/components/ui/use-toast";
+import { ToastAction } from "@/components/ui/toast";
 import { updateLikes } from "@/lib/updateLikes";
+import { translate } from "@/app/i18n/client";
 
 interface ILikeButtonProps {
   lng: string;
@@ -19,40 +22,43 @@ const LikeButton = ({ lng, like, capsuleId, queryKey }: ILikeButtonProps) => {
     required: false,
     onUnauthenticated() {},
   });
+  const { toast } = useToast();
+  const { t } = translate(lng, "like");
 
   const queryClient = useQueryClient();
 
   const [isLiked, setIsLiked] = useState(like);
   const [isLikeLoading, setIsLikeLoading] = useState(false);
-  const [isLogginAlert, setIsLogginAlert] = useState(false);
 
   const toggleLike = () => {
     setIsLiked(!isLiked);
   };
 
-  const handleLike = () => {
-    if (session) {
-      if (isLikeLoading) return;
-      setIsLikeLoading(true);
-      setTimeout(() => {
-        setIsLikeLoading(false);
-      }, 1000);
-
-      toggleLike();
-      updateLikes(queryClient, queryKey[0], capsuleId);
-
-      fetchLike();
-    } else {
-      // 로그인이 되어있지 않으면 로그인을 하라는 알림을 띄운다.
-      // 2초 동안 입력을 받지 않는다.
-      if (!isLogginAlert) {
-        setIsLogginAlert(true);
+  const handleLike = session
+    ? () => {
+        if (isLikeLoading) return;
+        setIsLikeLoading(true);
         setTimeout(() => {
-          setIsLogginAlert(false);
-        }, 2000);
+          setIsLikeLoading(false);
+        }, 1000);
+
+        toggleLike();
+        updateLikes(queryClient, queryKey[0], capsuleId);
+
+        fetchLike();
       }
-    }
-  };
+    : () => {
+        toast({
+          title: t("loginRequired"),
+          description: t("loginRequiredMessage"),
+          variant: "destructive",
+          action: (
+            <Link href="/auth/signin">
+              <ToastAction altText="Login">{t("login")}</ToastAction>
+            </Link>
+          ),
+        });
+      };
 
   const fetchLike = async () => {
     if (!session) return;
@@ -74,7 +80,6 @@ const LikeButton = ({ lng, like, capsuleId, queryKey }: ILikeButtonProps) => {
 
   return (
     <>
-      <LoginAlert lng={lng} isDisplay={isLogginAlert} />
       <button className="" onClick={handleLike} disabled={isLikeLoading}>
         <div className="flex items-center space-x-1">
           <svg

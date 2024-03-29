@@ -24,5 +24,8 @@
   "account-info": "アカウント情報",
   "mypage": "MY PAGE",
   "asc": "昇順",
-  "desc": "降順"
+  "desc": "降順",
+  "notification": "通知",
+  "keyword-notification": "通知一覧",
+  "no-notification-message": "通知はありません"
 }

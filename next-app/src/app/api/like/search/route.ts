@@ -3,6 +3,8 @@
 // 이 방법은 서버 측에서만 사용할 수 있습니다.
 
 import { NextResponse, NextRequest } from "next/server";
+import dbConnect from "@/lib/db/db-connect";
+
 import { getToken } from "next-auth/jwt";
 import Like from "@/lib/models/like-model";
 import { convertToObjectId } from "@/lib/db/convertObjectId";
@@ -50,6 +52,8 @@ export async function GET(request: NextRequest) {
   page ? (currentPage = +page) : null;
 
   let perPage = perPageEnum.SMALL;
+
+  await dbConnect();
 
   // 좋아요 객체가 있는지 확인
   let likes: ILike[] = [];

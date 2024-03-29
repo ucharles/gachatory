@@ -2,9 +2,9 @@
 
 import Image from "next/image";
 import { signIn } from "next-auth/react";
-import google_icon from "../../../../public/images/google-icon.png";
-import github_icon from "../../../../public/images/github-icon.png";
-import discord_icon from "../../../../public/images/discord-icon.png";
+import google_icon from "public/images/google-icon.png";
+import github_icon from "public/images/github-icon.png";
+import discord_icon from "public/images/discord-icon.png";
 
 const buttonStyle =
   "flex w-full items-center space-x-6 py-2 pl-1 pr-10 font-semibold text-black hover:bg-gray-100 rounded-lg";

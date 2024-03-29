@@ -7,7 +7,7 @@ import { useSearchParams } from "next/navigation";
 import { Trans } from "react-i18next/TransWithoutContext";
 import { languages } from "../../../i18n/settings";
 import { TFunction } from "i18next";
-import bigLogo from "../../../../../public/images/pnglogo.png";
+import bigLogo from "public/images/pnglogo.png";
 
 interface FooterBaseProps {
   t: TFunction;

@@ -1,7 +1,7 @@
 import Image from "next/image";
-import google_icon from "../../../../../public/images/google-icon.png";
-import github_icon from "../../../../../public/images/github-icon.png";
-import discord_icon from "../../../../../public/images/discord-icon.png";
+import google_icon from "public/images/google-icon.png";
+import github_icon from "public/images/github-icon.png";
+import discord_icon from "public/images/discord-icon.png";
 
 function providerIconSelector(provider: string) {
   switch (provider) {

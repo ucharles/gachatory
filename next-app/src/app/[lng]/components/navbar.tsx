@@ -4,12 +4,12 @@ import { useState, useEffect, useRef } from "react";
 
 import Link from "next/link";
 import Image from "next/image";
-import bigLogo from "../../../../public/images/pnglogo.png";
-import smallLogo from "../../../../public/images/small_logo.png";
-import SearchBar from "./SearchBar";
+import bigLogo from "public/images/pnglogo.png";
+import smallLogo from "public/images/small_logo.png";
+import SearchBar from "../../../components/navbar/SearchBar";
 import { useSession } from "next-auth/react";
-import Avatar from "../components/Avatar";
-import UserInfoOverlay from "./UserInfoOverlay";
+import Avatar from "../../../components/navbar/Avatar";
+import UserInfoOverlay from "../../../components/navbar/UserInfoOverlay";
 
 export default function Navbar({ lng }: { lng: string }) {
   const [isOverlayOpen, setIsOverlayOpen] = useState(false);
@@ -92,22 +92,26 @@ export default function Navbar({ lng }: { lng: string }) {
       <div className="container relative flex max-w-[1200px] flex-row items-center justify-items-center space-x-4 px-6 py-3 md:py-6 xl:px-0">
         <div className="flex basis-2/12 justify-center">
           <Link href={`/${lng}`}>
-            <Image
-              priority
-              src={bigLogo}
-              alt="logo"
-              width={200}
-              height={32}
-              className="hidden h-auto w-44 pb-2 md:block"
-            />
-            <Image
-              priority
-              src={smallLogo}
-              alt="logo"
-              width={50}
-              height={40}
-              className="mb-1 h-auto w-10 md:hidden"
-            />
+            <div className="hidden pb-2 md:block">
+              <Image
+                priority
+                src={bigLogo}
+                alt="logo"
+                width={200}
+                height={0}
+                style={{ width: "200px", height: "auto" }}
+              />
+            </div>
+            <div className="mb-1 md:hidden">
+              <Image
+                priority
+                src={smallLogo}
+                alt="logo"
+                width={80}
+                height={0}
+                style={{ width: "40px", height: "auto" }}
+              />
+            </div>
           </Link>
         </div>
         <div className="basis-9/12">

@@ -1,3 +1,5 @@
+// server component
+
 import Link from "next/link";
 import Image from "next/image";
 import { cookies } from "next/headers";
@@ -6,7 +8,7 @@ import { translate } from "@/app/i18n";
 import ImageGallery from "./image-gallery";
 import DisplayCapsuleTags from "./display-capsule-tag";
 import { capsuleFetchData } from "@/lib/fetch-data";
-import getQueryClient from "@/app/[lng]/components/Providers/getQueryClient";
+import getQueryClient from "@/components/Providers/getQueryClient";
 
 import CapsuleLinkCopyButton from "./CapsuleLinkCopyButton";
 import LikeBigButtonSet from "./LikeBigButtonSet";
@@ -24,8 +26,11 @@ export default async function CapsuleInfo({
 
   const queryClient = getQueryClient();
   const cookie = cookies();
-  const data = await queryClient.fetchQuery(["capsule", id, lng], () => {
-    return capsuleFetchData(id, lng, cookie);
+  const data = await queryClient.fetchQuery({
+    queryKey: ["capsule", id, lng],
+    queryFn: () => {
+      return capsuleFetchData(id, lng, cookie);
+    },
   });
 
   return (
@@ -46,7 +51,11 @@ export default async function CapsuleInfo({
               ) : null}
               {data.tagId?.length > 0 ? (
                 <div className="pt-4">
-                  <DisplayCapsuleTags tags={data.tagId} lng={lng} />
+                  <DisplayCapsuleTags
+                    tags={data.tagId}
+                    lng={lng}
+                    queryKey={queryKey}
+                  />
                 </div>
               ) : null}
             </div>
@@ -73,7 +82,11 @@ export default async function CapsuleInfo({
             <div className="hidden sm:block">
               {data.tagId?.length > 0 ? (
                 <div className="pb-6">
-                  <DisplayCapsuleTags tags={data.tagId} lng={lng} />
+                  <DisplayCapsuleTags
+                    lng={lng}
+                    tags={data.tagId}
+                    queryKey={queryKey}
+                  />
                 </div>
               ) : null}
             </div>
@@ -81,7 +94,7 @@ export default async function CapsuleInfo({
               <div className="flex flex-row">
                 <div className="basis-1/6">{t("release-date")}</div>
                 <div className="flex basis-5/6">
-                  <p className="basis-1/2">{data.date.join(", ")}</p>
+                  <p className="basis-1/2">{data.date?.join(", ")}</p>
                   <p className="text-end text-subtle-medium text-gray-400">
                     {t("date-explain")}
                   </p>
@@ -104,7 +117,7 @@ export default async function CapsuleInfo({
               <div className="flex justify-between">
                 <div className="basis-1/2">{t("release-date")}</div>
                 <div className="text-end">
-                  <p>{data.date.join(", ")}</p>
+                  <p>{data.date?.join(", ")}</p>
                   <p className="text-subtle-medium text-gray-400">
                     {t("date-explain")}
                   </p>

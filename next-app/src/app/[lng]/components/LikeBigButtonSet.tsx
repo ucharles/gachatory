@@ -13,7 +13,8 @@ import { cacheTimeEnum } from "@/lib/enums";
 
 import { updateLikes } from "@/lib/updateLikes";
 
-import LoginAlert from "./LoginAlert";
+import { useToast } from "@/components/ui/use-toast";
+import { ToastAction } from "@/components/ui/toast";
 
 export default function LikeBigButtonSet({
   lng,
@@ -24,7 +25,8 @@ export default function LikeBigButtonSet({
   queryKey: any[];
   id: string;
 }) {
-  const { t } = translate(lng, "translation");
+  const { t } = translate(lng, "like");
+  const { toast } = useToast();
   const { data: session } = useSession({
     required: false,
     onUnauthenticated() {},
@@ -52,7 +54,6 @@ export default function LikeBigButtonSet({
 
   const [isLiked, setIsLiked] = useState(data?.like ?? false);
   const [isLikeLoading, setIsLikeLoading] = useState(false);
-  const [isLogginAlert, setIsLogginAlert] = useState(false);
 
   const fetchLike = async () => {
     if (!session) return;
@@ -72,53 +73,51 @@ export default function LikeBigButtonSet({
     }, 500);
   };
 
-  function handleLike() {
-    // 버튼을 누르면 로그인이 되어있는지 확인하고
-    // 로그인이 되어있으면 좋아요를 누른다.
-    // 로그인 된 상태에서 좋아요를 누른 경우, 1초간 버튼을 비활성화한다.
+  const handleLike = session
+    ? () => {
+        if (session) {
+          if (isLikeLoading) return;
+          setIsLikeLoading(true);
+          setTimeout(() => {
+            setIsLikeLoading(false);
+          }, 1000);
 
-    if (session) {
-      if (isLikeLoading) return;
-      setIsLikeLoading(true);
-      setTimeout(() => {
-        setIsLikeLoading(false);
-      }, 1000);
+          setIsLiked(!isLiked);
 
-      setIsLiked(!isLiked);
-
-      fetchLike();
-      updateLikes(queryClient, "capsule", id);
-    } else {
-      // 로그인이 되어있지 않으면 로그인을 하라는 알림을 띄운다.
-      // 2초 동안 입력을 받지 않는다.
-      if (!isLogginAlert) {
-        setIsLogginAlert(true);
-        setTimeout(() => {
-          setIsLogginAlert(false);
-        }, 2000);
+          fetchLike();
+          updateLikes(queryClient, "capsule", id);
+        }
       }
-    }
-  }
+    : () => {
+        toast({
+          title: t("loginRequired"),
+          description: t("loginRequiredMessage"),
+          variant: "destructive",
+          action: (
+            <Link href="/auth/signin">
+              <ToastAction altText="Login">{t("login")}</ToastAction>
+            </Link>
+          ),
+        });
+      };
 
-  async function handleLikeList() {
-    // 좋아요 리스트로 이동
-    if (session) {
-    } else {
-      // 로그인이 되어있지 않으면 로그인을 하라는 알림을 띄운다.
-      // 2초 동안 입력을 받지 않는다.
-      if (!isLogginAlert) {
-        setIsLogginAlert(true);
-        setTimeout(() => {
-          setIsLogginAlert(false);
-        }, 2000);
-      }
-    }
-  }
+  const handleLikeList = session
+    ? () => {}
+    : () => {
+        toast({
+          title: t("loginRequired"),
+          description: t("loginRequiredMessage"),
+          variant: "destructive",
+          action: (
+            <Link href="/auth/signin">
+              <ToastAction altText="Login">{t("login")}</ToastAction>
+            </Link>
+          ),
+        });
+      };
 
   return (
     <>
-      <LoginAlert lng={lng} isDisplay={isLogginAlert} />
-
       <div className="flex h-14 space-x-1.5">
         <button
           className={`h-full basis-2/3 rounded-md border border-gigas-600 hover:shadow-md ${
