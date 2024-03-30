@@ -49,10 +49,10 @@ export default function CapsuleImageCarousel({ data }: { data: Capsule }) {
             transform: `translateX(-${activeIndex * 100}%)`,
             transition: "transform 0.5s ease-in-out",
           }}
-          className="-ml-[0.5px]"
+          className="-ml-0 flex items-center"
         >
           {images.map((img, i) => (
-            <CarouselItem key={i} className="pl-[0.5px]">
+            <CarouselItem key={i} className="pl-0">
               <div
                 className={`flex justify-center overflow-hidden rounded-md border border-gray-300`}
               >
@@ -68,7 +68,7 @@ export default function CapsuleImageCarousel({ data }: { data: Capsule }) {
         {images.map((img, i) => (
           <div
             key={i}
-            className={`flex justify-center overflow-hidden rounded-md border-2 ${
+            className={`flex aspect-square items-center justify-center overflow-hidden rounded-md border-2 ${
               activeIndex === i ? "border-gigas-700" : "border-gray-300"
             }`}
             onClick={() => setActiveIndex(i)}
@@ -77,8 +77,8 @@ export default function CapsuleImageCarousel({ data }: { data: Capsule }) {
               priority
               src={img}
               alt={data.name + i}
-              width={500}
-              height={500}
+              width={200}
+              height={200}
             />
           </div>
         ))}
