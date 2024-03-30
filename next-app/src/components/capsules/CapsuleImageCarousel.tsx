@@ -68,7 +68,7 @@ export default function CapsuleImageCarousel({ data }: { data: Capsule }) {
         {images.map((img, i) => (
           <div
             key={i}
-            className={`flex justify-center overflow-hidden rounded-md border-2 ${
+            className={`flex aspect-square items-center justify-center overflow-hidden rounded-md border-2 ${
               activeIndex === i ? "border-gigas-700" : "border-gray-300"
             }`}
             onClick={() => setActiveIndex(i)}
@@ -77,8 +77,8 @@ export default function CapsuleImageCarousel({ data }: { data: Capsule }) {
               priority
               src={img}
               alt={data.name + i}
-              width={500}
-              height={500}
+              width={200}
+              height={200}
             />
           </div>
         ))}
