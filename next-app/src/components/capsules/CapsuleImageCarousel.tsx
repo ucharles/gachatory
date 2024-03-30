@@ -49,10 +49,13 @@ export default function CapsuleImageCarousel({ data }: { data: Capsule }) {
             transform: `translateX(-${activeIndex * 100}%)`,
             transition: "transform 0.5s ease-in-out",
           }}
+          className="-ml-[0.5px]"
         >
           {images.map((img, i) => (
-            <CarouselItem key={i}>
-              <div className="mx-4 flex justify-center overflow-hidden rounded-md border border-gray-300 ">
+            <CarouselItem key={i} className="pl-[0.5px]">
+              <div
+                className={`flex justify-center overflow-hidden rounded-md border border-gray-300`}
+              >
                 <Image src={img} alt={data.name + i} width={600} height={600} />
               </div>
             </CarouselItem>
