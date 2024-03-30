@@ -13,6 +13,8 @@ import getQueryClient from "@/components/Providers/getQueryClient";
 import CapsuleLinkCopyButton from "./CapsuleLinkCopyButton";
 import LikeBigButtonSet from "./LikeBigButtonSet";
 
+import CapsuleImageCarousel from "@/components/capsules/CapsuleImageCarousel";
+
 export default async function CapsuleInfo({
   lng,
   queryKey,
@@ -37,7 +39,7 @@ export default async function CapsuleInfo({
     <>
       {data ? (
         <>
-          <div>
+          <div className="grid-left">
             <div className="pb-4 sm:hidden">
               <div className="flex items-center justify-between">
                 <p className="text-gray-400">{t("product-info")}</p>
@@ -49,6 +51,9 @@ export default async function CapsuleInfo({
                   {data.originalName}
                 </p>
               ) : null}
+            </div>
+            <CapsuleImageCarousel data={data} />
+            <div className="sm:hidden">
               {data.tagId?.length > 0 ? (
                 <div className="pt-4">
                   <DisplayCapsuleTags
@@ -59,12 +64,8 @@ export default async function CapsuleInfo({
                 </div>
               ) : null}
             </div>
-            <div className="flex justify-center rounded-md border border-gray-300">
-              <Image src={data.img} alt={data.name} width={560} height={560} />
-            </div>
-            <ImageGallery detail_img={data.detail_img} />
           </div>
-          <div>
+          <div className="grid-right">
             <div className="hidden sm:block">
               <div className="flex items-center justify-between pb-2">
                 <p className="text-gray-400">{t("product-info")}</p>
