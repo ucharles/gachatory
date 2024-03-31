@@ -12,10 +12,12 @@ export async function getUserIdWithCheckToken(request: NextRequest) {
     token = await getToken({ req: request });
   } catch (error) {
     console.error("JWT Token Error: ", error);
-    return NextResponse.json({
-      status: 500,
-      message: "Internal Server Error",
-    });
+    return NextResponse.json(
+      {
+        message: "JWT Token Error:" + error,
+      },
+      { status: 500 },
+    );
   }
   let userId = token?.sub; // add null check for token
 

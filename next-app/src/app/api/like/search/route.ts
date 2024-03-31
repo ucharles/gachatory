@@ -25,10 +25,12 @@ export async function GET(request: NextRequest) {
     token = await getToken({ req: request });
   } catch (error) {
     console.error("JWT Token Error: ", error);
-    return NextResponse.json({
-      status: 500,
-      message: "Internal Server Error",
-    });
+    return NextResponse.json(
+      {
+        message: "Internal Server Error",
+      },
+      { status: 500 },
+    );
   }
   let userId = token?.sub; // add null check for token
 
@@ -120,10 +122,12 @@ export async function GET(request: NextRequest) {
   }
 
   if (capsules.length === 0 && locSearchCapsules.length === 0) {
-    return NextResponse.json({
-      status: 200,
-      likes: [],
-    });
+    return NextResponse.json(
+      {
+        likes: [],
+      },
+      { status: 200 },
+    );
   }
 
   const capsuleIds = capsules.map((capsule) => {
@@ -147,8 +151,10 @@ export async function GET(request: NextRequest) {
   // 캡슐 정보 편집
   likes = editLikes(likes, lng);
 
-  return NextResponse.json({
-    status: 200,
-    likes,
-  });
+  return NextResponse.json(
+    {
+      likes,
+    },
+    { status: 200 },
+  );
 }
