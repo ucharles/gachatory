@@ -21,10 +21,12 @@ export async function GET(request: NextRequest) {
     token = await getToken({ req: request });
   } catch (error) {
     console.error("JWT Token Error: ", error);
-    return NextResponse.json({
-      status: 500,
-      message: "Internal Server Error",
-    });
+    return NextResponse.json(
+      {
+        message: "Internal Server Error",
+      },
+      { status: 500 },
+    );
   }
   let userId = token?.sub; // add null check for token
 
@@ -90,10 +92,12 @@ export async function GET(request: NextRequest) {
   }
 
   if (totalLikes === 0) {
-    return NextResponse.json({
-      status: 200,
-      likes: [],
-    });
+    return NextResponse.json(
+      {
+        likes: [],
+      },
+      { status: 200 },
+    );
   }
 
   // 최대 페이지 계산 후 현재 페이지가 최대 페이지보다 크다면 최대 페이지로 설정
@@ -143,11 +147,14 @@ export async function GET(request: NextRequest) {
     // 캡슐 정보 편집
     likes = editLikes(likes, lng);
 
-    return NextResponse.json({
-      totalCount: totalLikes,
-      likes,
-      page: +currentPage,
-    });
+    return NextResponse.json(
+      {
+        totalCount: totalLikes,
+        likes,
+        page: +currentPage,
+      },
+      { status: 200 },
+    );
   }
 
   // 이후 검색어가 있다면 검색어에 따라 좋아요 캡슐 반환
@@ -193,10 +200,12 @@ export async function GET(request: NextRequest) {
   }
 
   if (capsules.length === 0 && locSearchCapsules.length === 0) {
-    return NextResponse.json({
-      status: 200,
-      likes: [],
-    });
+    return NextResponse.json(
+      {
+        likes: [],
+      },
+      { status: 200 },
+    );
   }
 
   const capsuleIds = capsules.map((capsule) => {
@@ -220,11 +229,14 @@ export async function GET(request: NextRequest) {
   // 캡슐 정보 편집
   likes = editLikes(likes, lng);
 
-  return NextResponse.json({
-    totalCount: totalLikes,
-    likes,
-    page: +currentPage,
-  });
+  return NextResponse.json(
+    {
+      totalCount: totalLikes,
+      likes,
+      page: +currentPage,
+    },
+    { status: 200 },
+  );
 }
 
 export async function POST(request: NextRequest) {
@@ -234,10 +246,12 @@ export async function POST(request: NextRequest) {
     token = await getToken({ req: request });
   } catch (error) {
     console.error("JWT Token Error: ", error);
-    return NextResponse.json({
-      status: 500,
-      message: "Internal Server Error",
-    });
+    return NextResponse.json(
+      {
+        message: "Internal Server Error",
+      },
+      { status: 500 },
+    );
   }
   let userId = token?.sub; // add null check for token
 
@@ -276,7 +290,7 @@ export async function POST(request: NextRequest) {
         capsuleId: capsuleIdObj,
         state: true,
       });
-      return NextResponse.json({ status: 200, like: true });
+      return NextResponse.json({ like: true }, { status: 200 });
     } catch (error) {
       console.error("Error creating like:", error);
       return NextResponse.next();
@@ -292,10 +306,12 @@ export async function POST(request: NextRequest) {
         },
         { state: like.state ? false : true },
       );
-      return NextResponse.json({
-        status: 200,
-        like: like.state ? false : true,
-      });
+      return NextResponse.json(
+        {
+          like: like.state ? false : true,
+        },
+        { status: 200 },
+      );
     } catch (error) {
       console.error("Error update like: ", error);
       return NextResponse.next();

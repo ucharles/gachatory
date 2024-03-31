@@ -55,7 +55,7 @@ export default function UserInfoOverlay({
         </button>
         <div
           className={`${
-            notificationCount.length > 0 ? "block" : "hidden"
+            notificationCount?.length > 0 ? "block" : "hidden"
           } absolute -right-2 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white`}
         >
           {notificationCount?.length <= 9 ? notificationCount?.length : "9+"}
@@ -79,7 +79,7 @@ export default function UserInfoOverlay({
             </Link>
             <div
               className={`${
-                notificationCount.length > 0 ? "block" : "hidden"
+                notificationCount?.length > 0 ? "block" : "hidden"
               } flex h-2 w-2 rounded-full bg-red-500`}
             ></div>
           </div>

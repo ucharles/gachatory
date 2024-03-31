@@ -163,10 +163,12 @@ export async function GET(request: NextRequest) {
       token = await getToken({ req: request });
     } catch (error) {
       console.error("JWT Token Error: ", error);
-      return NextResponse.json({
-        status: 500,
-        message: "Internal Server Error",
-      });
+      return NextResponse.json(
+        {
+          message: "Internal Server Error",
+        },
+        { status: 500 },
+      );
     }
 
     if (token) {
