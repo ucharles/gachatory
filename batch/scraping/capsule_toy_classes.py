@@ -1,10 +1,9 @@
 import unicodedata
 import re
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import List
 import math
-from datetime import datetime
 
 
 def convert_to_numeric_month(month: str) -> int:
@@ -61,7 +60,9 @@ def calculate_last_day(year: int, month: int) -> int:
     return last_day
 
 
-def date_convert_to_iso(dates: str):
+def date_convert_to_iso(
+    dates: str, timezone_obj: timezone = timezone(timedelta(hours=9))
+):
     """
     Convert a date string to ISO format.
 
@@ -88,7 +89,10 @@ def date_convert_to_iso(dates: str):
         else:
             parsed_date = datetime(year, month, calculate_last_day(year, month))
 
-        return parsed_date.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+        # Apply the timezone to the parsed_date
+        parsed_date = parsed_date.replace(tzinfo=timezone_obj)
+
+        return parsed_date.isoformat()
     except Exception as e:
         print('"' + date_str + '"', e)
         return None

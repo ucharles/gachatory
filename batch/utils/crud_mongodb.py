@@ -4,7 +4,7 @@ import re
 from bson import ObjectId
 import json
 from dotenv import load_dotenv
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from mongoengine import (
     connect,
@@ -154,7 +154,7 @@ def insert_new_product(file_name):
                 detail_img=product["detail_img"],
                 detail_url=product["detail_url"],
                 lng=product["lng"],
-                createdAt=datetime.utcnow().isoformat(),
+                createdAt=datetime.now(timezone.utc).isoformat(),
                 dateISO=[product["dateISO"]],
             )
             # DB에 저장
@@ -205,9 +205,9 @@ def insert_new_product_as_bulk(file_name):
                 detail_img=product["detail_img"],
                 detail_url=product["detail_url"],
                 lng=product["lng"],
-                createdAt=datetime.utcnow().isoformat(),
-                updatedAt=datetime.utcnow().isoformat(),
-                releaseUpdateDate=datetime.utcnow().isoformat(),
+                createdAt=datetime.now(timezone.utc).isoformat(),
+                updatedAt=datetime.now(timezone.utc).isoformat(),
+                releaseUpdateDate=datetime.now(timezone.utc).isoformat(),
                 dateISO=insert_dateISO,
             )
 
@@ -304,7 +304,7 @@ def insert_updated_image(file_name):
                 capsule.update(
                     img=product["img"],
                     detail_img=product["detail_img"],
-                    updatedAt=datetime.utcnow().isoformat(),
+                    updatedAt=datetime.now(timezone.utc).isoformat(),
                 )
                 log(product["brand"], product["name"], "", 0, "'image data updated'")
 
@@ -351,7 +351,7 @@ def insert_new_tag(file_name):
                     en=tag["en"],
                     property=tag["property"],
                     linkCount=0,
-                    createdAt=datetime.utcnow().isoformat(),
+                    createdAt=datetime.now(timezone.utc).isoformat(),
                 ).save()
                 print("new capsule_tag", tag)
 
@@ -377,7 +377,7 @@ def search_capsule_toy_and_update_tag():
     # 반복문을 사용하여 캡슐 토이를 하나씩 검사하는 것이 더 이득인가
 
     # 오늘 날짜를 구하고, 하루를 빼서 '하루 전' 날짜를 계산합니다.
-    today = datetime.utcnow().isoformat() - timedelta(days=1)
+    today = datetime.now(timezone.utc) - timedelta(days=1)
 
     # 하루 전 날짜만을 기준으로 하려면, 날짜 범위의 시작과 끝을 정확히 하루로 설정합니다.
     # 'one_day_ago'의 날짜 부분만 사용하고, 시간은 00:00:00으로 설정합니다.
@@ -433,7 +433,7 @@ def search_capsule_toy_and_update_tag():
                 continue
 
             # capsule_toy.update(
-            #     push__tagId=tag_info["_id"], updatedAt=datetime.utcnow().isoformat()
+            #     push__tagId=tag_info["_id"], updatedAt=datetime.now(timezone.utc).isoformat()
             # )
             bulk_operation.append(
                 UpdateOne(
@@ -441,8 +441,8 @@ def search_capsule_toy_and_update_tag():
                     {
                         "$push": {"tagId": tag_info["_id"]},
                         "$set": {
-                            "updatedAt": datetime.utcnow()
-                        },  # datetime.utcnow().isoformat() -> datetime.utcnow() / isoformat()을 사용할 경우 string 형식으로 저장됨
+                            "updatedAt": datetime.now(timezone.utc)
+                        },  # datetime.now(timezone.utc).isoformat() -> datetime.now(timezone.utc) / isoformat()을 사용할 경우 string 형식으로 저장됨
                     },
                 )
             )
@@ -665,6 +665,100 @@ def tag_cutter():
         logging.info(f"Updated: {len(bulk_operation)} items")
 
 
+def add_zero_to_month():
+    # connect to db
+    try:
+        connect(database_name, host=database_url)
+        logging.info("DB Connection Success")
+    except Exception as e:
+        logging.error(f"DB Connection Error: {e}")
+        return
+
+    # get capsules with condition
+
+    try:
+        capsules = CapsuleToy.objects((Q(date__regex="年[0-9]月")))
+    except Exception as e:
+        logging.error(f"DB Query Error: {e}")
+        return
+
+    bulk_operation = []
+
+    for capsule in capsules:
+
+        # 태그가 10개 이상인 경우, 모든 태그 삭제
+        logging.info(f"Item: {capsule.name}, {capsule.tagId}")
+
+        new_date = []
+
+        for date in capsule.date:
+            if re.search(r"年[0-9]月", date):
+                logging.info(f"Item: {capsule.name}, {date}")
+                date = date.replace("年", "年0")
+                new_date.append(date)
+
+        bulk_operation.append(
+            UpdateOne(
+                {"_id": capsule.id},
+                {"$set": {"date": new_date}},
+            )
+        )
+        logging.info(f"Item: {capsule.name}, {new_date}")
+
+    if len(bulk_operation) > 0:
+        CapsuleToy._get_collection().bulk_write(bulk_operation, ordered=False)
+        logging.info(f"Updated: {len(bulk_operation)} items")
+
+
+def add_zero_to_month():
+    # connect to db
+    try:
+        connect(database_name, host=database_url)
+        logging.info("DB Connection Success")
+    except Exception as e:
+        logging.error(f"DB Connection Error: {e}")
+        return
+
+    # get capsules with condition
+
+    try:
+        capsules = CapsuleToy.objects((Q(date__regex="年[0-9]月")))
+    except Exception as e:
+        logging.error(f"DB Query Error: {e}")
+        return
+
+    bulk_operation = []
+
+    for capsule in capsules:
+
+        # 태그가 10개 이상인 경우, 모든 태그 삭제
+        logging.info(f"Item: {capsule.name}, {capsule.tagId}")
+
+        new_date = []
+
+        for date in capsule.date:
+            if re.search(r"年[0-9]月", date):
+                logging.info(f"Item: {capsule.name}, {date}")
+                date = date.replace("年", "年0")
+                new_date.append(date)
+
+        bulk_operation.append(
+            UpdateOne(
+                {"_id": capsule.id},
+                {"$set": {"date": new_date}},
+            )
+        )
+        logging.info(f"Item: {capsule.name}, {new_date}")
+
+    if len(bulk_operation) > 0:
+        CapsuleToy._get_collection().bulk_write(bulk_operation, ordered=False)
+        logging.info(f"Updated: {len(bulk_operation)} items")
+
+
+def transform_utc_0_to_9():
+    pass
+
+
 if __name__ == "__main__":
     # insert_new_product(
     #     "/home/local-optimum/git/gachatory/batch/scraping/bandai/new-product/detail-20231202.json"
@@ -678,4 +772,5 @@ if __name__ == "__main__":
     #     "E:/Git/gachatory/batch/scraping/tarlin/detail-img-20240308.json"
     # )
     # tag_cutter()
+    # add_zero_to_month()
     pass

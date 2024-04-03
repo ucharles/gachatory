@@ -247,3 +247,8 @@ if __name__ == "__main__":
         CURRENT_DIR + f"/3-detail/{print_date_format}.json"
     )
     write_file(image_result, CURRENT_DIR + f"/4-image-collect/")
+
+    # DB 갱신
+    insert_new_product_as_bulk(
+        CURRENT_DIR + f"/4-image-collect/{print_date_format}.json"
+    )
