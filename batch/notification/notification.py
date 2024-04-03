@@ -4,7 +4,7 @@ import os
 import sys
 
 from dotenv import load_dotenv
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from bson import ObjectId
 
 from mongoengine import (
@@ -80,6 +80,27 @@ def connect_to_db():
         raise
 
 
+def get_15_utc_datetime():
+    # datetime.utcnow() 사용 금지
+    now = datetime.now(timezone.utc)
+
+    # 현재 hour가 15보다 작으면 전날로 설정
+    if now.hour < 15:
+        now = now - timedelta(days=1)
+
+    # 15시로 설정
+    now = now.replace(hour=15, minute=0, second=0, microsecond=0)
+
+    return now
+
+
+def get_current_month_datetime():
+    now = datetime.now(timezone(timedelta(hours=9)))
+
+    now = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    return now
+
+
 def generate_notification(batch_days=1):
     # connect to db
     connect_to_db()
@@ -92,8 +113,8 @@ def generate_notification(batch_days=1):
     # 2. 새로 등록된 상품 불러오기
     # populate는 어떻게 하나
     capsule_toy = CapsuleToy.objects(
-        Q(releaseUpdateDate__gte=datetime.utcnow() - timedelta(days=batch_days))
-        | Q(createdAt__gte=datetime.utcnow() - timedelta(days=batch_days))
+        Q(releaseUpdateDate__gte=get_15_utc_datetime())
+        | Q(dateISO__gte=get_current_month_datetime())
     )
 
     logging.info(f"capsule_toy: {len(capsule_toy)}")
