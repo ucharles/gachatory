@@ -4,7 +4,7 @@ import re
 from bson import ObjectId
 import json
 from dotenv import load_dotenv
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone, date
 
 from mongoengine import (
     connect,
@@ -710,7 +710,61 @@ def add_zero_to_month():
         logging.info(f"Updated: {len(bulk_operation)} items")
 
 
+def transform_timezone_0_to_9(date: date = datetime.now(), hours: int = 9):
+    new_date = datetime.fromisoformat(date.isoformat())
+    new_date = new_date.replace(tzinfo=timezone(timedelta(hours=hours)))
+    return new_date
+
+
 def transform_utc_0_to_9():
+    # connect to db
+    try:
+        connect(database_name, host=database_url)
+        logging.info("DB Connection Success")
+    except Exception as e:
+        logging.error(f"DB Connection Error: {e}")
+        return
+
+    # get capsules with condition
+
+    try:
+        capsules = CapsuleToy.objects()
+    except Exception as e:
+        logging.error(f"DB Query Error: {e}")
+        return
+
+    bulk_operation = []
+
+    for capsule in capsules:
+        logging.info(f"Item: {capsule.name}, {capsule.dateISO}")
+
+        new_date = []
+
+        # capsule.dateISO의 자료형 확인
+        if isinstance(capsule.dateISO, list):
+            print(type(capsule.dateISO), capsule.dateISO)
+            for date in capsule.dateISO:
+                new_date_iso = transform_timezone_0_to_9(date=date, hours=9)
+                new_date.append(new_date_iso)
+                print("new date", new_date_iso.isoformat())
+        else:
+            print(type(capsule.dateISO), capsule.dateISO)
+            logging.info(f"Item: {capsule.name}, {capsule.dateISO}")
+            new_date_iso = transform_timezone_0_to_9(date=capsule.dateISO, hours=9)
+            new_date.append(new_date_iso)
+            print("new date", new_date_iso.isoformat())
+
+        bulk_operation.append(
+            UpdateOne(
+                {"_id": capsule.id},
+                {"$set": {"dateISO": new_date}},
+            )
+        )
+
+    if len(bulk_operation) > 0:
+        CapsuleToy._get_collection().bulk_write(bulk_operation, ordered=False)
+        logging.info(f"Updated: {len(bulk_operation)} items")
+
     pass
 
 
@@ -728,4 +782,5 @@ if __name__ == "__main__":
     # )
     # tag_cutter()
     # add_zero_to_month()
+    # transform_utc_0_to_9()
     pass

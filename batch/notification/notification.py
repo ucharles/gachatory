@@ -101,6 +101,36 @@ def get_current_month_datetime():
     return now
 
 
+def test():
+    # connect to db
+    connect_to_db()
+
+    capsule_toy = CapsuleToy.objects(
+        Q(releaseUpdateDate__gte=get_15_utc_datetime())
+        | Q(dateISO__gte=get_current_month_datetime())
+    )
+
+    logging.info(f"capsule_toy: {len(capsule_toy)}")
+
+    json_list = []
+    for capsule in capsule_toy:
+        capsule_json = {
+            "id": str(capsule.id),
+            "name": capsule.name,
+            "brand": capsule.brand,
+            "date": capsule.date,
+            "detail_url": capsule.detail_url,
+            "img": capsule.img,
+            "detail_img": capsule.detail_img,
+        }
+        json_list.append(capsule_json)
+
+    with open("capsule_toy.json", "w") as f:
+        f.write(json.dumps(json_list, ensure_ascii=False, indent=2))
+
+    pass
+
+
 def generate_notification(batch_days=1):
     # connect to db
     connect_to_db()
@@ -227,4 +257,6 @@ def generate_notification(batch_days=1):
 
 
 if __name__ == "__main__":
-    generate_notification(batch_days=1)
+    # generate_notification(batch_days=1)
+    test()
+    pass
