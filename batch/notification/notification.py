@@ -106,8 +106,11 @@ def test():
     connect_to_db()
 
     capsule_toy = CapsuleToy.objects(
-        Q(releaseUpdateDate__gte=get_15_utc_datetime())
-        | Q(dateISO__gte=get_current_month_datetime())
+        (
+            Q(releaseUpdateDate__gte=get_15_utc_datetime())
+            | Q(createdAt__gte=get_15_utc_datetime())
+        )
+        & Q(dateISO__gte=get_current_month_datetime())
     )
 
     logging.info(f"capsule_toy: {len(capsule_toy)}")
@@ -143,8 +146,11 @@ def generate_notification(batch_days=1):
     # 2. 새로 등록된 상품 불러오기
     # populate는 어떻게 하나
     capsule_toy = CapsuleToy.objects(
-        Q(releaseUpdateDate__gte=get_15_utc_datetime())
-        | Q(dateISO__gte=get_current_month_datetime())
+        (
+            Q(releaseUpdateDate__gte=get_15_utc_datetime())
+            | Q(createdAt__gte=get_15_utc_datetime())
+        )
+        & Q(dateISO__gte=get_current_month_datetime())
     )
 
     logging.info(f"capsule_toy: {len(capsule_toy)}")
