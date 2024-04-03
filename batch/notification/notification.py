@@ -150,14 +150,12 @@ def generate_notification(batch_days=1):
 
         for tag in capsule.tagId:
 
-            logging.info(f"new_capsule: {new_capsule.name['ko']}")
+            logging.info(f"new_capsule: {new_capsule.name}")
 
             if tag.id in tag_capsule_dict:
                 tag_capsule_dict[tag.id].append(new_capsule)
             else:
                 tag_capsule_dict[tag.id] = [new_capsule]
-
-    logging.info(f"tag_capsule_dict: {tag_capsule_dict}")
 
     # 유저별로 태그를 묶어서 딕셔너리에 저장
     user_tag_capsule_dict = {}

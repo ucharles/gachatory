@@ -710,51 +710,6 @@ def add_zero_to_month():
         logging.info(f"Updated: {len(bulk_operation)} items")
 
 
-def add_zero_to_month():
-    # connect to db
-    try:
-        connect(database_name, host=database_url)
-        logging.info("DB Connection Success")
-    except Exception as e:
-        logging.error(f"DB Connection Error: {e}")
-        return
-
-    # get capsules with condition
-
-    try:
-        capsules = CapsuleToy.objects((Q(date__regex="年[0-9]月")))
-    except Exception as e:
-        logging.error(f"DB Query Error: {e}")
-        return
-
-    bulk_operation = []
-
-    for capsule in capsules:
-
-        # 태그가 10개 이상인 경우, 모든 태그 삭제
-        logging.info(f"Item: {capsule.name}, {capsule.tagId}")
-
-        new_date = []
-
-        for date in capsule.date:
-            if re.search(r"年[0-9]月", date):
-                logging.info(f"Item: {capsule.name}, {date}")
-                date = date.replace("年", "年0")
-                new_date.append(date)
-
-        bulk_operation.append(
-            UpdateOne(
-                {"_id": capsule.id},
-                {"$set": {"date": new_date}},
-            )
-        )
-        logging.info(f"Item: {capsule.name}, {new_date}")
-
-    if len(bulk_operation) > 0:
-        CapsuleToy._get_collection().bulk_write(bulk_operation, ordered=False)
-        logging.info(f"Updated: {len(bulk_operation)} items")
-
-
 def transform_utc_0_to_9():
     pass
 
