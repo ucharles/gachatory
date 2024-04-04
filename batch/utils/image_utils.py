@@ -68,7 +68,7 @@ def compare_images(image1, image2):
 
         return similarity
     except:
-        log("error", 0, "", 0, "img error" + image1 + ", " + image2)
+        logging.error("img error: " + image1 + ", " + image2)
         mse_value = 0
         similarity = 0
     finally:
