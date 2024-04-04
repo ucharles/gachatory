@@ -87,7 +87,10 @@ def date_convert_to_iso(
             else:
                 parsed_date = datetime(year, month, int(mapping[date_str[-2:]]))
         else:
-            parsed_date = datetime(year, month, calculate_last_day(year, month))
+            if date_str[-1] == "日":
+                parsed_date = datetime(year, month, int(date_str[-3:-1]))
+            else:
+                parsed_date = datetime(year, month, calculate_last_day(year, month))
 
         # Apply the timezone to the parsed_date
         parsed_date = parsed_date.replace(tzinfo=timezone_obj)
@@ -98,18 +101,21 @@ def date_convert_to_iso(
         return None
 
 
-def extract_price_from_string(price: str) -> int:
+def extract_price_from_string(price: str | int) -> int:
     """
     Find patterns of price and remove the non-numeric characters.
     """
 
+    if type(price) == int:
+        return price
+
     # Find the price pattern
-    pattern = re.compile(r"(\d+)円")
+    pattern = re.compile(r"([\d,]+)円")
     match = pattern.search(price)
 
     # If the pattern is found, return the price
     if match:
-        return int(match.group(1).replace("円", ""))
+        return int(match.group(1).replace("円", "").replace(",", ""))
     else:
         return None
 
@@ -185,7 +191,7 @@ class CapsuleToyCl:
         )
 
     def set_date(self, date):
-        if type(date) == list:
+        if isinstance(date, list):
             self.date = date
         else:
             self.date = format_month(date)
@@ -209,7 +215,7 @@ class CapsuleToyCl:
         self.description = unicodedata.normalize("NFKC", _description)
 
     def set_dateISO(self):
-        if type(self.date) == list:
+        if isinstance(self.date, list):
             self.dateISO = [date_convert_to_iso(date) for date in self.date]
         else:
             self.dateISO = date_convert_to_iso(self.date)
@@ -363,3 +369,43 @@ class SotaCapsuleToyCl(CapsuleToyCl):
         self.name = unicodedata.normalize(
             "NFKC", name.replace("\n", "").replace("\t", "").strip()
         )
+
+
+class BandaiCapsuleToyCl(CapsuleToyCl):
+    def __init__(self, _id=None, resale=None, **kwargs):
+        super().__init__(**kwargs)
+        self.brand = "BANDAI"
+        self.lng = "ja"
+        self.resale = True if resale else False
+        self._id = _id
+
+    def set_name(self, name):
+        self.name = unicodedata.normalize(
+            "NFKC", name.replace("\n", "").replace("\t", "").strip()
+        )
+
+    def set_detail_url(self, detail_url):
+        if "../products/detail.php?jan_code=" in detail_url:
+            self.detail_url = detail_url.replace(
+                "../products/detail.php?jan_code=",
+                "https://www.bandai.co.jp/catalog/item.php?jan_cd=",
+            )
+        else:
+            self.detail_url = detail_url
+
+    def get_json(self):
+        return {
+            "_id": self._id,
+            "brand": self.brand,
+            "name": self.name,
+            "date": self.date,
+            "price": self.price,
+            "img": self.img,
+            "detail_img": self.detail_img,
+            "detail_url": self.detail_url,
+            "header": self.header,
+            "description": self.description,
+            "dateISO": self.dateISO,
+            "lng": self.lng,
+            "resale": self.resale,
+        }

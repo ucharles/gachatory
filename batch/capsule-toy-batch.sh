@@ -4,7 +4,7 @@
 scraping_path="/home/local-optimum/git/gachatory/batch/scraping"
 
 scripts=(
-    "/bandai/daily-scraping.py"
+    "/bandai/bandai.py"
     "/takaratomy/tt.py"
     "/kitan/kt.py"
     "/bushiroad/br.py"
@@ -33,3 +33,9 @@ python3 -c "from crud_mongodb import search_capsule_toy_and_update_tag; search_c
 # 디렉토리 변경
 cd /home/local-optimum/git/gachatory/batch/translate
 python3 ./capsule_translator.py >> log_file.log 2>&1
+
+# 알림
+
+# 디렉토리 변경
+cd /home/local-optimum/git/gachatory/batch/notification
+python3 ./notification.py >> log_file.log 2>&1

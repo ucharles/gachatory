@@ -263,6 +263,6 @@ def generate_notification(batch_days=1):
 
 
 if __name__ == "__main__":
-    # generate_notification(batch_days=1)
-    test()
+    generate_notification(batch_days=1)
+    # test()
     pass
