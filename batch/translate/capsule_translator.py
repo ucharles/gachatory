@@ -170,7 +170,7 @@ def translate_capsule_toy():
                 {"_id": capsule_toy.id},
                 {
                     "$set": {
-                        "localization": [new_kor.id, new_eng.capsuleId],
+                        "localization": [new_kor.id, new_eng.id],
                     }
                 },
             )
