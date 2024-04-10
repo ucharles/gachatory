@@ -1,5 +1,4 @@
 "use client";
-import { useQueryClient } from "@tanstack/react-query";
 import { translate } from "@/app/i18n/client";
 
 // likes - capsuleId - localization - title

@@ -5,16 +5,11 @@ import { getServerSession } from "next-auth/next";
 import { options } from "@/app/api/auth/[...nextauth]/options";
 
 import LikedCapsulesListItem from "./components/LikedCapsulesListItem";
-import { fetchLikedData } from "@/lib/fetch-data";
 
-import { QueryClient } from "@tanstack/react-query";
-import Hydrate from "../../../components/Providers/HydrateClient";
 import { translate } from "@/app/i18n";
 import { sortEnum } from "@/lib/enums";
 
 import LikeSort from "./components/LikeSort";
-
-import { dehydrate } from "@tanstack/query-core";
 
 /*
 @Path

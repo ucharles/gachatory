@@ -2,13 +2,10 @@ import { getServerSession } from "next-auth/next";
 import { options } from "@/app/api/auth/[...nextauth]/options";
 import { redirect } from "next/navigation";
 import SignOutButton from "@/app/auth/components/SignOutButton";
-import { capitalizeFirstLetter } from "@/lib/string-utils";
 import { Session, ISODateString } from "next-auth";
-import { convertToLocalTime } from "@/lib/date-converter";
 import DeleteAccountButton from "@/app/auth/components/DeleteAccountButton";
 import ProviderIcon from "@/app/[lng]/user/components/ProviderIcon";
 
-import EmailNotification from "../components/EmailNotification";
 import DisplayDate from "@/components/DisplayDate";
 
 import { translate } from "@/app/i18n";

@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ICapsuleToy } from "@/lib/models/capsule-model";
-import { arrivalFetchData, searchFetchData } from "@/lib/fetch-data";
+import { searchFetchData } from "@/lib/fetch-data";
 import { cacheTimeEnum } from "@/lib/enums";
 import { DisplayCapsuleOneTag } from "./display-capsule-tag";
 
@@ -39,7 +38,7 @@ function CapsuleCards({
   // 좋아요 기능 추가 시 useMutation을 사용하여 캐시 업데이트
 
   return (
-    <ul className="grid grid-cols-1 gap-x-6 gap-y-10 md:grid-cols-4 xs:grid-cols-2">
+    <ul className="grid grid-cols-1 gap-x-6 gap-y-10 xs:grid-cols-2 md:grid-cols-4">
       {isLoading ? <p>Loading...</p> : null}
       {data?.capsules?.map((capsule: ICapsuleToy) => {
         return capsule.display_img ? (

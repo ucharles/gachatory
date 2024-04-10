@@ -4,7 +4,6 @@
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { perPageEnum } from "@/lib/enums";
-import { set } from "mongoose";
 
 interface PaginationProps {
   total: number; // total number of items

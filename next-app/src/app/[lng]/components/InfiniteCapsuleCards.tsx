@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
-import { useSession } from "next-auth/react";
 import { ICapsuleToy } from "@/lib/models/capsule-model";
 import { arrivalFetchData } from "@/lib/fetch-data";
 import { perPageEnum } from "@/lib/enums";

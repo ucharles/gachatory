@@ -1,7 +1,5 @@
 "use client";
 
-import { translate } from "@/app/i18n/client";
-
 export default function EmailNotification() {
   return (
     <div className="flex space-x-2">

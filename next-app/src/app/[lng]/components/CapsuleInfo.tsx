@@ -1,11 +1,9 @@
 // server component
 
 import Link from "next/link";
-import Image from "next/image";
 import { cookies } from "next/headers";
 
 import { translate } from "@/app/i18n";
-import ImageGallery from "./image-gallery";
 import DisplayCapsuleTags from "./display-capsule-tag";
 import { capsuleFetchData } from "@/lib/fetch-data";
 import getQueryClient from "@/components/Providers/getQueryClient";
